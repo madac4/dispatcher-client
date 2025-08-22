@@ -5,38 +5,66 @@ import { ApiResponse } from '../models/response.model'
 
 const baseURL = '/authorization'
 
-export const register = async (data: { email: string; password: string; inviteCode: string }) => {
-  return apiRequest<void>(() => api.post(`${baseURL}/register`, data).then(res => res.data))
+export const AuthService = {
+	async register(data: {
+		email: string
+		password: string
+		inviteCode: string
+	}) {
+		return apiRequest<void>(() =>
+			api.post(`${baseURL}/register`, data).then(res => res.data),
+		)
+	},
 }
 
-export const login = async (data: { email: string; password: string }): Promise<ApiResponse<LoginResponse>> => {
-  return apiRequest<LoginResponse>(() => api.post(`${baseURL}/login`, data).then(res => res.data))
+export const login = async (data: {
+	email: string
+	password: string
+}): Promise<ApiResponse<LoginResponse>> => {
+	return apiRequest<LoginResponse>(() =>
+		api.post(`${baseURL}/login`, data).then(res => res.data),
+	)
 }
 
 export const logout = async (): Promise<ApiResponse<null>> => {
-  return apiRequest<null>(() => api.post(`${baseURL}/logout`).then(res => res.data))
+	return apiRequest<null>(() =>
+		api.post(`${baseURL}/logout`).then(res => res.data),
+	)
 }
 
-export const forgotPassword = async (data: { email: string }): Promise<ApiResponse<null>> => {
-  return apiRequest<null>(() => api.post(`${baseURL}/forgot-password`, data).then(res => res.data))
+export const forgotPassword = async (data: {
+	email: string
+}): Promise<ApiResponse<null>> => {
+	return apiRequest<null>(() =>
+		api.post(`${baseURL}/forgot-password`, data).then(res => res.data),
+	)
 }
 
 export const updatePassword = async (data: {
-  currentPassword: string
-  password: string
-  confirmPassword: string
+	currentPassword: string
+	password: string
+	confirmPassword: string
 }): Promise<ApiResponse<null>> => {
-  return apiRequest<null>(() => api.post(`${baseURL}/update-password`, data).then(res => res.data))
+	return apiRequest<null>(() =>
+		api.post(`${baseURL}/update-password`, data).then(res => res.data),
+	)
 }
 
 export const resetPassword = async (data: {
-  token: string
-  password: string
-  confirmPassword: string
+	token: string
+	password: string
+	confirmPassword: string
 }): Promise<ApiResponse<null>> => {
-  return apiRequest<null>(() => api.post(`${baseURL}/reset-password`, data).then(res => res.data))
+	return apiRequest<null>(() =>
+		api.post(`${baseURL}/reset-password`, data).then(res => res.data),
+	)
 }
 
-export const createInvitation = async (data: { email: string; role: 'admin' | 'user' }) => {
-  return apiRequest<void>(() => api.post(`${baseURL}/invite`, data).then(res => res.data))
+export const createInvitation = async (data: {
+	email: string
+	role: 'admin' | 'user'
+}) => {
+	return apiRequest<void>(() =>
+		api.post(`${baseURL}/invite`, data).then(res => res.data),
+	)
 }
