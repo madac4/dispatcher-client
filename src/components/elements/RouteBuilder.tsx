@@ -1,18 +1,11 @@
 'use client'
 
-import { orderFormSchema } from '@/lib/schemas/order.schema'
+import { useGoogleMaps } from '@/hooks/useGoogleMaps'
 import { MapPin } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
-import { z } from 'zod'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import {
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '../ui/form'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 import { Input } from '../ui/input'
 
 const useDebounce = (value: string, delay: number) => {
@@ -26,44 +19,33 @@ const useDebounce = (value: string, delay: number) => {
 	return debouncedValue
 }
 
-type FormData = z.infer<typeof orderFormSchema>
+export interface RouteFormData {
+	originAddress: string
+	destinationAddress: string
+	stops?: string[]
+}
 
-export default function RouteBuilder({
-	form,
-}: {
-	form: UseFormReturn<FormData>
-}) {
+export default function RouteBuilder({ form }: { form: UseFormReturn<RouteFormData> }) {
 	const mapRef = useRef<HTMLDivElement>(null)
 	const [map, setMap] = useState<google.maps.Map>()
-	const [directionsService, setDirectionsService] =
-		useState<google.maps.DirectionsService>()
-	const [directionsRenderer, setDirectionsRenderer] =
-		useState<google.maps.DirectionsRenderer>()
-	const [autocompleteOrigin, setAutocompleteOrigin] =
-		useState<google.maps.places.Autocomplete>()
-	const [autocompleteDestination, setAutocompleteDestination] =
-		useState<google.maps.places.Autocomplete>()
+	const [directionsService, setDirectionsService] = useState<google.maps.DirectionsService>()
+	const [directionsRenderer, setDirectionsRenderer] = useState<google.maps.DirectionsRenderer>()
+	const [autocompleteOrigin, setAutocompleteOrigin] = useState<google.maps.places.Autocomplete>()
+	const [autocompleteDestination, setAutocompleteDestination] = useState<google.maps.places.Autocomplete>()
 	const [routeError, setRouteError] = useState<string | null>(null)
 	const [waypoints, setWaypoints] = useState<string[]>([])
 	const [isCalculating, setIsCalculating] = useState(false)
 
+	const { isLoaded: isGoogleMapsLoaded, loadError: googleMapsError } = useGoogleMaps()
+
 	const debouncedOrigin = useDebounce(form.watch('originAddress') || '', 500)
-	const debouncedDestination = useDebounce(
-		form.watch('destinationAddress') || '',
-		500,
-	)
+	const debouncedDestination = useDebounce(form.watch('destinationAddress') || '', 500)
 
 	const calculateRoute = useCallback(() => {
 		const origin = form.getValues('originAddress')
 		const destination = form.getValues('destinationAddress')
 
-		if (
-			!origin ||
-			!destination ||
-			!directionsService ||
-			!directionsRenderer
-		)
-			return
+		if (!origin || !destination || !directionsService || !directionsRenderer) return
 
 		setIsCalculating(true)
 		setRouteError(null)
@@ -123,14 +105,11 @@ export default function RouteBuilder({
 
 		directionsRenderer.setMap(map)
 
-		const geocodeLatLng = (
-			latlng: google.maps.LatLng,
-		): Promise<string | null> => {
+		const geocodeLatLng = (latlng: google.maps.LatLng): Promise<string | null> => {
 			const geocoder = new google.maps.Geocoder()
 			return new Promise(resolve => {
 				geocoder.geocode({ location: latlng }, (results, status) => {
-					if (status === 'OK' && results?.[0])
-						resolve(results[0].formatted_address)
+					if (status === 'OK' && results?.[0]) resolve(results[0].formatted_address)
 					else resolve(null)
 				})
 			})
@@ -154,12 +133,7 @@ export default function RouteBuilder({
 					if (leg.via_waypoints && leg.via_waypoints.length > 0) {
 						for (const vw of leg.via_waypoints) {
 							const addr = await geocodeLatLng(vw)
-							stops.push(
-								addr ??
-									`${vw.lat().toFixed(6)}, ${vw
-										.lng()
-										.toFixed(6)}`,
-							)
+							stops.push(addr ?? `${vw.lat().toFixed(6)}, ${vw.lng().toFixed(6)}`)
 						}
 					}
 
@@ -167,9 +141,7 @@ export default function RouteBuilder({
 				}
 			}
 
-			const deduped = stops.filter(
-				(s, i, arr) => i === 0 || s !== arr[i - 1],
-			)
+			const deduped = stops.filter((s, i, arr) => i === 0 || s !== arr[i - 1])
 
 			const waypointsOnly = deduped.slice(1, -1)
 
@@ -188,25 +160,12 @@ export default function RouteBuilder({
 	}, [form])
 
 	useEffect(() => {
-		const loadGoogleMapsAPI = () => {
-			if (window.google && window.google.maps) {
-				initializeMap()
-				return
-			}
-			const script = document.createElement('script')
-			script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`
-			script.async = true
-			script.defer = true
-			script.onload = () => initializeMap()
-			document.head.appendChild(script)
+		if (isGoogleMapsLoaded) {
+			initializeMap()
 		}
-		loadGoogleMapsAPI()
-	}, [initializeMap])
+	}, [isGoogleMapsLoaded, initializeMap])
 
-	const initializeAutocomplete = (
-		inputRef: HTMLInputElement,
-		isOrigin: boolean,
-	) => {
+	const initializeAutocomplete = (inputRef: HTMLInputElement, isOrigin: boolean) => {
 		if (!window.google?.maps?.places) return
 
 		const autocomplete = new google.maps.places.Autocomplete(inputRef, {
@@ -218,10 +177,8 @@ export default function RouteBuilder({
 		autocomplete.addListener('place_changed', () => {
 			const place = autocomplete.getPlace()
 			if (place.geometry && place.formatted_address) {
-				if (isOrigin)
-					form.setValue('originAddress', place.formatted_address)
-				else
-					form.setValue('destinationAddress', place.formatted_address)
+				if (isOrigin) form.setValue('originAddress', place.formatted_address)
+				else form.setValue('destinationAddress', place.formatted_address)
 
 				const origin = form.getValues('originAddress')
 				const destination = form.getValues('destinationAddress')
@@ -237,9 +194,7 @@ export default function RouteBuilder({
 		form.setValue('originAddress', e.target.value)
 	}
 
-	const handleDestinationChange = (
-		e: React.ChangeEvent<HTMLInputElement>,
-	) => {
+	const handleDestinationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		form.setValue('destinationAddress', e.target.value)
 	}
 
@@ -261,10 +216,7 @@ export default function RouteBuilder({
 		if (routeData) {
 			Object.entries(routeData).forEach(([key, value]) => {
 				if (key in form.getValues()) {
-					form.setValue(
-						key as keyof FormData,
-						value as FormData[keyof FormData],
-					)
+					form.setValue(key as keyof RouteFormData, value as RouteFormData[keyof RouteFormData])
 				}
 			})
 		}
@@ -272,16 +224,10 @@ export default function RouteBuilder({
 
 	useEffect(() => {
 		if (waypoints.length > 0) {
-			console.log(
-				'Waypoints changed, updating form stops field:',
-				waypoints,
-			)
+			console.log('Waypoints changed, updating form stops field:', waypoints)
 			const waypointsOnly = waypoints.slice(1, -1)
 			form.setValue('stops', waypointsOnly)
-			console.log(
-				'Form stops field after waypoints change (waypoints only):',
-				waypointsOnly,
-			)
+			console.log('Form stops field after waypoints change (waypoints only):', waypointsOnly)
 		}
 	}, [waypoints, form])
 
@@ -294,6 +240,12 @@ export default function RouteBuilder({
 				</CardTitle>
 			</CardHeader>
 			<CardContent className='space-y-4'>
+				{googleMapsError && (
+					<div className='bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-800'>
+						{googleMapsError}
+					</div>
+				)}
+
 				<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 					<FormField
 						control={form.control}
@@ -310,6 +262,7 @@ export default function RouteBuilder({
 											if (
 												el &&
 												!autocompleteOrigin &&
+												isGoogleMapsLoaded &&
 												window.google?.maps?.places
 											) {
 												initializeAutocomplete(el, true)
@@ -336,12 +289,10 @@ export default function RouteBuilder({
 											if (
 												el &&
 												!autocompleteDestination &&
+												isGoogleMapsLoaded &&
 												window.google?.maps?.places
 											) {
-												initializeAutocomplete(
-													el,
-													false,
-												)
+												initializeAutocomplete(el, false)
 											}
 										}}
 									/>
@@ -364,12 +315,14 @@ export default function RouteBuilder({
 					</div>
 				)}
 
+				{!isGoogleMapsLoaded && !googleMapsError && (
+					<div className='bg-gray-50 border border-gray-200 rounded-md p-3 text-sm text-gray-800'>
+						Loading Google Maps...
+					</div>
+				)}
+
 				<div className='h-[480px] bg-gray-100 rounded-lg overflow-hidden'>
-					<div
-						ref={mapRef}
-						className='w-full h-full'
-						style={{ minHeight: '480px' }}
-					/>
+					<div ref={mapRef} className='w-full h-full' style={{ minHeight: '480px' }} />
 				</div>
 			</CardContent>
 		</Card>

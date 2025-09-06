@@ -1,25 +1,48 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
-import { Phone } from 'lucide-react'
+import { useAuthStore } from '@/lib/stores/authStore'
+import Link from 'next/link'
 
 export function Hero() {
-  return (
-    <section className="bg-white py-16">
-      <div className="container mx-auto px-4 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto">
-          Welcome to OSOW.EXPRESS. Your one stop solution for all your oversize, overweight permitting, and high value
-          insurance needs.
-        </h1>
+	const { isAuthenticated, logout } = useAuthStore()
 
-        <p className="text-lg text-gray-600 mb-8 max-w-3xl mx-auto">
-          Whether you need a one state routine permit or have a move that spans multiple states and requires additional
-          insurance, escorts, and route surveys. We are here to help!
-        </p>
+	console.log(isAuthenticated())
+	return (
+		<section className='bg-white py-16'>
+			<div className='container mx-auto px-4 text-center'>
+				<h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6 max-w-4xl mx-auto'>
+					This Website is under construction.
+				</h1>
 
-        <Button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full text-lg">
-          <Phone className="mr-2 h-5 w-5" />
-          Call us 833.553.0483
-        </Button>
-      </div>
-    </section>
-  )
+				<p className='text-lg text-gray-600 mb-8 max-w-3xl mx-auto'>
+					At the moment, you can test only the features that are
+					enabled for the demo. With each update, we will add more
+					features and improve the website.
+				</p>
+
+				<div className='flex items-center justify-center gap-4'>
+					{isAuthenticated() ? (
+						<>
+							<Button variant='outline' asChild>
+								<Link href='/dashboard'>Dashboard</Link>
+							</Button>
+							<Button onClick={logout} variant='ghost'>
+								Logout
+							</Button>
+						</>
+					) : (
+						<>
+							<Button variant='secondary' asChild>
+								<Link href='/login'>Login</Link>
+							</Button>
+							<Button asChild>
+								<Link href='/register'>Create Account</Link>
+							</Button>
+						</>
+					)}
+				</div>
+			</div>
+		</section>
+	)
 }

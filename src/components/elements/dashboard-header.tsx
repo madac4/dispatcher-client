@@ -2,9 +2,8 @@
 
 import { useAuthStore } from '@/lib/stores/authStore'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
-import { FilePlus, PackagePlus, Plus, UserPlus } from 'lucide-react'
+import { FilePlus, PackagePlus, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { InviteUserModal } from '../modals/InviteUserModal'
 import { Button } from '../ui/button'
 import {
 	DropdownMenu,
@@ -14,6 +13,7 @@ import {
 
 export function DashboardHeader() {
 	const { logout } = useAuthStore()
+
 	return (
 		<header className='flex min-h-14 items-center justify-between gap-2 sm:gap-4 border-b bg-background px-4 lg:min-h-16 lg:px-6'>
 			<span></span>
@@ -40,12 +40,7 @@ export function DashboardHeader() {
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
-				<InviteUserModal>
-					<Button variant='outline'>
-						<UserPlus />
-						Invite User
-					</Button>
-				</InviteUserModal>
+
 				<Button onClick={logout}>Logout</Button>
 			</div>
 		</header>

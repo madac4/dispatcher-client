@@ -1,20 +1,13 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { AuthService } from '@/lib/services/authService'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EyeIcon, EyeOffIcon, Loader2Icon } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -52,8 +45,7 @@ const passwordSchema = z.string().superRefine((password, ctx) => {
 	if (!/[@$!%*?&]/.test(password)) {
 		ctx.addIssue({
 			code: z.ZodIssueCode.custom,
-			message:
-				'Password must contain at least one special character (@$!%*?&)',
+			message: 'Password must contain at least one special character (@$!%*?&)',
 			path: [],
 		})
 	}
@@ -62,30 +54,27 @@ const passwordSchema = z.string().superRefine((password, ctx) => {
 const loginFormSchema = z.object({
 	email: z.string().email('Invalid email address'),
 	password: passwordSchema,
-	inviteCode: z.string().min(1, 'Invite code is required'),
+	// inviteCode: z.string().min(1, 'Invite code is required'),
 })
 
 export default function RegisterPage() {
 	const [showPassword, setShowPassword] = useState<boolean>(false)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const searchParams = useSearchParams()
 	const router = useRouter()
-
-	const inviteCode = searchParams.get('code')
 
 	const form = useForm<z.infer<typeof loginFormSchema>>({
 		resolver: zodResolver(loginFormSchema),
 		defaultValues: {
 			email: '',
 			password: '',
-			inviteCode: inviteCode || '',
+			// inviteCode: inviteCode || '',
 		},
 	})
 
 	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
 		setIsLoading(true)
 		try {
-			const { message } = await AuthService.register(values)
+			const { message } = await AuthService.register(values.email, values.password)
 			toast.success(message)
 			router.push('/login')
 		} finally {
@@ -103,11 +92,7 @@ export default function RegisterPage() {
 						<FormItem>
 							<FormLabel>Email</FormLabel>
 							<FormControl>
-								<Input
-									type='email'
-									placeholder='Enter your email'
-									{...field}
-								/>
+								<Input type='email' placeholder='Enter your email' {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -123,26 +108,20 @@ export default function RegisterPage() {
 							<div className='relative'>
 								<FormControl>
 									<Input
-										type={
-											showPassword ? 'text' : 'password'
-										}
+										type={showPassword ? 'text' : 'password'}
 										placeholder='Enter your password'
 										{...field}
 									/>
 								</FormControl>
 								{showPassword ? (
 									<EyeOffIcon
-										onClick={() =>
-											setShowPassword(!showPassword)
-										}
+										onClick={() => setShowPassword(!showPassword)}
 										className='absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground'
 										size={18}
 									/>
 								) : (
 									<EyeIcon
-										onClick={() =>
-											setShowPassword(!showPassword)
-										}
+										onClick={() => setShowPassword(!showPassword)}
 										className='absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground'
 										size={18}
 									/>
@@ -153,7 +132,7 @@ export default function RegisterPage() {
 					)}
 				/>
 
-				<FormField
+				{/* <FormField
 					control={form.control}
 					name='inviteCode'
 					render={({ field }) => (
@@ -170,19 +149,16 @@ export default function RegisterPage() {
 							<FormMessage />
 						</FormItem>
 					)}
-				/>
+				/> */}
 
 				<Button type='submit' className='w-full' disabled={isLoading}>
 					{isLoading ? (
 						<>
-							<Loader2Icon
-								className='animate-spin mr-2'
-								size={16}
-							/>
-							Signing in...
+							<Loader2Icon className='animate-spin mr-2' size={16} />
+							Registering...
 						</>
 					) : (
-						'Sign In'
+						'Register'
 					)}
 				</Button>
 			</form>
@@ -190,10 +166,7 @@ export default function RegisterPage() {
 			<div className='mt-6 text-center'>
 				<p className='text-sm text-gray-600'>
 					Already have an account?{' '}
-					<Link
-						href='/login'
-						className='text-primary hover:text-primary/80 font-medium'
-					>
+					<Link href='/login' className='text-primary hover:text-primary/80 font-medium'>
 						Sign in
 					</Link>
 				</p>

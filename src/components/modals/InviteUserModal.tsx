@@ -18,13 +18,9 @@ import { Label } from '../ui/label'
 
 type InviteUserModalProps = {
 	children: React.ReactNode
-	onInviteSuccess?: () => void
 }
 
-export function InviteUserModal({
-	children,
-	onInviteSuccess,
-}: InviteUserModalProps) {
+export function InviteUserModal({ children }: InviteUserModalProps) {
 	const [email, setEmail] = useState('')
 	const [isLoading, setIsLoading] = useState(false)
 
@@ -49,10 +45,6 @@ export function InviteUserModal({
 
 			toast.success(message)
 			setEmail('')
-
-			if (onInviteSuccess) {
-				onInviteSuccess()
-			}
 		} finally {
 			setIsLoading(false)
 		}

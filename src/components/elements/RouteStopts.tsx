@@ -1,5 +1,6 @@
 'use client'
 
+import { useGoogleMaps } from '@/hooks/useGoogleMaps'
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -18,17 +19,16 @@ export default function RoutePlanner() {
 		},
 	})
 
-	const [directionsRenderer, setDirectionsRenderer] =
-		useState<google.maps.DirectionsRenderer>()
-	const [directionsService, setDirectionsService] =
-		useState<google.maps.DirectionsService>()
+	const [directionsRenderer, setDirectionsRenderer] = useState<google.maps.DirectionsRenderer>()
+	const [directionsService, setDirectionsService] = useState<google.maps.DirectionsService>()
 	const [stops, setStops] = useState<string[]>([])
 
 	const mapRef = useRef<HTMLDivElement>(null)
+	const { isLoaded: isGoogleMapsLoaded, loadError: googleMapsError } = useGoogleMaps()
 
 	// initialize map
 	useEffect(() => {
-		if (!mapRef.current) return
+		if (!mapRef.current || !isGoogleMapsLoaded) return
 
 		const m = new google.maps.Map(mapRef.current, {
 			center: { lat: 39.5, lng: -98.35 },
@@ -67,26 +67,16 @@ export default function RoutePlanner() {
 				const geocoder = new google.maps.Geocoder()
 
 				for (const latlng of viaWaypoints) {
-					const geocoded = await new Promise<string | null>(
-						resolve => {
-							geocoder.geocode(
-								{ location: latlng },
-								(results, status) => {
-									if (
-										status === 'OK' &&
-										results &&
-										results[0]
-									) {
-										resolve(results[0].formatted_address)
-									} else {
-										resolve(null)
-									}
-								},
-							)
-						},
-					)
-					if (geocoded)
-						allStops.splice(allStops.length - 1, 0, geocoded)
+					const geocoded = await new Promise<string | null>(resolve => {
+						geocoder.geocode({ location: latlng }, (results, status) => {
+							if (status === 'OK' && results && results[0]) {
+								resolve(results[0].formatted_address)
+							} else {
+								resolve(null)
+							}
+						})
+					})
+					if (geocoded) allStops.splice(allStops.length - 1, 0, geocoded)
 				}
 			}
 
@@ -95,7 +85,7 @@ export default function RoutePlanner() {
 			form.setValue('stops', uniqueStops)
 			setStops(uniqueStops)
 		})
-	}, [form])
+	}, [form, isGoogleMapsLoaded])
 
 	const calculateRoute = () => {
 		if (!directionsService || !directionsRenderer) return
@@ -118,20 +108,35 @@ export default function RoutePlanner() {
 
 	return (
 		<div className='flex flex-col gap-4'>
+			{googleMapsError && (
+				<div className='bg-red-50 border border-red-200 rounded-md p-3 text-sm text-red-800'>
+					{googleMapsError}
+				</div>
+			)}
+
+			{!isGoogleMapsLoaded && !googleMapsError && (
+				<div className='bg-gray-50 border border-gray-200 rounded-md p-3 text-sm text-gray-800'>
+					Loading Google Maps...
+				</div>
+			)}
+
 			<div className='flex gap-2'>
 				<input
 					placeholder='Origin Address'
 					{...form.register('origin')}
 					className='border p-2 w-1/2'
+					disabled={!isGoogleMapsLoaded}
 				/>
 				<input
 					placeholder='Destination Address'
 					{...form.register('destination')}
 					className='border p-2 w-1/2'
+					disabled={!isGoogleMapsLoaded}
 				/>
 				<button
 					onClick={calculateRoute}
-					className='bg-blue-500 text-white px-4 rounded'
+					className='bg-blue-500 text-white px-4 rounded disabled:bg-gray-300'
+					disabled={!isGoogleMapsLoaded}
 				>
 					Calculate
 				</button>
@@ -144,10 +149,7 @@ export default function RoutePlanner() {
 				<ul className='list-disc pl-5'>
 					{stops.map((stop, idx) => (
 						<li key={idx}>
-							<span className='font-semibold'>
-								{String.fromCharCode(65 + idx)}:
-							</span>{' '}
-							{stop}
+							<span className='font-semibold'>{String.fromCharCode(65 + idx)}:</span> {stop}
 						</li>
 					))}
 				</ul>

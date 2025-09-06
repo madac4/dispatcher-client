@@ -1,31 +1,28 @@
 'use client'
 
+import OrderChat from '@/components/blocks/OrderChat'
 import RouteDisplay from '@/components/elements/RouteDisplay'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-} from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { OrderDTO } from '@/lib/models/order.model'
-import { getOrderByNumber } from '@/lib/services/orderService'
+import { getOrderByNumber, OrderService } from '@/lib/services/orderService'
+import { useAuthStore } from '@/lib/stores/authStore'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import {
 	ArrowLeft,
 	Calendar,
 	Copy,
+	Download,
 	Edit,
-	ExternalLink,
 	FileText,
 	Loader2,
 	Package,
 	Route,
 	Ruler,
-	Send,
 	Trash,
 	Truck,
 	X,
@@ -40,6 +37,8 @@ export default function OrderDetailsPage() {
 	const router = useRouter()
 	const [order, setOrder] = useState<OrderDTO | null>(null)
 	const [loading, setLoading] = useState(true)
+
+	const { accessToken } = useAuthStore()
 
 	useEffect(() => {
 		if (orderNumber) {
@@ -82,6 +81,16 @@ export default function OrderDetailsPage() {
 		toast.success(`${text} copied to clipboard`)
 	}
 
+	const downloadOrderFile = async (orderId: string, filename: string) => {
+		try {
+			const { message } = await OrderService.downloadOrderFile(orderId, filename)
+			toast.success(message)
+		} catch (error) {
+			console.error('Error downloading file:', error)
+			toast.error('Failed to download file')
+		}
+	}
+
 	if (loading) {
 		return (
 			<div className='flex items-center justify-center min-h-[400px]'>
@@ -96,12 +105,8 @@ export default function OrderDetailsPage() {
 	if (!order) {
 		return (
 			<div className='text-center py-12'>
-				<h2 className='text-2xl font-bold text-gray-900 mb-2'>
-					Order Not Found
-				</h2>
-				<p className='text-gray-600 mb-4'>
-					The order you&apos;re looking for doesn&apos;t exist.
-				</p>
+				<h2 className='text-2xl font-bold text-gray-900 mb-2'>Order Not Found</h2>
+				<p className='text-gray-600 mb-4'>The order you&apos;re looking for doesn&apos;t exist.</p>
 				<Button onClick={() => router.push('/dashboard/orders')}>
 					<ArrowLeft className='w-4 h-4 mr-2' />
 					Back to Orders
@@ -120,16 +125,10 @@ export default function OrderDetailsPage() {
 
 					<div>
 						<div className='flex items-center gap-3'>
-							<h1 className='text-2xl font-bold'>
-								{order.orderNumber}
-							</h1>
-							<Badge className={`border font-medium`}>
-								{order.status}
-							</Badge>
+							<h1 className='text-2xl font-bold'>{order.orderNumber}</h1>
+							<Badge className={`border font-medium`}>{order.status}</Badge>
 						</div>
-						<p className='text-gray-600'>
-							Created on {formatDate(order.createdAt)}
-						</p>
+						<p className='text-gray-600'>Created on {formatDate(order.createdAt)}</p>
 					</div>
 				</div>
 
@@ -161,7 +160,7 @@ export default function OrderDetailsPage() {
 				</DropdownMenu>
 			</div>
 
-			<div className='grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6'>
+			<div className='grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6'>
 				<div className='space-y-6'>
 					<Card>
 						<CardHeader>
@@ -174,62 +173,34 @@ export default function OrderDetailsPage() {
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 								<div className='space-y-4'>
 									<div>
-										<label className='text-sm font-medium text-gray-600'>
-											Commodity
-										</label>
-										<p className='font-semibold text-gray-900'>
-											{order.commodity}
-										</p>
+										<label className='text-sm font-medium text-gray-600'>Commodity</label>
+										<p className='font-semibold text-gray-900'>{order.commodity}</p>
 									</div>
 									<div>
-										<label className='text-sm font-medium text-gray-600'>
-											Load Dimensions
-										</label>
-										<p className='font-semibold text-gray-900'>
-											{order.loadDims}
-										</p>
+										<label className='text-sm font-medium text-gray-600'>Load Dimensions</label>
+										<p className='font-semibold text-gray-900'>{order.loadDims}</p>
 									</div>
 									<div>
-										<label className='text-sm font-medium text-gray-600'>
-											Make/Model
-										</label>
-										<p className='font-semibold text-gray-900'>
-											{order.makeModel}
-										</p>
+										<label className='text-sm font-medium text-gray-600'>Make/Model</label>
+										<p className='font-semibold text-gray-900'>{order.makeModel}</p>
 									</div>
 								</div>
 								<div className='space-y-4'>
 									<div>
-										<label className='text-sm font-medium text-gray-600'>
-											Serial Number
-										</label>
-										<p className='font-semibold text-gray-900'>
-											{order.serial}
-										</p>
+										<label className='text-sm font-medium text-gray-600'>Serial Number</label>
+										<p className='font-semibold text-gray-900'>{order.serial}</p>
+									</div>
+									<div>
+										<label className='text-sm font-medium text-gray-600'>Quantity</label>
+										<p className='font-semibold text-gray-900'>{order.singleMultiple} piece(s)</p>
 									</div>
 									<div>
 										<label className='text-sm font-medium text-gray-600'>
-											Quantity
+											Weight is{' '}
+											<span className='font-semibold text-primary'>
+												{order.legalWeight === 'yes' ? 'Legal' : 'Not Legal'}
+											</span>
 										</label>
-										<p className='font-semibold text-gray-900'>
-											{order.singleMultiple} piece(s)
-										</p>
-									</div>
-									<div>
-										<label className='text-sm font-medium text-gray-600'>
-											Legal Weight
-										</label>
-										<Badge
-											variant={
-												order.legalWeight === 'yes'
-													? 'default'
-													: 'destructive'
-											}
-										>
-											{order.legalWeight === 'yes'
-												? 'Yes'
-												: 'No'}
-										</Badge>
 									</div>
 								</div>
 							</div>
@@ -243,53 +214,107 @@ export default function OrderDetailsPage() {
 								</h4>
 								<div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
 									<div className='bg-gray-50 rounded-lg p-3 text-center'>
-										<p className='text-xs font-medium text-gray-600 mb-1'>
-											LENGTH
-										</p>
+										<p className='text-xs font-medium text-gray-600 mb-1'>LENGTH</p>
 										<p className='font-bold text-gray-900'>
-											{formatDimensions(
-												order.lengthFt,
-												order.lengthIn,
-											)}
+											{formatDimensions(order.lengthFt, order.lengthIn)}
 										</p>
 									</div>
 									<div className='bg-gray-50 rounded-lg p-3 text-center'>
-										<p className='text-xs font-medium text-gray-600 mb-1'>
-											WIDTH
-										</p>
+										<p className='text-xs font-medium text-gray-600 mb-1'>WIDTH</p>
 										<p className='font-bold text-gray-900'>
-											{formatDimensions(
-												order.widthFt,
-												order.widthIn,
-											)}
+											{formatDimensions(order.widthFt, order.widthIn)}
 										</p>
 									</div>
 									<div className='bg-gray-50 rounded-lg p-3 text-center'>
-										<p className='text-xs font-medium text-gray-600 mb-1'>
-											HEIGHT
-										</p>
+										<p className='text-xs font-medium text-gray-600 mb-1'>HEIGHT</p>
 										<p className='font-bold text-gray-900'>
-											{formatDimensions(
-												order.heightFt,
-												order.heightIn,
-											)}
+											{formatDimensions(order.heightFt, order.heightIn)}
 										</p>
 									</div>
 									<div className='bg-gray-50 rounded-lg p-3 text-center'>
-										<p className='text-xs font-medium text-gray-600 mb-1'>
-											REAR OVERHANG
-										</p>
+										<p className='text-xs font-medium text-gray-600 mb-1'>REAR OVERHANG</p>
 										<p className='font-bold text-gray-900'>
-											{formatDimensions(
-												order.rearOverhangFt,
-												order.rearOverhangIn,
-											)}
+											{formatDimensions(order.rearOverhangFt, order.rearOverhangIn)}
 										</p>
 									</div>
 								</div>
 							</div>
 						</CardContent>
 					</Card>
+
+					{order.axleConfigs && order.axleConfigs.length > 0 && order.legalWeight === 'no' && (
+						<Card>
+							<CardHeader>
+								<CardTitle className='flex items-center text-lg'>
+									<Ruler className='w-5 h-5 mr-2 text-orange-500' />
+									Axle Configuration
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<Table>
+									<TableHeader>
+										<TableRow>
+											<TableHead>Number of Axles</TableHead>
+											{order.axleConfigs.map((_, i) => (
+												<TableHead key={i} className='text-center'>
+													{i + 1}
+												</TableHead>
+											))}
+										</TableRow>
+									</TableHeader>
+									<TableBody>
+										<TableRow>
+											<TableHead>No of Tires</TableHead>
+											{order.axleConfigs.map((config, i) => (
+												<TableCell key={i} className='text-center'>
+													{config.tires}
+												</TableCell>
+											))}
+										</TableRow>
+										<TableRow>
+											<TableHead>Axle Spacing</TableHead>
+											<TableCell></TableCell>
+											{order.axleConfigs.slice(1).map((config, i) => (
+												<TableCell key={i} className='text-center'>
+													{config.spacing || '—'}
+												</TableCell>
+											))}
+										</TableRow>
+										<TableRow>
+											<TableHead>Tire Width</TableHead>
+											{order.axleConfigs.map((config, i) => (
+												<TableCell key={i} className='text-center'>
+													{config.tireWidth}
+												</TableCell>
+											))}
+										</TableRow>
+										<TableRow>
+											<TableHead>Axle Weights</TableHead>
+											{order.axleConfigs.map((config, i) => (
+												<TableCell key={i} className='text-center font-semibold'>
+													{config.weight.toLocaleString()}
+												</TableCell>
+											))}
+										</TableRow>
+									</TableBody>
+									<TableFooter>
+										<TableRow className='bg-orange-50 font-semibold'>
+											<TableCell className='text-left'>Gross Weight:</TableCell>
+											<TableCell
+												colSpan={order.axleConfigs.length}
+												className='text-right font-semibold text-orange-600'
+											>
+												{order.axleConfigs
+													.reduce((sum: number, config) => sum + config.weight, 0)
+													.toLocaleString()}{' '}
+												lbs
+											</TableCell>
+										</TableRow>
+									</TableFooter>
+								</Table>
+							</CardContent>
+						</Card>
+					)}
 
 					<Card>
 						<CardHeader>
@@ -302,13 +327,9 @@ export default function OrderDetailsPage() {
 							<div className='bg-gray-50 rounded-lg p-4 flex items-center justify-between'>
 								<div className='flex items-center space-x-2'>
 									<Calendar className='w-4 h-4 text-gray-500' />
-									<span className='text-sm font-medium text-gray-600'>
-										Permit Start Date
-									</span>
+									<span className='text-sm font-medium text-gray-600'>Permit Start Date</span>
 								</div>
-								<span className='font-semibold text-gray-900'>
-									{formatDate(order.permitStartDate)}
-								</span>
+								<span className='font-semibold text-gray-900'>{formatDate(order.permitStartDate)}</span>
 							</div>
 
 							<RouteDisplay
@@ -320,7 +341,6 @@ export default function OrderDetailsPage() {
 					</Card>
 
 					<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-						{/* Truck */}
 						<Card>
 							<CardHeader>
 								<CardTitle className='flex items-center text-lg'>
@@ -335,20 +355,15 @@ export default function OrderDetailsPage() {
 											<Truck className='w-5 h-5 text-white' />
 										</div>
 										<div>
-											<h3 className='font-bold text-gray-900'>
-												Unit #{order.truck.unitNumber}
-											</h3>
+											<h3 className='font-bold text-gray-900'>Unit #{order.truck.unitNumber}</h3>
 											<p className='text-blue-600 font-semibold'>
-												{order.truck.year}{' '}
-												{order.truck.make}
+												{order.truck.year} {order.truck.make}
 											</p>
 										</div>
 									</div>
 									<div className='grid grid-cols-2 gap-3'>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>
-												License Plate
-											</p>
+											<p className='text-xs font-medium text-gray-600'>License Plate</p>
 											<div className='flex items-center space-x-1'>
 												<p className='font-semibold text-gray-900'>
 													{order.truck.licencePlate}
@@ -357,50 +372,29 @@ export default function OrderDetailsPage() {
 													variant='ghost'
 													size='sm'
 													className='h-4 w-4 p-0'
-													onClick={() =>
-														copyToClipboard(
-															order.truck
-																.licencePlate,
-														)
-													}
+													onClick={() => copyToClipboard(order.truck.licencePlate)}
 												>
 													<Copy className='w-3 h-3' />
 												</Button>
 											</div>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>
-												State
-											</p>
-											<p className='font-semibold text-gray-900'>
-												{order.truck.state}
-											</p>
+											<p className='text-xs font-medium text-gray-600'>State</p>
+											<p className='font-semibold text-gray-900'>{order.truck.state}</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>
-												Axles
-											</p>
-											<p className='font-semibold text-gray-900'>
-												{order.truck.nrOfAxles}
-											</p>
+											<p className='text-xs font-medium text-gray-600'>Axles</p>
+											<p className='font-semibold text-gray-900'>{order.truck.nrOfAxles}</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>
-												VIN
-											</p>
+											<p className='text-xs font-medium text-gray-600'>VIN</p>
 											<div className='flex items-center space-x-1'>
-												<p className='font-semibold text-gray-900 text-xs'>
-													{order.truck.vin}
-												</p>
+												<p className='font-semibold text-gray-900 text-xs'>{order.truck.vin}</p>
 												<Button
 													variant='ghost'
 													size='sm'
 													className='h-4 w-4 p-0'
-													onClick={() =>
-														copyToClipboard(
-															order.truck.vin,
-														)
-													}
+													onClick={() => copyToClipboard(order.truck.vin)}
 												>
 													<Copy className='w-3 h-3' />
 												</Button>
@@ -430,16 +424,13 @@ export default function OrderDetailsPage() {
 												Unit #{order.trailer.unitNumber}
 											</h3>
 											<p className='text-purple-600 font-semibold'>
-												{order.trailer.year}{' '}
-												{order.trailer.make}
+												{order.trailer.year} {order.trailer.make}
 											</p>
 										</div>
 									</div>
 									<div className='grid grid-cols-2 gap-3'>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>
-												License Plate
-											</p>
+											<p className='text-xs font-medium text-gray-600'>License Plate</p>
 											<div className='flex items-center space-x-1'>
 												<p className='font-semibold text-gray-900'>
 													{order.trailer.licencePlate}
@@ -448,45 +439,26 @@ export default function OrderDetailsPage() {
 													variant='ghost'
 													size='sm'
 													className='h-4 w-4 p-0'
-													onClick={() =>
-														copyToClipboard(
-															order.trailer
-																.licencePlate,
-														)
-													}
+													onClick={() => copyToClipboard(order.trailer.licencePlate)}
 												>
 													<Copy className='w-3 h-3' />
 												</Button>
 											</div>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>
-												State
-											</p>
-											<p className='font-semibold text-gray-900'>
-												{order.trailer.state}
-											</p>
+											<p className='text-xs font-medium text-gray-600'>State</p>
+											<p className='font-semibold text-gray-900'>{order.trailer.state}</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>
-												Length
-											</p>
-											<p className='font-semibold text-gray-900'>
-												{order.trailer.length}
-											</p>
+											<p className='text-xs font-medium text-gray-600'>Length</p>
+											<p className='font-semibold text-gray-900'>{order.trailer.length}</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>
-												Type
-											</p>
-											<p className='font-semibold text-gray-900'>
-												{order.trailer.type}
-											</p>
+											<p className='text-xs font-medium text-gray-600'>Type</p>
+											<p className='font-semibold text-gray-900'>{order.trailer.type}</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2 col-span-2'>
-											<p className='text-xs font-medium text-gray-600'>
-												VIN
-											</p>
+											<p className='text-xs font-medium text-gray-600'>VIN</p>
 											<div className='flex items-center space-x-1'>
 												<p className='font-semibold text-gray-900 text-xs'>
 													{order.trailer.vin}
@@ -495,11 +467,7 @@ export default function OrderDetailsPage() {
 													variant='ghost'
 													size='sm'
 													className='h-4 w-4 p-0'
-													onClick={() =>
-														copyToClipboard(
-															order.trailer.vin,
-														)
-													}
+													onClick={() => copyToClipboard(order.trailer.vin)}
 												>
 													<Copy className='w-3 h-3' />
 												</Button>
@@ -522,82 +490,43 @@ export default function OrderDetailsPage() {
 						</CardHeader>
 						<CardContent className='space-y-3'>
 							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>
-									Order ID
-								</span>
+								<span className='text-sm text-gray-600'>Order ID</span>
 								<div className='flex items-center space-x-1'>
-									<span className='font-medium text-gray-900'>
-										{order.orderNumber}
-									</span>
+									<span className='font-medium text-gray-900'>{order.orderNumber}</span>
 									<Button
 										variant='ghost'
 										size='sm'
 										className='h-4 w-4 p-0'
-										onClick={() =>
-											copyToClipboard(order.orderNumber)
-										}
+										onClick={() => copyToClipboard(order.orderNumber)}
 									>
 										<Copy className='w-3 h-3' />
 									</Button>
 								</div>
 							</div>
 							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>
-									Status
-								</span>
-								<Badge className={`border font-medium`}>
-									{order.status}
-								</Badge>
+								<span className='text-sm text-gray-600'>Status</span>
+								<Badge className={`border font-medium`}>{order.status}</Badge>
 							</div>
 							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>
-									Contact
-								</span>
-								<span className='font-medium text-gray-900'>
-									{order.contact}
-								</span>
+								<span className='text-sm text-gray-600'>Contact</span>
+								<span className='font-medium text-gray-900'>{order.contact}</span>
 							</div>
 							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>
-									Created
-								</span>
+								<span className='text-sm text-gray-600'>Created</span>
 								<span className='font-medium text-gray-900'>
-									{new Date(
-										order.createdAt,
-									).toLocaleDateString()}
+									{new Date(order.createdAt).toLocaleDateString()}
 								</span>
 							</div>
 							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>
-									Last Updated
-								</span>
+								<span className='text-sm text-gray-600'>Last Updated</span>
 								<span className='font-medium text-gray-900'>
-									{new Date(
-										order.updatedAt,
-									).toLocaleDateString()}
+									{new Date(order.updatedAt).toLocaleDateString()}
 								</span>
 							</div>
 						</CardContent>
 					</Card>
 
-					<Card>
-						<CardHeader>
-							<CardTitle className='flex items-center text-lg'>
-								<Send className='w-5 h-5 mr-2 text-orange-500' />
-								Add a message to the order
-							</CardTitle>
-						</CardHeader>
-						<CardContent className='space-y-4'>
-							<Textarea
-								placeholder='Type your message'
-								className='min-h-[80px] resize-none'
-							/>
-							<Button className='w-full'>
-								<Send className='w-4 h-4' />
-								Send
-							</Button>
-						</CardContent>
-					</Card>
+					<OrderChat token={accessToken() || ''} orderId={order.id} />
 
 					<Card>
 						<CardHeader>
@@ -610,14 +539,8 @@ export default function OrderDetailsPage() {
 							{order.files.length === 0 ? (
 								<div className='text-center py-8'>
 									<FileText className='w-12 h-12 text-gray-300 mx-auto mb-3' />
-									<p className='text-gray-500 text-sm'>
-										No files uploaded
-									</p>
-									<Button
-										variant='outline'
-										size='sm'
-										className='mt-3 bg-transparent'
-									>
+									<p className='text-gray-500 text-sm'>No files uploaded</p>
+									<Button variant='outline' size='sm' className='mt-3 bg-transparent'>
 										Upload Files
 									</Button>
 								</div>
@@ -630,12 +553,14 @@ export default function OrderDetailsPage() {
 										>
 											<div className='flex items-center space-x-2'>
 												<FileText className='w-4 h-4 text-gray-400' />
-												<span className='text-sm'>
-													{file.filename}
-												</span>
+												<span className='text-sm'>{file.filename}</span>
 											</div>
-											<Button variant='ghost' size='sm'>
-												<ExternalLink className='w-4 h-4' />
+											<Button
+												variant='ghost'
+												size='sm'
+												onClick={() => downloadOrderFile(order.id, file.filename)}
+											>
+												<Download className='w-4 h-4' />
 											</Button>
 										</div>
 									))}
