@@ -2,26 +2,14 @@
 import { Footer } from '@/components/elements/footer'
 import { Header } from '@/components/elements/header'
 import { Logo } from '@/components/elements/logo'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-export default function AuthLayout({
-	children,
-}: {
-	children: React.ReactNode
-}) {
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
 	const pathname = usePathname()
 	const [title, setTitle] = useState('Welcome Back')
-	const [description, setDescription] = useState(
-		'Sign in to your account to continue',
-	)
+	const [description, setDescription] = useState('Sign in to your account to continue')
 
 	useEffect(() => {
 		switch (pathname) {
@@ -46,7 +34,7 @@ export default function AuthLayout({
 	return (
 		<div className='flex flex-col min-h-screen'>
 			<Header />
-			<div className='flex  flex-1 items-center justify-center w-full'>
+			<div className='flex  flex-1 items-center justify-center w-full py-20'>
 				<Card className='w-full max-w-md'>
 					<CardHeader className='text-center justify-center flex flex-col items-center'>
 						<Logo />

@@ -5,22 +5,20 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { useChat } from '@/hooks/useChat'
-import { AlertCircle, ChevronDown, Loader2, MessageCircle, Send, Wifi, WifiOff } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useAuthStore } from '@/lib/stores/authStore'
+import { AlertCircle, Loader2, MessageCircle, Send, Wifi, WifiOff } from 'lucide-react'
+import { useState } from 'react'
 import ChatMessage from './ChatMessage'
 import TypingIndicator from './TypingIndicator'
 
 interface OrderChatProps {
 	orderId: string
-	token: string
 }
 
-export default function OrderChat({ orderId, token }: OrderChatProps) {
+export default function OrderChat({ orderId }: OrderChatProps) {
+	const { accessToken } = useAuthStore()
 	const [newMessage, setNewMessage] = useState('')
 	const [isSending, setIsSending] = useState(false)
-	const messagesEndRef = useRef<HTMLDivElement>(null)
-	const messagesContainerRef = useRef<HTMLDivElement>(null)
-	const [showScrollButton, setShowScrollButton] = useState(false)
 
 	const {
 		messages,
@@ -33,30 +31,7 @@ export default function OrderChat({ orderId, token }: OrderChatProps) {
 		startTyping,
 		stopTyping,
 		// markAsRead,
-	} = useChat(token, orderId)
-
-	const scrollToBottom = () => {
-		if (messagesEndRef.current) {
-			messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-		}
-	}
-
-	useEffect(() => {
-		scrollToBottom()
-	}, [messages])
-
-	const handleScroll = () => {
-		if (messagesContainerRef.current) {
-			const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current
-			const isNearTop = scrollTop < scrollHeight - clientHeight - 100
-			setShowScrollButton(isNearTop)
-		}
-	}
-
-	const handleScrollToBottom = () => {
-		scrollToBottom()
-		// markAsRead()
-	}
+	} = useChat(accessToken() || '', orderId)
 
 	const handleTyping = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setNewMessage(e.target.value)
@@ -136,11 +111,7 @@ export default function OrderChat({ orderId, token }: OrderChatProps) {
 					</Alert>
 				)}
 
-				<div
-					ref={messagesContainerRef}
-					onScroll={handleScroll}
-					className='bg-gray-50 border rounded-lg p-3 max-h-[400px] overflow-y-auto space-y-4'
-				>
+				<div className='bg-gray-50 border rounded-lg p-3 max-h-[400px] overflow-y-auto space-y-4'>
 					{isLoading ? (
 						<div className='flex items-center justify-center py-8'>
 							<Loader2 className='w-6 h-6 animate-spin text-gray-400' />
@@ -161,20 +132,7 @@ export default function OrderChat({ orderId, token }: OrderChatProps) {
 					)}
 
 					<TypingIndicator users={typingUsers} />
-
-					<div ref={messagesEndRef} />
 				</div>
-
-				{showScrollButton && (
-					<Button
-						onClick={handleScrollToBottom}
-						size='sm'
-						className='absolute bottom-4 right-4 h-8 w-8 p-0 rounded-full shadow-lg'
-						variant='secondary'
-					>
-						<ChevronDown className='h-4 w-4' />
-					</Button>
-				)}
 			</CardContent>
 
 			<CardFooter className='gap-3 flex-col'>

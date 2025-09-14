@@ -15,15 +15,16 @@ export function bytesToSize(bytes: number) {
 export const formatChatTime = (date: string) => {
 	const messageDate = new Date(date)
 	const now = new Date()
-	const diffInMinutes = Math.floor(
-		(now.getTime() - messageDate.getTime()) / (1000 * 60),
-	)
+	const diffInMinutes = Math.floor((now.getTime() - messageDate.getTime()) / (1000 * 60))
 
 	if (diffInMinutes < 1) return 'Just now'
 	if (diffInMinutes < 60) return `${diffInMinutes}m ago`
 	if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`
 
 	return messageDate.toLocaleTimeString([], {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric',
 		hour: '2-digit',
 		minute: '2-digit',
 	})

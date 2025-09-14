@@ -15,6 +15,8 @@ import { logout } from '../services/authService'
 
 interface AuthState {
 	userId: string | null
+	userRole: UserRole | null
+	userEmail: string | null
 	isAuthenticated: () => boolean
 	email: () => string | null
 	setUser: (accessToken: string, refreshToken: string) => void
@@ -27,6 +29,8 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>(set => ({
 	userId: null,
+	userRole: null,
+	userEmail: null,
 	email: () => getEmail() || null,
 	role: () => getRole() || null,
 	isAuthenticated: () => getAccessToken() && getRefreshToken(),
@@ -41,8 +45,8 @@ export const useAuthStore = create<AuthState>(set => ({
 		setEmail(payload.email)
 		set({
 			userId: payload.userId,
-			role: payload.role,
-			email: payload.email,
+			userRole: payload.role,
+			userEmail: payload.email,
 		})
 	},
 	getTokens: () => ({
@@ -52,7 +56,7 @@ export const useAuthStore = create<AuthState>(set => ({
 	logout: async () => {
 		await logout()
 		removeTokens()
-		set({ role: undefined, userId: undefined })
+		set({ userRole: null, userEmail: null, userId: null })
 		window.location.href = '/'
 	},
 }))

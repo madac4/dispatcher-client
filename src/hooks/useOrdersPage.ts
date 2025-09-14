@@ -12,27 +12,13 @@ export function useOrdersPage() {
 	const { getOrders, orders, getStatuses, statuses } = useOrdersStore()
 	const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-	const activeStatuses = useMemo(
-		() => [OrderStatus.ACTIVE, OrderStatus.PENDING, OrderStatus.PROCESSING],
-		[],
-	)
+	const activeStatuses = useMemo(() => [OrderStatus.PENDING, OrderStatus.PROCESSING], [])
 
-	const completedStatuses = useMemo(
-		() => [
-			OrderStatus.COMPLETED,
-			OrderStatus.CANCELLED,
-			OrderStatus.REQUIRES_CHARGE,
-			OrderStatus.REQUIRES_INVOICE,
-		],
-		[],
-	)
+	const completedStatuses = useMemo(() => [OrderStatus.REQUIRES_CHARGE, OrderStatus.REQUIRES_INVOICE], [])
 
 	const paidStatuses = useMemo(() => [OrderStatus.CHARGED], [])
 
-	const archivedStatuses = useMemo(
-		() => [OrderStatus.COMPLETED, OrderStatus.CANCELLED],
-		[],
-	)
+	const archivedStatuses = useMemo(() => [OrderStatus.FINISHED, OrderStatus.CANCELLED], [])
 
 	const payload = useMemo(() => new RequestModel(), [])
 

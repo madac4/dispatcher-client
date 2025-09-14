@@ -2,15 +2,30 @@
 
 import OrderChat from '@/components/blocks/OrderChat'
 import RouteDisplay from '@/components/elements/RouteDisplay'
+import FileUploader from '@/components/forms/FileUploader'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { OrderDTO } from '@/lib/models/order.model'
+import { UserRole } from '@/lib/models/auth.model'
+import { formatStatus, getStatusBadge, OrderDTO, OrderStatus } from '@/lib/models/order.model'
 import { getOrderByNumber, OrderService } from '@/lib/services/orderService'
 import { useAuthStore } from '@/lib/stores/authStore'
+import { formatDate, formatDimensions, truncate } from '@/utils/formatters'
+
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import {
 	ArrowLeft,
@@ -21,60 +36,76 @@ import {
 	FileText,
 	Loader2,
 	Package,
+	RefreshCcwDot,
 	Route,
 	Ruler,
 	Trash,
 	Truck,
+	Upload,
 	X,
 	Zap,
 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 export default function OrderDetailsPage() {
-	const { orderNumber } = useParams()
-	const router = useRouter()
+	const [selectedStatus, setSelectedStatus] = useState<string | null>(null)
+	const [selectedFile, setSelectedFile] = useState<File | null>(null)
+	const { orderNumber } = useParams<{ orderNumber: string }>()
 	const [order, setOrder] = useState<OrderDTO | null>(null)
 	const [loading, setLoading] = useState(true)
+	const { role } = useAuthStore()
+	const router = useRouter()
+	const fetchingRef = useRef(false)
 
-	const { accessToken } = useAuthStore()
+	const statuses = Object.entries(OrderStatus).map(([, value]) => ({
+		value: value,
+		label: formatStatus(value),
+	}))
+
+	const updateOrderStatus = useCallback(async (status: OrderStatus | null, orderId: string) => {
+		try {
+			if (!status) {
+				toast.warning('Please select a status')
+				return
+			}
+
+			const { message } = await OrderService.updateOrderStatus(orderId, status)
+			toast.success(message)
+
+			setOrder(prev => ({ ...prev!, status: status }))
+		} catch (error) {
+			console.error('Error updating order status:', error)
+		}
+	}, [])
+
+	const fetchOrder = useCallback(
+		async (number: string) => {
+			if (fetchingRef.current) return
+
+			try {
+				fetchingRef.current = true
+				setLoading(true)
+				const { data } = await getOrderByNumber(number)
+				setOrder(data)
+
+				console.log(role(), data?.status)
+
+				if (role() === UserRole.ADMIN && data?.status === OrderStatus.PENDING) {
+					updateOrderStatus(OrderStatus.PROCESSING, data.id)
+				}
+			} finally {
+				setLoading(false)
+				fetchingRef.current = false
+			}
+		},
+		[role, updateOrderStatus],
+	)
 
 	useEffect(() => {
-		if (orderNumber) {
-			fetchOrder(orderNumber as string)
-		}
-	}, [orderNumber])
-
-	const fetchOrder = async (number: string) => {
-		try {
-			setLoading(true)
-			const { data } = await getOrderByNumber(number)
-			setOrder(data)
-		} catch (error) {
-			console.error('Error fetching order:', error)
-			toast.error('Failed to load order details')
-		} finally {
-			setLoading(false)
-		}
-	}
-
-	const formatDate = (dateString: string) => {
-		const date = new Date(dateString)
-		return date.toLocaleDateString('en-US', {
-			weekday: 'long',
-			year: 'numeric',
-			month: 'long',
-			day: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit',
-		})
-	}
-
-	const formatDimensions = (ft: number, inches: number) => {
-		if (ft === 0 && inches === 0) return 'Not specified'
-		return `${ft}' ${inches}"`
-	}
+		if (orderNumber) fetchOrder(orderNumber)
+	}, [orderNumber, fetchOrder])
 
 	const copyToClipboard = (text: string) => {
 		navigator.clipboard.writeText(text)
@@ -88,6 +119,31 @@ export default function OrderDetailsPage() {
 		} catch (error) {
 			console.error('Error downloading file:', error)
 			toast.error('Failed to download file')
+		}
+	}
+
+	const uploadFileToOrder = async () => {
+		try {
+			const { message } = await OrderService.uploadOrderFile(order!.id, selectedFile!)
+			toast.success(message)
+
+			setOrder(prev => ({
+				...prev!,
+				files: [
+					...prev!.files,
+					{
+						filename: selectedFile!.name,
+						originalname: selectedFile!.name,
+						contentType: selectedFile!.type,
+						size: selectedFile!.size,
+						_id: '1',
+					},
+				],
+			}))
+			setSelectedFile(null)
+		} catch (error) {
+			console.error('Error uploading file:', error)
+			toast.error('Failed to upload file')
 		}
 	}
 
@@ -126,38 +182,87 @@ export default function OrderDetailsPage() {
 					<div>
 						<div className='flex items-center gap-3'>
 							<h1 className='text-2xl font-bold'>{order.orderNumber}</h1>
-							<Badge className={`border font-medium`}>{order.status}</Badge>
+							<Badge className={getStatusBadge(order.status)}>{formatStatus(order.status)}</Badge>
 						</div>
 						<p className='text-gray-600'>Created on {formatDate(order.createdAt)}</p>
 					</div>
 				</div>
 
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant='outline' size='md'>
-							<Zap size='16' />
-							Quick Actions
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent>
-						<DropdownMenuItem>
-							<Edit size='16' />
-							Edit Order
-						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<Copy size='16' />
-							Duplicate Order
-						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<X size='16' />
-							Cancel Order
-						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<Trash size='16' />
-							Delete Order
-						</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
+				<Dialog>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<Button variant='outline' size='md'>
+								<Zap size='16' />
+								Quick Actions
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent>
+							<DialogTrigger asChild>
+								<DropdownMenuItem>
+									<RefreshCcwDot size='16' />
+									Update Status
+								</DropdownMenuItem>
+							</DialogTrigger>
+
+							<DropdownMenuItem disabled={true}>
+								<Edit size='16' />
+								Edit Order
+							</DropdownMenuItem>
+							<DropdownMenuItem disabled={true}>
+								<Copy size='16' />
+								Duplicate Order
+							</DropdownMenuItem>
+							<DropdownMenuItem disabled={true}>
+								<X size='16' />
+								Cancel Order
+							</DropdownMenuItem>
+							<DropdownMenuItem disabled={true}>
+								<Trash size='16' />
+								Delete Order
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+
+					<DialogContent className='sm:max-w-md'>
+						<DialogHeader>
+							<DialogTitle>Update Status</DialogTitle>
+							<DialogDescription>Update the status of the order.</DialogDescription>
+						</DialogHeader>
+						<div className='flex items-center gap-2'>
+							<div className='grid flex-1 gap-2'>
+								<Label htmlFor='status' className='sr-only'>
+									Status
+								</Label>
+								<Select value={selectedStatus || ''} onValueChange={setSelectedStatus}>
+									<SelectTrigger className='w-full'>
+										<SelectValue placeholder='Select a status' />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectGroup>
+											{statuses.map(status => (
+												<SelectItem key={status.value} value={status.value}>
+													{status.label}{' '}
+													<span className='text-primary'>
+														{status.value === order.status ? '(Current)' : ''}
+													</span>
+												</SelectItem>
+											))}
+										</SelectGroup>
+									</SelectContent>
+								</Select>
+							</div>
+						</div>
+						<DialogFooter className='sm:justify-start'>
+							<Button
+								type='button'
+								variant='secondary'
+								onClick={() => updateOrderStatus(selectedStatus as OrderStatus, order.id)}
+							>
+								Update Status
+							</Button>
+						</DialogFooter>
+					</DialogContent>
+				</Dialog>
 			</div>
 
 			<div className='grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6'>
@@ -182,18 +287,22 @@ export default function OrderDetailsPage() {
 									</div>
 									<div>
 										<label className='text-sm font-medium text-gray-600'>Make/Model</label>
-										<p className='font-semibold text-gray-900'>{order.makeModel}</p>
+										<p className='font-semibold text-gray-900'>{order.makeModel || 'N/A'}</p>
 									</div>
 								</div>
 								<div className='space-y-4'>
 									<div>
 										<label className='text-sm font-medium text-gray-600'>Serial Number</label>
-										<p className='font-semibold text-gray-900'>{order.serial}</p>
+										<p className='font-semibold text-gray-900'>{order.serial || 'N/A'}</p>
 									</div>
-									<div>
-										<label className='text-sm font-medium text-gray-600'>Quantity</label>
-										<p className='font-semibold text-gray-900'>{order.singleMultiple} piece(s)</p>
-									</div>
+									{order.singleMultiple && (
+										<div>
+											<label className='text-sm font-medium text-gray-600'>Quantity</label>
+											<p className='font-semibold text-gray-900'>
+												{order.singleMultiple} piece(s)
+											</p>
+										</div>
+									)}
 									<div>
 										<label className='text-sm font-medium text-gray-600'>
 											Weight is{' '}
@@ -478,6 +587,336 @@ export default function OrderDetailsPage() {
 							</CardContent>
 						</Card>
 					</div>
+
+					{role() !== UserRole.USER && (order.carrierNumbers || order.companyInfo) && (
+						<Card>
+							<CardHeader>
+								<CardTitle className='flex items-center text-lg'>
+									<Truck className='w-5 h-5 mr-2 text-green-500' />
+									Carrier Information
+								</CardTitle>
+							</CardHeader>
+							<CardContent className='space-y-6'>
+								{order.carrierNumbers && (
+									<div>
+										<h4 className='font-semibold text-gray-900 mb-4 flex items-center'>
+											<FileText className='w-4 h-4 mr-2' />
+											Carrier Numbers
+										</h4>
+										<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+											{order.carrierNumbers.mcNumber && (
+												<div className='bg-gray-50 rounded-lg p-3'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>MC Number</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.carrierNumbers.mcNumber}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(order.carrierNumbers!.mcNumber!)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+											)}
+											{order.carrierNumbers.dotNumber && (
+												<div className='bg-gray-50 rounded-lg p-3'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>DOT Number</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.carrierNumbers.dotNumber}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(order.carrierNumbers!.dotNumber!)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+											)}
+											{order.carrierNumbers.einNumber && (
+												<div className='bg-gray-50 rounded-lg p-3'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>EIN Number</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.carrierNumbers.einNumber}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(order.carrierNumbers!.einNumber!)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+											)}
+											{order.carrierNumbers.iftaNumber && (
+												<div className='bg-gray-50 rounded-lg p-3'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>
+														IFTA Number
+													</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.carrierNumbers.iftaNumber}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(order.carrierNumbers!.iftaNumber!)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+											)}
+											{order.carrierNumbers.orNumber && (
+												<div className='bg-gray-50 rounded-lg p-3'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>OR Number</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.carrierNumbers.orNumber}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(order.carrierNumbers!.orNumber!)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+											)}
+											{order.carrierNumbers.kyuNumber && (
+												<div className='bg-gray-50 rounded-lg p-3'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>KYU Number</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.carrierNumbers.kyuNumber}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(order.carrierNumbers!.kyuNumber!)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+											)}
+											{order.carrierNumbers.txNumber && (
+												<div className='bg-gray-50 rounded-lg p-3'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>TX Number</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.carrierNumbers.txNumber}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(order.carrierNumbers!.txNumber!)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+											)}
+											{order.carrierNumbers.tnNumber && (
+												<div className='bg-gray-50 rounded-lg p-3'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>TN Number</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.carrierNumbers.tnNumber}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(order.carrierNumbers!.tnNumber!)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+											)}
+											{order.carrierNumbers.laNumber && (
+												<div className='bg-gray-50 rounded-lg p-3'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>LA Number</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.carrierNumbers.laNumber}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(order.carrierNumbers!.laNumber!)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+											)}
+										</div>
+										{order.carrierNumbers.notes && (
+											<div className='mt-4'>
+												<p className='text-xs font-medium text-gray-600 mb-1'>Notes</p>
+												<p className='text-sm text-gray-900 bg-gray-50 rounded-lg p-3'>
+													{order.carrierNumbers.notes}
+												</p>
+											</div>
+										)}
+										{order.carrierNumbers.files && order.carrierNumbers.files.length > 0 && (
+											<div className='mt-4'>
+												<p className='text-xs font-medium text-gray-600 mb-2'>Carrier Files</p>
+												<div className='space-y-2'>
+													{order.carrierNumbers.files.map((file, index) => (
+														<div
+															key={index}
+															className='flex items-center justify-between p-2 border rounded'
+														>
+															<div className='flex items-center space-x-2'>
+																<FileText className='w-4 h-4 text-gray-400' />
+																<span className='text-sm' title={file.filename}>
+																	{truncate(file.filename, 20)}
+																</span>
+															</div>
+															<Button
+																variant='ghost'
+																size='sm'
+																onClick={() =>
+																	downloadOrderFile(order.id, file.filename)
+																}
+															>
+																<Download className='w-4 h-4' />
+															</Button>
+														</div>
+													))}
+												</div>
+											</div>
+										)}
+									</div>
+								)}
+
+								{order.companyInfo && (
+									<div>
+										<h4 className='font-semibold text-gray-900 mb-4 flex items-center'>
+											<FileText className='w-4 h-4 mr-2' />
+											Company Information
+										</h4>
+										<div className='bg-gray-50 rounded-lg p-4 space-y-3'>
+											<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+												<div>
+													<p className='text-xs font-medium text-gray-600 mb-1'>
+														Company Name
+													</p>
+													<p className='font-semibold text-gray-900'>
+														{order.companyInfo.name}
+													</p>
+												</div>
+												{order.companyInfo.dba && (
+													<div>
+														<p className='text-xs font-medium text-gray-600 mb-1'>DBA</p>
+														<p className='font-semibold text-gray-900'>
+															{order.companyInfo.dba}
+														</p>
+													</div>
+												)}
+											</div>
+											<div>
+												<p className='text-xs font-medium text-gray-600 mb-1'>Address</p>
+												<p className='font-semibold text-gray-900'>
+													{order.companyInfo.address}, {order.companyInfo.city},{' '}
+													{order.companyInfo.state} {order.companyInfo.zip}
+												</p>
+											</div>
+											<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+												<div>
+													<p className='text-xs font-medium text-gray-600 mb-1'>Phone</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{order.companyInfo.phone}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() => copyToClipboard(order.companyInfo!.phone)}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
+												</div>
+												{order.companyInfo.fax && (
+													<div>
+														<p className='text-xs font-medium text-gray-600 mb-1'>Fax</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{order.companyInfo.fax}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() => copyToClipboard(order.companyInfo!.fax!)}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+												)}
+											</div>
+											<div>
+												<p className='text-xs font-medium text-gray-600 mb-1'>Email</p>
+												<div className='flex items-center space-x-1'>
+													<p className='font-semibold text-gray-900'>
+														{order.companyInfo.email}
+													</p>
+													<Button
+														variant='ghost'
+														size='sm'
+														className='h-4 w-4 p-0'
+														onClick={() => copyToClipboard(order.companyInfo!.email)}
+													>
+														<Copy className='w-3 h-3' />
+													</Button>
+												</div>
+											</div>
+										</div>
+									</div>
+								)}
+							</CardContent>
+						</Card>
+					)}
 				</div>
 
 				<div className='space-y-6'>
@@ -505,7 +944,7 @@ export default function OrderDetailsPage() {
 							</div>
 							<div className='flex justify-between'>
 								<span className='text-sm text-gray-600'>Status</span>
-								<Badge className={`border font-medium`}>{order.status}</Badge>
+								<Badge className={getStatusBadge(order.status)}>{formatStatus(order.status)}</Badge>
 							</div>
 							<div className='flex justify-between'>
 								<span className='text-sm text-gray-600'>Contact</span>
@@ -526,7 +965,7 @@ export default function OrderDetailsPage() {
 						</CardContent>
 					</Card>
 
-					<OrderChat token={accessToken() || ''} orderId={order.id} />
+					<OrderChat orderId={order.id} />
 
 					<Card>
 						<CardHeader>
@@ -536,36 +975,40 @@ export default function OrderDetailsPage() {
 							</CardTitle>
 						</CardHeader>
 						<CardContent>
-							{order.files.length === 0 ? (
-								<div className='text-center py-8'>
-									<FileText className='w-12 h-12 text-gray-300 mx-auto mb-3' />
-									<p className='text-gray-500 text-sm'>No files uploaded</p>
-									<Button variant='outline' size='sm' className='mt-3 bg-transparent'>
-										Upload Files
-									</Button>
-								</div>
-							) : (
-								<div className='space-y-2'>
-									{order.files.map((file, index) => (
-										<div
-											key={index}
-											className='flex items-center justify-between p-2 border rounded'
-										>
-											<div className='flex items-center space-x-2'>
-												<FileText className='w-4 h-4 text-gray-400' />
-												<span className='text-sm'>{file.filename}</span>
-											</div>
-											<Button
-												variant='ghost'
-												size='sm'
-												onClick={() => downloadOrderFile(order.id, file.filename)}
-											>
-												<Download className='w-4 h-4' />
-											</Button>
+							<div className='space-y-2'>
+								{order.files.map((file, index) => (
+									<div key={index} className='flex items-center justify-between p-2 border rounded'>
+										<div className='flex items-center space-x-2'>
+											<FileText className='w-4 h-4 text-gray-400' />
+											<span className='text-sm' title={file.filename}>
+												{truncate(file.filename, 20)}
+											</span>
 										</div>
-									))}
-								</div>
-							)}
+										<Button
+											variant='ghost'
+											size='sm'
+											onClick={() => downloadOrderFile(order.id, file.filename)}
+										>
+											<Download className='w-4 h-4' />
+										</Button>
+									</div>
+								))}
+
+								<FileUploader
+									maxFileSize={10}
+									acceptedTypes={['pdf', 'jpg', 'jpeg', 'png']}
+									uploadText='No files uploaded, upload a file'
+									selectedFile={selectedFile}
+									setSelectedFile={setSelectedFile}
+								/>
+
+								{selectedFile && (
+									<Button variant='outline' size='sm' className='w-full' onClick={uploadFileToOrder}>
+										<Upload className='w-4 h-4' />
+										Upload to Order
+									</Button>
+								)}
+							</div>
 						</CardContent>
 					</Card>
 				</div>

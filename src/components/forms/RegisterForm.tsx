@@ -3,14 +3,15 @@
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { login } from '@/lib/services/authService'
-import { useAuthStore } from '@/lib/stores/authStore'
+import { UserRole } from '@/lib/models/auth.model'
+import { AuthService } from '@/lib/services/authService'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EyeIcon, EyeOffIcon, Loader2Icon } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 import { z } from 'zod'
 
 const passwordSchema = z.string().superRefine((password, ctx) => {
@@ -51,32 +52,39 @@ const passwordSchema = z.string().superRefine((password, ctx) => {
 	}
 })
 
-const loginFormSchema = z.object({
+const registerFormSchema = z.object({
 	email: z.string().email('Invalid email address'),
 	password: passwordSchema,
+	role: z.nativeEnum(UserRole),
+	// inviteCode: z.string().min(1, 'Invite code is required'),
 })
 
-export default function LoginPage() {
+interface RegisterFormProps {
+	role?: UserRole
+}
+
+export default function RegisterForm({ role }: RegisterFormProps) {
 	const [showPassword, setShowPassword] = useState<boolean>(false)
 	const [isLoading, setIsLoading] = useState<boolean>(false)
-	const { setUser } = useAuthStore()
 	const router = useRouter()
 
-	const form = useForm<z.infer<typeof loginFormSchema>>({
-		resolver: zodResolver(loginFormSchema),
+	const form = useForm<z.infer<typeof registerFormSchema>>({
+		resolver: zodResolver(registerFormSchema),
 		defaultValues: {
 			email: '',
 			password: '',
+			role: role || UserRole.USER,
+			// inviteCode: inviteCode || '',
 		},
 	})
 
-	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
+	async function onSubmit(values: z.infer<typeof registerFormSchema>) {
 		setIsLoading(true)
 		try {
-			const { data } = await login(values)
-			setUser(data!.accessToken, data!.refreshToken)
+			const { message } = await AuthService.register(values.email, values.password, values.role)
+			toast.success(message)
 
-			router.push('/dashboard')
+			if (!role) router.push('/login')
 		} finally {
 			setIsLoading(false)
 		}
@@ -92,7 +100,7 @@ export default function LoginPage() {
 						<FormItem>
 							<FormLabel>Email</FormLabel>
 							<FormControl>
-								<Input autoComplete='email' type='email' placeholder='Enter your email' {...field} />
+								<Input type='email' placeholder='Enter your email' {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -108,7 +116,6 @@ export default function LoginPage() {
 							<div className='relative'>
 								<FormControl>
 									<Input
-										autoComplete='current-password'
 										type={showPassword ? 'text' : 'password'}
 										placeholder='Enter your password'
 										{...field}
@@ -129,36 +136,51 @@ export default function LoginPage() {
 								)}
 							</div>
 							<FormMessage />
-							<Link
-								href='/forgot-password'
-								className='text-sm text-right text-primary hover:underline block'
-							>
-								Forgot password?
-							</Link>
 						</FormItem>
 					)}
 				/>
 
+				{/* <FormField
+					control={form.control}
+					name='inviteCode'
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Invite Code</FormLabel>
+							<FormControl>
+								<Input
+									type='text'
+									placeholder='Enter your invite code'
+									disabled={!!inviteCode}
+									{...field}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/> */}
+
 				<Button type='submit' className='w-full' disabled={isLoading}>
 					{isLoading ? (
 						<>
-							<Loader2Icon className='animate-spin' size={16} />
-							Signing in...
+							<Loader2Icon className='animate-spin mr-2' size={16} />
+							Registering...
 						</>
 					) : (
-						'Sign In'
+						'Register'
 					)}
 				</Button>
 			</form>
 
-			<div className='mt-6 text-center'>
-				<p className='text-sm text-gray-600'>
-					Don&apos;t have an account?{' '}
-					<Link href='/register' className='text-orange-500 hover:text-orange-600 font-medium'>
-						Sign up
-					</Link>
-				</p>
-			</div>
+			{!role && (
+				<div className='mt-6 text-center'>
+					<p className='text-sm text-gray-600'>
+						Already have an account?{' '}
+						<Link href='/login' className='text-primary hover:text-primary/80 font-medium'>
+							Sign in
+						</Link>
+					</p>
+				</div>
+			)}
 		</Form>
 	)
 }

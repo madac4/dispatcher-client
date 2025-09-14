@@ -22,6 +22,7 @@ export type OrderPayload = {
 	legalWeight: 'yes' | 'no'
 	originAddress: string
 	destinationAddress: string
+	messages?: string[]
 	stops?: string[]
 	files?: File[]
 	axleConfigs?: {
@@ -74,6 +75,35 @@ export type OrderDTO = {
 		weight: number
 		spacing?: string
 	}[]
+	carrierNumbers?: {
+		mcNumber?: string
+		dotNumber?: string
+		einNumber?: string
+		iftaNumber?: string
+		orNumber?: string
+		kyuNumber?: string
+		txNumber?: string
+		tnNumber?: string
+		laNumber?: string
+		notes?: string
+		files: {
+			filename: string
+			originalname: string
+			contentType: string
+			size: number
+		}[]
+	}
+	companyInfo?: {
+		name: string
+		dba?: string
+		address: string
+		city: string
+		state: string
+		zip: string
+		phone: string
+		fax?: string
+		email: string
+	}
 }
 
 export type PaginatedOrderDTO = {
@@ -87,23 +117,16 @@ export type PaginatedOrderDTO = {
 }
 
 export enum OrderStatus {
-	ALL = 'all',
 	PENDING = 'pending',
 	PROCESSING = 'processing',
-	COMPLETED = 'completed',
-	CANCELLED = 'cancelled',
 	REQUIRES_INVOICE = 'requires_invoice',
 	REQUIRES_CHARGE = 'requires_charge',
 	CHARGED = 'charged',
-	ACTIVE = 'active',
+	CANCELLED = 'cancelled',
+	FINISHED = 'finished',
 }
 
-export type OrderStatusType =
-	| 'active'
-	| 'completed'
-	| 'paid'
-	| 'archived'
-	| 'all'
+export type OrderStatusType = 'active' | 'completed' | 'paid' | 'archived' | 'all'
 
 export type OrderStatusDTO = {
 	value: OrderStatus
@@ -112,24 +135,12 @@ export type OrderStatusDTO = {
 }
 
 export const formatStatus = (status: OrderStatus) => {
-	switch (status) {
-		case OrderStatus.PENDING:
-			return 'Pending'
-		case OrderStatus.PROCESSING:
-			return 'Processing'
-		case OrderStatus.COMPLETED:
-			return 'Completed'
-		case OrderStatus.CANCELLED:
-			return 'Cancelled'
-		case OrderStatus.REQUIRES_INVOICE:
-			return 'Requires Invoice'
-		case OrderStatus.REQUIRES_CHARGE:
-			return 'Requires Charge'
-		case OrderStatus.CHARGED:
-			return 'Charged'
-		case OrderStatus.ACTIVE:
-			return 'Active'
-	}
+	return status
+		.replace('_', ' ')
+		.toLowerCase()
+		.split(' ')
+		.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(' ')
 }
 
 export const getStatusBadge = (status: OrderStatus) => {
@@ -138,7 +149,7 @@ export const getStatusBadge = (status: OrderStatus) => {
 			return 'bg-blue-500 text-white'
 		case OrderStatus.PROCESSING:
 			return 'bg-yellow-500 text-white'
-		case OrderStatus.COMPLETED:
+		case OrderStatus.FINISHED:
 			return 'bg-green-500 text-white'
 		case OrderStatus.CANCELLED:
 			return 'bg-red-500 text-white'
@@ -147,8 +158,6 @@ export const getStatusBadge = (status: OrderStatus) => {
 		case OrderStatus.REQUIRES_CHARGE:
 			return 'bg-orange-500 text-white'
 		case OrderStatus.CHARGED:
-			return 'bg-green-500 text-white'
-		case OrderStatus.ACTIVE:
 			return 'bg-green-500 text-white'
 	}
 }

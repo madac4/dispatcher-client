@@ -1,5 +1,6 @@
 'use client'
 
+import OrderChatLocal from '@/components/blocks/OrderChatLocal'
 import RouteBuilder, { RouteFormData } from '@/components/elements/RouteBuilder'
 import { SingleDatePicker } from '@/components/elements/SingleDatePicker'
 import { EntitySelectModal } from '@/components/modals/EntitySelectModal'
@@ -28,6 +29,7 @@ type FormData = z.infer<typeof orderFormSchema>
 export default function NewOrderForm() {
 	const [truck, setTruck] = useState<TruckDTO | null>(null)
 	const [trailer, setTrailer] = useState<TrailerDTO | null>(null)
+	const [messages, setMessages] = useState<string[]>([])
 	const [isLoading, setIsLoading] = useState(false)
 
 	const form = useForm<FormData>({
@@ -76,12 +78,15 @@ export default function NewOrderForm() {
 
 		setIsLoading(true)
 
+		console.log(messages)
+
 		const payload: OrderPayload = {
 			...data,
 			truckId: truck._id,
 			trailerId: trailer._id,
 			permitStartDate: data.permitStartDate.toISOString(),
 			stops: data.stops,
+			messages: messages,
 		}
 
 		newOrder(payload)
@@ -872,6 +877,8 @@ export default function NewOrderForm() {
 							</FormItem>
 						)}
 					/>
+
+					<OrderChatLocal setMessages={setMessages} messages={messages} />
 
 					<Card>
 						<CardHeader className='block'>

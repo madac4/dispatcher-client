@@ -32,6 +32,8 @@ export const useChat = (token: string, orderId: string) => {
 	const socketRef = useRef<Socket | null>(null)
 
 	const loadMessages = useCallback(async () => {
+		if (!orderId) return
+
 		try {
 			setState(prev => ({ ...prev, isLoading: true, error: null }))
 
@@ -53,9 +55,8 @@ export const useChat = (token: string, orderId: string) => {
 		}
 	}, [orderId])
 
-	// Stop typing indicator
 	const stopTyping = useCallback(() => {
-		if (!socketRef.current) return
+		if (!socketRef.current || !orderId) return
 
 		socketRef.current.emit('typing-stop', orderId)
 
@@ -63,6 +64,37 @@ export const useChat = (token: string, orderId: string) => {
 			clearTimeout(typingTimeoutRef.current)
 			typingTimeoutRef.current = null
 		}
+	}, [orderId])
+
+	const sendMessage = useCallback(
+		async (message: string) => {
+			if (!message.trim() || !socketRef.current || !orderId) return
+
+			await chatService.sendMessage(message.trim(), orderId)
+			socketRef.current.emit('mark-read', orderId)
+		},
+		[orderId],
+	)
+
+	const startTyping = useCallback(() => {
+		if (!socketRef.current || !orderId) return
+
+		socketRef.current.emit('typing-start', orderId)
+
+		if (typingTimeoutRef.current) {
+			clearTimeout(typingTimeoutRef.current)
+		}
+
+		typingTimeoutRef.current = setTimeout(() => {
+			stopTyping()
+		}, 3000)
+	}, [orderId, stopTyping])
+
+	const getUnreadCount = useCallback(async () => {
+		if (!orderId) return
+
+		const { data } = await chatService.getUnreadCount(orderId)
+		setState(prev => ({ ...prev, unreadCount: data?.count || 0 }))
 	}, [orderId])
 
 	useEffect(() => {
@@ -192,33 +224,13 @@ export const useChat = (token: string, orderId: string) => {
 		}
 	}, [token, orderId, loadMessages])
 
-	const sendMessage = useCallback(
-		async (message: string) => {
-			if (!message.trim() || !socketRef.current) return
-
-			await chatService.sendMessage(message.trim(), orderId)
-			socketRef.current.emit('mark-read', orderId)
-		},
-		[orderId],
-	)
-
-	const startTyping = useCallback(() => {
-		if (!socketRef.current) return
-
-		socketRef.current.emit('typing-start', orderId)
-
-		if (typingTimeoutRef.current) {
-			clearTimeout(typingTimeoutRef.current)
-		}
-
-		typingTimeoutRef.current = setTimeout(() => {
-			stopTyping()
-		}, 3000)
-	}, [orderId, stopTyping])
+	useEffect(() => {
+		if (token && orderId) getUnreadCount()
+	}, [token, orderId, getUnreadCount])
 
 	// Mark messages as read
 	// const markAsRead = useCallback(async () => {
-	// 	if (!socketRef.current) return
+	// 	if (!socketRef.current || !orderId) return
 
 	// 	try {
 	// 		await chatService.markAsRead(orderId, token)
@@ -233,17 +245,6 @@ export const useChat = (token: string, orderId: string) => {
 	// 		console.error('Failed to mark messages as read:', error)
 	// 	}
 	// }, [token, orderId])
-
-	const getUnreadCount = useCallback(async () => {
-		const { data } = await chatService.getUnreadCount(orderId)
-		setState(prev => ({ ...prev, unreadCount: data?.count || 0 }))
-	}, [orderId])
-
-	useEffect(() => {
-		if (token && orderId) {
-			getUnreadCount()
-		}
-	}, [token, orderId, getUnreadCount])
 
 	return {
 		...state,
