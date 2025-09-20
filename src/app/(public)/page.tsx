@@ -1,6 +1,11 @@
 'use client'
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from '@/components/ui/accordion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -37,15 +42,24 @@ export default function Homepage() {
 				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative'>
 					<div className='text-center max-w-5xl mx-auto'>
 						<div className='flex items-center justify-center space-x-4 mb-6'>
-							<Badge variant='secondary' className='bg-green-100 text-green-800 border-green-200'>
+							<Badge
+								variant='secondary'
+								className='bg-green-100 text-green-800 border-green-200'
+							>
 								<CheckCircle className='w-3 h-3 mr-1' />
 								20+ Years Experience
 							</Badge>
-							<Badge variant='secondary' className='bg-blue-100 text-blue-800 border-blue-200'>
+							<Badge
+								variant='secondary'
+								className='bg-blue-100 text-blue-800 border-blue-200'
+							>
 								<Star className='w-3 h-3 mr-1' />
 								Trusted by 1000+ Companies
 							</Badge>
-							<Badge variant='secondary' className='bg-purple-100 text-purple-800 border-purple-200'>
+							<Badge
+								variant='secondary'
+								className='bg-purple-100 text-purple-800 border-purple-200'
+							>
 								<Zap className='w-3 h-3 mr-1' />
 								24/7 Support
 							</Badge>
@@ -54,7 +68,7 @@ export default function Homepage() {
 						<h1 className='text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight'>
 							Welcome to{' '}
 							<span className='text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600'>
-								OSOW EXPRESS
+								Click Permit
 							</span>
 						</h1>
 
@@ -64,16 +78,18 @@ export default function Homepage() {
 
 						<div className='text-2xl md:text-3xl font-bold text-white mb-8'>
 							<span className='text-orange-500'>Oversize</span> •{' '}
-							<span className='text-orange-500'>Overweight</span> •{' '}
+							<span className='text-orange-500'>Overweight</span>{' '}
+							•{' '}
 							<span className='text-orange-500'>High Value</span>
 							<br />
 							Permitting & Insurance Needs
 						</div>
 
 						<p className='text-lg md:text-xl text-gray-200 mb-12 max-w-4xl mx-auto leading-relaxed'>
-							Whether you need a single-state routine permit or complex multi-state transportation
-							requiring additional insurance, escorts, and route surveys — we&apos;re here to make it
-							seamless.
+							Whether you need a single-state routine permit or
+							complex multi-state transportation requiring
+							additional insurance, escorts, and route surveys —
+							we&apos;re here to make it seamless.
 						</p>
 
 						<div className='flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6'>
@@ -93,20 +109,36 @@ export default function Homepage() {
 				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 					<div className='grid grid-cols-2 md:grid-cols-4 gap-8'>
 						<div className='text-center'>
-							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>20+</div>
-							<div className='text-gray-600 font-medium'>Years Experience</div>
+							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>
+								20+
+							</div>
+							<div className='text-gray-600 font-medium'>
+								Years Experience
+							</div>
 						</div>
 						<div className='text-center'>
-							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>50K+</div>
-							<div className='text-gray-600 font-medium'>Permits Processed</div>
+							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>
+								50K+
+							</div>
+							<div className='text-gray-600 font-medium'>
+								Permits Processed
+							</div>
 						</div>
 						<div className='text-center'>
-							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>1000+</div>
-							<div className='text-gray-600 font-medium'>Happy Clients</div>
+							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>
+								1000+
+							</div>
+							<div className='text-gray-600 font-medium'>
+								Happy Clients
+							</div>
 						</div>
 						<div className='text-center'>
-							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>24/7</div>
-							<div className='text-gray-600 font-medium'>Support Available</div>
+							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>
+								24/7
+							</div>
+							<div className='text-gray-600 font-medium'>
+								Support Available
+							</div>
 						</div>
 					</div>
 				</div>
@@ -115,10 +147,12 @@ export default function Homepage() {
 			<section className='bg-gradient-to-br from-gray-50 to-white py-20'>
 				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 					<div className='text-center mb-12'>
-						<h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>Precision in Every Detail</h2>
+						<h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
+							Precision in Every Detail
+						</h2>
 						<p className='text-xl text-gray-600 max-w-3xl mx-auto'>
-							Our expert team analyzes every aspect of your load to ensure safe, legal, and efficient
-							transportation.
+							Our expert team analyzes every aspect of your load
+							to ensure safe, legal, and efficient transportation.
 						</p>
 					</div>
 
@@ -151,7 +185,8 @@ export default function Homepage() {
 							</span>
 						</h2>
 						<p className='text-xl text-gray-300 max-w-3xl mx-auto'>
-							Our streamlined process gets you from inquiry to permit in record time
+							Our streamlined process gets you from inquiry to
+							permit in record time
 						</p>
 					</div>
 
@@ -206,13 +241,17 @@ export default function Homepage() {
 										<item.icon className='w-10 h-10 text-white' />
 									</div>
 									<div className='absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg'>
-										<span className='text-sm font-bold text-gray-900'>{item.step}</span>
+										<span className='text-sm font-bold text-gray-900'>
+											{item.step}
+										</span>
 									</div>
 								</div>
 								<h3 className='text-white font-bold text-lg mb-3 group-hover:text-orange-400 transition-colors'>
 									{item.title}
 								</h3>
-								<p className='text-gray-300 text-sm leading-relaxed'>{item.description}</p>
+								<p className='text-gray-300 text-sm leading-relaxed'>
+									{item.description}
+								</p>
 							</div>
 						))}
 					</div>
@@ -233,13 +272,14 @@ export default function Homepage() {
 				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
 					<div className='text-center mb-16'>
 						<Badge className='bg-orange-100 text-orange-800 border-orange-200 mb-4'>
-							OSOW EXPRESS SOLUTIONS
+							CLICK PERMIT SOLUTIONS
 						</Badge>
 						<h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6'>
 							Always Quick, Accurate, No Hassle
 						</h2>
 						<p className='text-xl text-gray-600 max-w-4xl mx-auto'>
-							Comprehensive products for all your oversize, overweight and high-value shipment needs
+							Comprehensive products for all your oversize,
+							overweight and high-value shipment needs
 						</p>
 					</div>
 
@@ -264,7 +304,12 @@ export default function Homepage() {
 								title: 'Insurance',
 								description:
 									"Protect shipments valued above your cargo policy limit. Don't risk losing thousands because of inadequate coverage. Our experienced team provides instant access to cargo coverage when you need it most.",
-								features: ['High-value coverage', 'Instant quotes', 'Flexible terms', 'Claims support'],
+								features: [
+									'High-value coverage',
+									'Instant quotes',
+									'Flexible terms',
+									'Claims support',
+								],
 								color: 'from-green-500 to-green-600',
 								bgColor: 'from-green-50 to-green-100',
 							},
@@ -288,25 +333,38 @@ export default function Homepage() {
 								className='group hover:shadow-2xl transition-all duration-300 p-0 border-0 overflow-hidden'
 							>
 								<CardContent className='p-0'>
-									<div className={`bg-gradient-to-br ${service.bgColor} p-8 text-center`}>
+									<div
+										className={`bg-gradient-to-br ${service.bgColor} p-8 text-center`}
+									>
 										<div
 											className={`w-16 h-16 bg-gradient-to-br ${service.color} rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
 										>
 											<service.icon className='w-8 h-8 text-white' />
 										</div>
-										<h3 className='text-2xl font-bold text-gray-900'>{service.title}</h3>
+										<h3 className='text-2xl font-bold text-gray-900'>
+											{service.title}
+										</h3>
 									</div>
 
 									<div className='p-6'>
-										<p className='text-gray-600 leading-relaxed mb-6'>{service.description}</p>
+										<p className='text-gray-600 leading-relaxed mb-6'>
+											{service.description}
+										</p>
 
 										<div className='space-y-2 mb-6'>
-											{service.features.map((feature, idx) => (
-												<div key={idx} className='flex items-center space-x-2'>
-													<CheckCircle className='w-4 h-4 text-green-500' />
-													<span className='text-sm text-gray-600'>{feature}</span>
-												</div>
-											))}
+											{service.features.map(
+												(feature, idx) => (
+													<div
+														key={idx}
+														className='flex items-center space-x-2'
+													>
+														<CheckCircle className='w-4 h-4 text-green-500' />
+														<span className='text-sm text-gray-600'>
+															{feature}
+														</span>
+													</div>
+												),
+											)}
 										</div>
 
 										<Button className='w-full'>
@@ -341,15 +399,18 @@ export default function Homepage() {
 
 						<div className='order-1 lg:order-2'>
 							<Badge className='bg-orange-100 text-orange-800 border-orange-200 mb-4'>
-								OSOW EXPRESS SUPPORT
+								CLICK PERMIT SUPPORT
 							</Badge>
 							<h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6'>
 								We&apos;re Here to Help You Succeed
 							</h2>
 							<p className='text-xl text-gray-600 mb-8 leading-relaxed'>
-								OSOW EXPRESS strives to make your experience with OTR permitting, insurance, and
-								superload services as seamless as possible. Our experienced professionals are always
-								available to answer questions and provide expert consultation.
+								Click Permit strives to make your experience
+								with OTR permitting, insurance, and superload
+								services as seamless as possible. Our
+								experienced professionals are always available
+								to answer questions and provide expert
+								consultation.
 							</p>
 
 							<div className='grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8'>
@@ -358,8 +419,12 @@ export default function Homepage() {
 										<Clock className='w-5 h-5 text-green-600' />
 									</div>
 									<div>
-										<div className='font-semibold text-gray-900'>Quick Turnaround</div>
-										<div className='text-sm text-gray-600'>Fast processing times</div>
+										<div className='font-semibold text-gray-900'>
+											Quick Turnaround
+										</div>
+										<div className='text-sm text-gray-600'>
+											Fast processing times
+										</div>
 									</div>
 								</div>
 
@@ -368,8 +433,12 @@ export default function Homepage() {
 										<Award className='w-5 h-5 text-blue-600' />
 									</div>
 									<div>
-										<div className='font-semibold text-gray-900'>Expert Team</div>
-										<div className='text-sm text-gray-600'>20+ years experience</div>
+										<div className='font-semibold text-gray-900'>
+											Expert Team
+										</div>
+										<div className='text-sm text-gray-600'>
+											20+ years experience
+										</div>
 									</div>
 								</div>
 
@@ -378,8 +447,12 @@ export default function Homepage() {
 										<MapPin className='w-5 h-5 text-purple-600' />
 									</div>
 									<div>
-										<div className='font-semibold text-gray-900'>Nationwide Coverage</div>
-										<div className='text-sm text-gray-600'>All 50 states</div>
+										<div className='font-semibold text-gray-900'>
+											Nationwide Coverage
+										</div>
+										<div className='text-sm text-gray-600'>
+											All 50 states
+										</div>
 									</div>
 								</div>
 
@@ -388,8 +461,12 @@ export default function Homepage() {
 										<Zap className='w-5 h-5 text-orange-600' />
 									</div>
 									<div>
-										<div className='font-semibold text-gray-900'>24/7 Support</div>
-										<div className='text-sm text-gray-600'>Always available</div>
+										<div className='font-semibold text-gray-900'>
+											24/7 Support
+										</div>
+										<div className='text-sm text-gray-600'>
+											Always available
+										</div>
 									</div>
 								</div>
 							</div>
@@ -413,22 +490,26 @@ export default function Homepage() {
 							Frequently Asked Questions
 						</h2>
 						<p className='text-xl text-gray-600'>
-							Get answers to the most common questions about our services
+							Get answers to the most common questions about our
+							services
 						</p>
 					</div>
 
 					<Accordion type='single' collapsible>
 						{[
 							{
-								question: 'What is an oversize/overweight permit?',
+								question:
+									'What is an oversize/overweight permit?',
 								answer: 'An oversize/overweight permit is a permit that allows a truck to transport an oversize or overweight load.',
 							},
 							{
-								question: 'When do I need an oversize/overweight permit (OD)?',
+								question:
+									'When do I need an oversize/overweight permit (OD)?',
 								answer: 'When you need to transport an oversize or overweight load.',
 							},
 							{
-								question: 'How long does it take to get a permit?',
+								question:
+									'How long does it take to get a permit?',
 								answer: 'It depends on the state and the complexity of the permit.',
 							},
 							{
@@ -436,7 +517,8 @@ export default function Homepage() {
 								answer: 'It depends on the state and the complexity of the permit.',
 							},
 							{
-								question: 'Why should I work with OSOW EXPRESS?',
+								question:
+									'Why should I work with Click Permit?',
 								answer: 'Because we are the best in the business.',
 							},
 							{
@@ -444,19 +526,29 @@ export default function Homepage() {
 								answer: 'A superload permit is a permit that allows a truck to transport a superload.',
 							},
 							{
-								question: 'What is an Escort vehicle or a Pilot Car?',
+								question:
+									'What is an Escort vehicle or a Pilot Car?',
 								answer: 'An escort vehicle or a pilot car is a vehicle that escorts a truck to the destination.',
 							},
 						].map((question, index) => (
-							<AccordionItem value={`item-${index + 1}`} key={index}>
-								<AccordionTrigger>{question.question}</AccordionTrigger>
-								<AccordionContent>{question.answer}</AccordionContent>
+							<AccordionItem
+								value={`item-${index + 1}`}
+								key={index}
+							>
+								<AccordionTrigger>
+									{question.question}
+								</AccordionTrigger>
+								<AccordionContent>
+									{question.answer}
+								</AccordionContent>
 							</AccordionItem>
 						))}
 					</Accordion>
 
 					<div className='text-center mt-12'>
-						<p className='text-gray-600 mb-4'>Still have questions?</p>
+						<p className='text-gray-600 mb-4'>
+							Still have questions?
+						</p>
 						<Button
 							variant='outline'
 							className='border-2 border-orange-500 text-orange-600 hover:bg-orange-50 bg-transparent'
