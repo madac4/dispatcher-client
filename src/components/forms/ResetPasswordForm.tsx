@@ -48,7 +48,7 @@ const passwordSchema = z.string().superRefine((password, ctx) => {
 			path: [],
 		})
 	}
-	if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+	if (!/[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password)) {
 		ctx.addIssue({
 			code: z.ZodIssueCode.custom,
 			message: 'Password must contain at least one special character',
@@ -104,7 +104,7 @@ export default function ResetPasswordForm() {
 		{ text: 'One number', met: /\d/.test(password || ''), id: 'number' },
 		{
 			text: 'One special character',
-			met: /[!@#$%^&*(),.?":{}|<>]/.test(password || ''),
+			met: /[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password || ''),
 			id: 'special',
 		},
 	]

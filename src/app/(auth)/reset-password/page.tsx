@@ -48,7 +48,7 @@ const passwordSchema = z.string().superRefine((password, ctx) => {
 			path: [],
 		})
 	}
-	if (!/[@$!%*?&]/.test(password)) {
+	if (!/[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password)) {
 		ctx.addIssue({
 			code: z.ZodIssueCode.custom,
 			message:
