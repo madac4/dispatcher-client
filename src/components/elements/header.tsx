@@ -24,13 +24,19 @@ export function Header() {
 							<Clock className='h-4 w-4 text-orange-500' />
 							Mon-Sat 7am-7pm
 						</div>
-						<Link href='tel:8335530483' className='flex items-center gap-2'>
+						<Link
+							href='tel:8335530483'
+							className='flex items-center gap-2'
+						>
 							<Phone className='h-4 w-4 text-orange-500' />
 							Call us 833.553.0483
 						</Link>
-						<Link href='mailto:sales@osow.express' className='flex items-center gap-2'>
+						<Link
+							href='mailto:sales@clickpermit.com'
+							className='flex items-center gap-2'
+						>
 							<Mail className='h-4 w-4 text-orange-500' />
-							sales@osow.express
+							sales@clickpermit.com
 						</Link>
 					</div>
 				</div>

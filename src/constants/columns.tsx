@@ -419,7 +419,7 @@ export const orderColumns: ColumnDef<PaginatedOrderDTO>[] = [
 					label: 'Duplicate Order',
 					icon: 'copy',
 					action: () => {
-						toast.success('VIN copied to clipboard')
+						toast.warning('Functionality not implemented yet')
 					},
 				},
 				{

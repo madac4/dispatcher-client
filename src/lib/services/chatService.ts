@@ -3,47 +3,36 @@ import api from '../api'
 import { ChatMessage } from '../models/chat.model'
 import { ApiResponse, PaginationResponse } from '../models/response.model'
 
-class ChatService {
-	private baseUrl = '/chat'
+const baseUrl = '/chat'
 
-	async sendMessage(message: string, orderId: string): Promise<ApiResponse<ChatMessage>> {
+export const ChatService = {
+	async sendMessage(
+		message: string,
+		orderId: string,
+	): Promise<ApiResponse<ChatMessage>> {
 		return apiRequest<ChatMessage>(() =>
 			api
-				.post(`${this.baseUrl}/messages`, {
+				.post(`${baseUrl}/messages`, {
 					message,
 					orderId,
 				})
 				.then(res => res.data),
 		)
-	}
+	},
 
-	async getUnreadCount(orderId: string): Promise<ApiResponse<{ count: number }>> {
-		return apiRequest<{ count: number }>(() =>
-			api.get(`${this.baseUrl}/orders/${orderId}/unread-count`, {}).then(res => res.data),
-		)
-	}
-
-	async getOrderMessages(orderId: string): Promise<PaginationResponse<ChatMessage>> {
+	async getOrderMessages(
+		orderId: string,
+	): Promise<PaginationResponse<ChatMessage>> {
 		return apiRequestPaginated<ChatMessage>(() =>
 			api
-				.get(`${this.baseUrl}/orders/${orderId}/messages`, {
+				.get(`${baseUrl}/orders/${orderId}/messages`, {
 					params: {
 						orderId,
 					},
 				})
 				.then(res => res.data),
 		)
-	}
-
-	// Mark messages as read
-	// async markAsRead(orderId: string, token: string): Promise<void> {
-	// 	return this.request<void>(`/chat/orders/${orderId}/read`, {
-	// 		method: 'PATCH',
-	// 		headers: {
-	// 			Authorization: `Bearer ${token}`,
-	// 		},
-	// 	})
-	// }
+	},
 
 	// async deleteMessage(messageId: string, token: string): Promise<void> {
 	// 	return this.request<void>(`/chat/messages/${messageId}`, {
@@ -65,5 +54,3 @@ class ChatService {
 	// 	)
 	// }
 }
-
-export const chatService = new ChatService()

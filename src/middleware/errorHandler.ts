@@ -1,4 +1,8 @@
-import { PaginatedModel, PaginationResponse, ResponseModel } from '@/lib/models/response.model'
+import {
+	PaginatedModel,
+	PaginationResponse,
+	ResponseModel,
+} from '@/lib/models/response.model'
 import { AxiosError } from 'axios'
 import { toast } from 'sonner'
 
@@ -19,7 +23,10 @@ export function handleApiError(error: unknown): never {
 		const status = error.response?.status || 500
 
 		const errorMessage =
-			error.response?.data?.error || error.response?.data?.message || error.message || 'Unknown error occurred'
+			error.response?.data?.error ||
+			error.response?.data?.message ||
+			error.message ||
+			'Unknown error occurred'
 
 		if (status !== 401) toast.error(errorMessage)
 
@@ -30,7 +37,10 @@ export function handleApiError(error: unknown): never {
 		throw error
 	}
 
-	throw new ApiError(error instanceof Error ? error.message : 'Unknown error occurred', 500)
+	throw new ApiError(
+		error instanceof Error ? error.message : 'Unknown error occurred',
+		500,
+	)
 }
 
 export async function apiRequest<T>(
@@ -40,7 +50,10 @@ export async function apiRequest<T>(
 		const response = await requestFn()
 
 		if (!response.success) {
-			throw new ApiError(response.message || 'Request failed', response.status)
+			throw new ApiError(
+				response.message || 'Request failed',
+				response.status,
+			)
 		}
 
 		if (response.data === null) {
@@ -66,7 +79,10 @@ export async function apiRequestPaginated<T>(
 		const response = await requestFn()
 
 		if (!response.success) {
-			throw new ApiError(response.message || 'Request failed', response.status)
+			throw new ApiError(
+				response.message || 'Request failed',
+				response.status,
+			)
 		}
 
 		return {

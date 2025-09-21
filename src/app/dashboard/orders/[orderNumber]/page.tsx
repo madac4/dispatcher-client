@@ -15,13 +15,37 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+} from '@/components/ui/dropdown-menu'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableFooter,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table'
 import { UserRole } from '@/lib/models/auth.model'
-import { formatStatus, getStatusBadge, OrderDTO, OrderStatus } from '@/lib/models/order.model'
+import {
+	formatStatus,
+	getStatusBadge,
+	OrderDTO,
+	OrderStatus,
+} from '@/lib/models/order.model'
 import { getOrderByNumber, OrderService } from '@/lib/services/orderService'
 import { useAuthStore } from '@/lib/stores/authStore'
 import { formatDate, formatDimensions, truncate } from '@/utils/formatters'
@@ -64,21 +88,27 @@ export default function OrderDetailsPage() {
 		label: formatStatus(value),
 	}))
 
-	const updateOrderStatus = useCallback(async (status: OrderStatus | null, orderId: string) => {
-		try {
-			if (!status) {
-				toast.warning('Please select a status')
-				return
+	const updateOrderStatus = useCallback(
+		async (status: OrderStatus | null, orderId: string) => {
+			try {
+				if (!status) {
+					toast.warning('Please select a status')
+					return
+				}
+
+				const { message } = await OrderService.updateOrderStatus(
+					orderId,
+					status,
+				)
+				toast.success(message)
+
+				setOrder(prev => ({ ...prev!, status: status }))
+			} catch (error) {
+				console.error('Error updating order status:', error)
 			}
-
-			const { message } = await OrderService.updateOrderStatus(orderId, status)
-			toast.success(message)
-
-			setOrder(prev => ({ ...prev!, status: status }))
-		} catch (error) {
-			console.error('Error updating order status:', error)
-		}
-	}, [])
+		},
+		[],
+	)
 
 	const fetchOrder = useCallback(
 		async (number: string) => {
@@ -92,7 +122,10 @@ export default function OrderDetailsPage() {
 
 				console.log(role(), data?.status)
 
-				if (role() === UserRole.ADMIN && data?.status === OrderStatus.PENDING) {
+				if (
+					role() === UserRole.ADMIN &&
+					data?.status === OrderStatus.PENDING
+				) {
 					updateOrderStatus(OrderStatus.PROCESSING, data.id)
 				}
 			} finally {
@@ -114,7 +147,10 @@ export default function OrderDetailsPage() {
 
 	const downloadOrderFile = async (orderId: string, filename: string) => {
 		try {
-			const { message } = await OrderService.downloadOrderFile(orderId, filename)
+			const { message } = await OrderService.downloadOrderFile(
+				orderId,
+				filename,
+			)
 			toast.success(message)
 		} catch (error) {
 			console.error('Error downloading file:', error)
@@ -124,7 +160,10 @@ export default function OrderDetailsPage() {
 
 	const uploadFileToOrder = async () => {
 		try {
-			const { message } = await OrderService.uploadOrderFile(order!.id, selectedFile!)
+			const { message } = await OrderService.uploadOrderFile(
+				order!.id,
+				selectedFile!,
+			)
 			toast.success(message)
 
 			setOrder(prev => ({
@@ -161,8 +200,12 @@ export default function OrderDetailsPage() {
 	if (!order) {
 		return (
 			<div className='text-center py-12'>
-				<h2 className='text-2xl font-bold text-gray-900 mb-2'>Order Not Found</h2>
-				<p className='text-gray-600 mb-4'>The order you&apos;re looking for doesn&apos;t exist.</p>
+				<h2 className='text-2xl font-bold text-gray-900 mb-2'>
+					Order Not Found
+				</h2>
+				<p className='text-gray-600 mb-4'>
+					The order you&apos;re looking for doesn&apos;t exist.
+				</p>
 				<Button onClick={() => router.push('/dashboard/orders')}>
 					<ArrowLeft className='w-4 h-4 mr-2' />
 					Back to Orders
@@ -181,10 +224,16 @@ export default function OrderDetailsPage() {
 
 					<div>
 						<div className='flex items-center gap-3'>
-							<h1 className='text-2xl font-bold'>{order.orderNumber}</h1>
-							<Badge className={getStatusBadge(order.status)}>{formatStatus(order.status)}</Badge>
+							<h1 className='text-2xl font-bold'>
+								{order.orderNumber}
+							</h1>
+							<Badge className={getStatusBadge(order.status)}>
+								{formatStatus(order.status)}
+							</Badge>
 						</div>
-						<p className='text-gray-600'>Created on {formatDate(order.createdAt)}</p>
+						<p className='text-gray-600'>
+							Created on {formatDate(order.createdAt)}
+						</p>
 					</div>
 				</div>
 
@@ -226,24 +275,35 @@ export default function OrderDetailsPage() {
 					<DialogContent className='sm:max-w-md'>
 						<DialogHeader>
 							<DialogTitle>Update Status</DialogTitle>
-							<DialogDescription>Update the status of the order.</DialogDescription>
+							<DialogDescription>
+								Update the status of the order.
+							</DialogDescription>
 						</DialogHeader>
 						<div className='flex items-center gap-2'>
 							<div className='grid flex-1 gap-2'>
 								<Label htmlFor='status' className='sr-only'>
 									Status
 								</Label>
-								<Select value={selectedStatus || ''} onValueChange={setSelectedStatus}>
+								<Select
+									value={selectedStatus || ''}
+									onValueChange={setSelectedStatus}
+								>
 									<SelectTrigger className='w-full'>
 										<SelectValue placeholder='Select a status' />
 									</SelectTrigger>
 									<SelectContent>
 										<SelectGroup>
 											{statuses.map(status => (
-												<SelectItem key={status.value} value={status.value}>
+												<SelectItem
+													key={status.value}
+													value={status.value}
+												>
 													{status.label}{' '}
 													<span className='text-primary'>
-														{status.value === order.status ? '(Current)' : ''}
+														{status.value ===
+														order.status
+															? '(Current)'
+															: ''}
 													</span>
 												</SelectItem>
 											))}
@@ -256,7 +316,12 @@ export default function OrderDetailsPage() {
 							<Button
 								type='button'
 								variant='secondary'
-								onClick={() => updateOrderStatus(selectedStatus as OrderStatus, order.id)}
+								onClick={() =>
+									updateOrderStatus(
+										selectedStatus as OrderStatus,
+										order.id,
+									)
+								}
 							>
 								Update Status
 							</Button>
@@ -278,26 +343,44 @@ export default function OrderDetailsPage() {
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 								<div className='space-y-4'>
 									<div>
-										<label className='text-sm font-medium text-gray-600'>Commodity</label>
-										<p className='font-semibold text-gray-900'>{order.commodity}</p>
+										<label className='text-sm font-medium text-gray-600'>
+											Commodity
+										</label>
+										<p className='font-semibold text-gray-900'>
+											{order.commodity}
+										</p>
 									</div>
 									<div>
-										<label className='text-sm font-medium text-gray-600'>Load Dimensions</label>
-										<p className='font-semibold text-gray-900'>{order.loadDims}</p>
+										<label className='text-sm font-medium text-gray-600'>
+											Load Dimensions
+										</label>
+										<p className='font-semibold text-gray-900'>
+											{order.loadDims}
+										</p>
 									</div>
 									<div>
-										<label className='text-sm font-medium text-gray-600'>Make/Model</label>
-										<p className='font-semibold text-gray-900'>{order.makeModel || 'N/A'}</p>
+										<label className='text-sm font-medium text-gray-600'>
+											Make/Model
+										</label>
+										<p className='font-semibold text-gray-900'>
+											{order.makeModel || 'N/A'}
+										</p>
 									</div>
 								</div>
 								<div className='space-y-4'>
 									<div>
-										<label className='text-sm font-medium text-gray-600'>Serial Number</label>
-										<p className='font-semibold text-gray-900'>{order.serial || 'N/A'}</p>
+										<label className='text-sm font-medium text-gray-600'>
+											Serial Number
+										</label>
+										<p className='font-semibold text-gray-900'>
+											{order.serial || 'N/A'}
+										</p>
 									</div>
 									{order.singleMultiple && (
 										<div>
-											<label className='text-sm font-medium text-gray-600'>Quantity</label>
+											<label className='text-sm font-medium text-gray-600'>
+												Quantity
+											</label>
 											<p className='font-semibold text-gray-900'>
 												{order.singleMultiple} piece(s)
 											</p>
@@ -307,7 +390,9 @@ export default function OrderDetailsPage() {
 										<label className='text-sm font-medium text-gray-600'>
 											Weight is{' '}
 											<span className='font-semibold text-primary'>
-												{order.legalWeight === 'yes' ? 'Legal' : 'Not Legal'}
+												{order.legalWeight === 'yes'
+													? 'Legal'
+													: 'Not Legal'}
 											</span>
 										</label>
 									</div>
@@ -323,27 +408,47 @@ export default function OrderDetailsPage() {
 								</h4>
 								<div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
 									<div className='bg-gray-50 rounded-lg p-3 text-center'>
-										<p className='text-xs font-medium text-gray-600 mb-1'>LENGTH</p>
+										<p className='text-xs font-medium text-gray-600 mb-1'>
+											LENGTH
+										</p>
 										<p className='font-bold text-gray-900'>
-											{formatDimensions(order.lengthFt, order.lengthIn)}
+											{formatDimensions(
+												order.lengthFt,
+												order.lengthIn,
+											)}
 										</p>
 									</div>
 									<div className='bg-gray-50 rounded-lg p-3 text-center'>
-										<p className='text-xs font-medium text-gray-600 mb-1'>WIDTH</p>
+										<p className='text-xs font-medium text-gray-600 mb-1'>
+											WIDTH
+										</p>
 										<p className='font-bold text-gray-900'>
-											{formatDimensions(order.widthFt, order.widthIn)}
+											{formatDimensions(
+												order.widthFt,
+												order.widthIn,
+											)}
 										</p>
 									</div>
 									<div className='bg-gray-50 rounded-lg p-3 text-center'>
-										<p className='text-xs font-medium text-gray-600 mb-1'>HEIGHT</p>
+										<p className='text-xs font-medium text-gray-600 mb-1'>
+											HEIGHT
+										</p>
 										<p className='font-bold text-gray-900'>
-											{formatDimensions(order.heightFt, order.heightIn)}
+											{formatDimensions(
+												order.heightFt,
+												order.heightIn,
+											)}
 										</p>
 									</div>
 									<div className='bg-gray-50 rounded-lg p-3 text-center'>
-										<p className='text-xs font-medium text-gray-600 mb-1'>REAR OVERHANG</p>
+										<p className='text-xs font-medium text-gray-600 mb-1'>
+											REAR OVERHANG
+										</p>
 										<p className='font-bold text-gray-900'>
-											{formatDimensions(order.rearOverhangFt, order.rearOverhangIn)}
+											{formatDimensions(
+												order.rearOverhangFt,
+												order.rearOverhangIn,
+											)}
 										</p>
 									</div>
 								</div>
@@ -351,79 +456,129 @@ export default function OrderDetailsPage() {
 						</CardContent>
 					</Card>
 
-					{order.axleConfigs && order.axleConfigs.length > 0 && order.legalWeight === 'no' && (
-						<Card>
-							<CardHeader>
-								<CardTitle className='flex items-center text-lg'>
-									<Ruler className='w-5 h-5 mr-2 text-orange-500' />
-									Axle Configuration
-								</CardTitle>
-							</CardHeader>
-							<CardContent>
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>Number of Axles</TableHead>
-											{order.axleConfigs.map((_, i) => (
-												<TableHead key={i} className='text-center'>
-													{i + 1}
+					{order.axleConfigs &&
+						order.axleConfigs.length > 0 &&
+						order.legalWeight === 'no' && (
+							<Card>
+								<CardHeader>
+									<CardTitle className='flex items-center text-lg'>
+										<Ruler className='w-5 h-5 mr-2 text-orange-500' />
+										Axle Configuration
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<Table>
+										<TableHeader>
+											<TableRow>
+												<TableHead>
+													Number of Axles
 												</TableHead>
-											))}
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										<TableRow>
-											<TableHead>No of Tires</TableHead>
-											{order.axleConfigs.map((config, i) => (
-												<TableCell key={i} className='text-center'>
-													{config.tires}
-												</TableCell>
-											))}
-										</TableRow>
-										<TableRow>
-											<TableHead>Axle Spacing</TableHead>
-											<TableCell></TableCell>
-											{order.axleConfigs.slice(1).map((config, i) => (
-												<TableCell key={i} className='text-center'>
-													{config.spacing || '—'}
-												</TableCell>
-											))}
-										</TableRow>
-										<TableRow>
-											<TableHead>Tire Width</TableHead>
-											{order.axleConfigs.map((config, i) => (
-												<TableCell key={i} className='text-center'>
-													{config.tireWidth}
-												</TableCell>
-											))}
-										</TableRow>
-										<TableRow>
-											<TableHead>Axle Weights</TableHead>
-											{order.axleConfigs.map((config, i) => (
-												<TableCell key={i} className='text-center font-semibold'>
-													{config.weight.toLocaleString()}
-												</TableCell>
-											))}
-										</TableRow>
-									</TableBody>
-									<TableFooter>
-										<TableRow className='bg-orange-50 font-semibold'>
-											<TableCell className='text-left'>Gross Weight:</TableCell>
-											<TableCell
-												colSpan={order.axleConfigs.length}
-												className='text-right font-semibold text-orange-600'
-											>
+												{order.axleConfigs.map(
+													(_, i) => (
+														<TableHead
+															key={i}
+															className='text-center'
+														>
+															{i + 1}
+														</TableHead>
+													),
+												)}
+											</TableRow>
+										</TableHeader>
+										<TableBody>
+											<TableRow>
+												<TableHead>
+													No of Tires
+												</TableHead>
+												{order.axleConfigs.map(
+													(config, i) => (
+														<TableCell
+															key={i}
+															className='text-center'
+														>
+															{config.tires}
+														</TableCell>
+													),
+												)}
+											</TableRow>
+											<TableRow>
+												<TableHead>
+													Axle Spacing
+												</TableHead>
+												<TableCell></TableCell>
 												{order.axleConfigs
-													.reduce((sum: number, config) => sum + config.weight, 0)
-													.toLocaleString()}{' '}
-												lbs
-											</TableCell>
-										</TableRow>
-									</TableFooter>
-								</Table>
-							</CardContent>
-						</Card>
-					)}
+													.slice(1)
+													.map((config, i) => (
+														<TableCell
+															key={i}
+															className='text-center'
+														>
+															{config.spacing ||
+																'—'}
+														</TableCell>
+													))}
+											</TableRow>
+											<TableRow>
+												<TableHead>
+													Tire Width
+												</TableHead>
+												{order.axleConfigs.map(
+													(config, i) => (
+														<TableCell
+															key={i}
+															className='text-center'
+														>
+															{config.tireWidth}
+														</TableCell>
+													),
+												)}
+											</TableRow>
+											<TableRow>
+												<TableHead>
+													Axle Weights
+												</TableHead>
+												{order.axleConfigs.map(
+													(config, i) => (
+														<TableCell
+															key={i}
+															className='text-center font-semibold'
+														>
+															{config.weight.toLocaleString()}
+														</TableCell>
+													),
+												)}
+											</TableRow>
+										</TableBody>
+										<TableFooter>
+											<TableRow className='bg-orange-50 font-semibold'>
+												<TableCell className='text-left'>
+													Gross Weight:
+												</TableCell>
+												<TableCell
+													colSpan={
+														order.axleConfigs.length
+													}
+													className='text-right font-semibold text-orange-600'
+												>
+													{order.axleConfigs
+														.reduce(
+															(
+																sum: number,
+																config,
+															) =>
+																sum +
+																config.weight,
+															0,
+														)
+														.toLocaleString()}{' '}
+													lbs
+												</TableCell>
+											</TableRow>
+										</TableFooter>
+									</Table>
+								</CardContent>
+							</Card>
+						)}
 
 					<Card>
 						<CardHeader>
@@ -436,9 +591,13 @@ export default function OrderDetailsPage() {
 							<div className='bg-gray-50 rounded-lg p-4 flex items-center justify-between'>
 								<div className='flex items-center space-x-2'>
 									<Calendar className='w-4 h-4 text-gray-500' />
-									<span className='text-sm font-medium text-gray-600'>Permit Start Date</span>
+									<span className='text-sm font-medium text-gray-600'>
+										Permit Start Date
+									</span>
 								</div>
-								<span className='font-semibold text-gray-900'>{formatDate(order.permitStartDate)}</span>
+								<span className='font-semibold text-gray-900'>
+									{formatDate(order.permitStartDate)}
+								</span>
 							</div>
 
 							<RouteDisplay
@@ -464,15 +623,20 @@ export default function OrderDetailsPage() {
 											<Truck className='w-5 h-5 text-white' />
 										</div>
 										<div>
-											<h3 className='font-bold text-gray-900'>Unit #{order.truck.unitNumber}</h3>
+											<h3 className='font-bold text-gray-900'>
+												Unit #{order.truck.unitNumber}
+											</h3>
 											<p className='text-blue-600 font-semibold'>
-												{order.truck.year} {order.truck.make}
+												{order.truck.year}{' '}
+												{order.truck.make}
 											</p>
 										</div>
 									</div>
 									<div className='grid grid-cols-2 gap-3'>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>License Plate</p>
+											<p className='text-xs font-medium text-gray-600'>
+												License Plate
+											</p>
 											<div className='flex items-center space-x-1'>
 												<p className='font-semibold text-gray-900'>
 													{order.truck.licencePlate}
@@ -481,29 +645,50 @@ export default function OrderDetailsPage() {
 													variant='ghost'
 													size='sm'
 													className='h-4 w-4 p-0'
-													onClick={() => copyToClipboard(order.truck.licencePlate)}
+													onClick={() =>
+														copyToClipboard(
+															order.truck
+																.licencePlate,
+														)
+													}
 												>
 													<Copy className='w-3 h-3' />
 												</Button>
 											</div>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>State</p>
-											<p className='font-semibold text-gray-900'>{order.truck.state}</p>
+											<p className='text-xs font-medium text-gray-600'>
+												State
+											</p>
+											<p className='font-semibold text-gray-900'>
+												{order.truck.state}
+											</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>Axles</p>
-											<p className='font-semibold text-gray-900'>{order.truck.nrOfAxles}</p>
+											<p className='text-xs font-medium text-gray-600'>
+												Axles
+											</p>
+											<p className='font-semibold text-gray-900'>
+												{order.truck.nrOfAxles}
+											</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>VIN</p>
+											<p className='text-xs font-medium text-gray-600'>
+												VIN
+											</p>
 											<div className='flex items-center space-x-1'>
-												<p className='font-semibold text-gray-900 text-xs'>{order.truck.vin}</p>
+												<p className='font-semibold text-gray-900 text-xs'>
+													{order.truck.vin}
+												</p>
 												<Button
 													variant='ghost'
 													size='sm'
 													className='h-4 w-4 p-0'
-													onClick={() => copyToClipboard(order.truck.vin)}
+													onClick={() =>
+														copyToClipboard(
+															order.truck.vin,
+														)
+													}
 												>
 													<Copy className='w-3 h-3' />
 												</Button>
@@ -533,13 +718,16 @@ export default function OrderDetailsPage() {
 												Unit #{order.trailer.unitNumber}
 											</h3>
 											<p className='text-purple-600 font-semibold'>
-												{order.trailer.year} {order.trailer.make}
+												{order.trailer.year}{' '}
+												{order.trailer.make}
 											</p>
 										</div>
 									</div>
 									<div className='grid grid-cols-2 gap-3'>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>License Plate</p>
+											<p className='text-xs font-medium text-gray-600'>
+												License Plate
+											</p>
 											<div className='flex items-center space-x-1'>
 												<p className='font-semibold text-gray-900'>
 													{order.trailer.licencePlate}
@@ -548,26 +736,45 @@ export default function OrderDetailsPage() {
 													variant='ghost'
 													size='sm'
 													className='h-4 w-4 p-0'
-													onClick={() => copyToClipboard(order.trailer.licencePlate)}
+													onClick={() =>
+														copyToClipboard(
+															order.trailer
+																.licencePlate,
+														)
+													}
 												>
 													<Copy className='w-3 h-3' />
 												</Button>
 											</div>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>State</p>
-											<p className='font-semibold text-gray-900'>{order.trailer.state}</p>
+											<p className='text-xs font-medium text-gray-600'>
+												State
+											</p>
+											<p className='font-semibold text-gray-900'>
+												{order.trailer.state}
+											</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>Length</p>
-											<p className='font-semibold text-gray-900'>{order.trailer.length}</p>
+											<p className='text-xs font-medium text-gray-600'>
+												Length
+											</p>
+											<p className='font-semibold text-gray-900'>
+												{order.trailer.length}
+											</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2'>
-											<p className='text-xs font-medium text-gray-600'>Type</p>
-											<p className='font-semibold text-gray-900'>{order.trailer.type}</p>
+											<p className='text-xs font-medium text-gray-600'>
+												Type
+											</p>
+											<p className='font-semibold text-gray-900'>
+												{order.trailer.type}
+											</p>
 										</div>
 										<div className='bg-white/70 rounded-lg p-2 col-span-2'>
-											<p className='text-xs font-medium text-gray-600'>VIN</p>
+											<p className='text-xs font-medium text-gray-600'>
+												VIN
+											</p>
 											<div className='flex items-center space-x-1'>
 												<p className='font-semibold text-gray-900 text-xs'>
 													{order.trailer.vin}
@@ -576,7 +783,11 @@ export default function OrderDetailsPage() {
 													variant='ghost'
 													size='sm'
 													className='h-4 w-4 p-0'
-													onClick={() => copyToClipboard(order.trailer.vin)}
+													onClick={() =>
+														copyToClipboard(
+															order.trailer.vin,
+														)
+													}
 												>
 													<Copy className='w-3 h-3' />
 												</Button>
@@ -588,306 +799,287 @@ export default function OrderDetailsPage() {
 						</Card>
 					</div>
 
-					{role() !== UserRole.USER && (order.carrierNumbers || order.companyInfo) && (
-						<Card>
-							<CardHeader>
-								<CardTitle className='flex items-center text-lg'>
-									<Truck className='w-5 h-5 mr-2 text-green-500' />
-									Carrier Information
-								</CardTitle>
-							</CardHeader>
-							<CardContent className='space-y-6'>
-								{order.carrierNumbers && (
-									<div>
-										<h4 className='font-semibold text-gray-900 mb-4 flex items-center'>
-											<FileText className='w-4 h-4 mr-2' />
-											Carrier Numbers
-										</h4>
-										<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-											{order.carrierNumbers.mcNumber && (
-												<div className='bg-gray-50 rounded-lg p-3'>
-													<p className='text-xs font-medium text-gray-600 mb-1'>MC Number</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.carrierNumbers.mcNumber}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() =>
-																copyToClipboard(order.carrierNumbers!.mcNumber!)
-															}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-											)}
-											{order.carrierNumbers.dotNumber && (
-												<div className='bg-gray-50 rounded-lg p-3'>
-													<p className='text-xs font-medium text-gray-600 mb-1'>DOT Number</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.carrierNumbers.dotNumber}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() =>
-																copyToClipboard(order.carrierNumbers!.dotNumber!)
-															}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-											)}
-											{order.carrierNumbers.einNumber && (
-												<div className='bg-gray-50 rounded-lg p-3'>
-													<p className='text-xs font-medium text-gray-600 mb-1'>EIN Number</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.carrierNumbers.einNumber}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() =>
-																copyToClipboard(order.carrierNumbers!.einNumber!)
-															}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-											)}
-											{order.carrierNumbers.iftaNumber && (
-												<div className='bg-gray-50 rounded-lg p-3'>
-													<p className='text-xs font-medium text-gray-600 mb-1'>
-														IFTA Number
-													</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.carrierNumbers.iftaNumber}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() =>
-																copyToClipboard(order.carrierNumbers!.iftaNumber!)
-															}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-											)}
-											{order.carrierNumbers.orNumber && (
-												<div className='bg-gray-50 rounded-lg p-3'>
-													<p className='text-xs font-medium text-gray-600 mb-1'>OR Number</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.carrierNumbers.orNumber}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() =>
-																copyToClipboard(order.carrierNumbers!.orNumber!)
-															}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-											)}
-											{order.carrierNumbers.kyuNumber && (
-												<div className='bg-gray-50 rounded-lg p-3'>
-													<p className='text-xs font-medium text-gray-600 mb-1'>KYU Number</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.carrierNumbers.kyuNumber}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() =>
-																copyToClipboard(order.carrierNumbers!.kyuNumber!)
-															}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-											)}
-											{order.carrierNumbers.txNumber && (
-												<div className='bg-gray-50 rounded-lg p-3'>
-													<p className='text-xs font-medium text-gray-600 mb-1'>TX Number</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.carrierNumbers.txNumber}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() =>
-																copyToClipboard(order.carrierNumbers!.txNumber!)
-															}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-											)}
-											{order.carrierNumbers.tnNumber && (
-												<div className='bg-gray-50 rounded-lg p-3'>
-													<p className='text-xs font-medium text-gray-600 mb-1'>TN Number</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.carrierNumbers.tnNumber}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() =>
-																copyToClipboard(order.carrierNumbers!.tnNumber!)
-															}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-											)}
-											{order.carrierNumbers.laNumber && (
-												<div className='bg-gray-50 rounded-lg p-3'>
-													<p className='text-xs font-medium text-gray-600 mb-1'>LA Number</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.carrierNumbers.laNumber}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() =>
-																copyToClipboard(order.carrierNumbers!.laNumber!)
-															}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-											)}
-										</div>
-										{order.carrierNumbers.notes && (
-											<div className='mt-4'>
-												<p className='text-xs font-medium text-gray-600 mb-1'>Notes</p>
-												<p className='text-sm text-gray-900 bg-gray-50 rounded-lg p-3'>
-													{order.carrierNumbers.notes}
-												</p>
-											</div>
-										)}
-										{order.carrierNumbers.files && order.carrierNumbers.files.length > 0 && (
-											<div className='mt-4'>
-												<p className='text-xs font-medium text-gray-600 mb-2'>Carrier Files</p>
-												<div className='space-y-2'>
-													{order.carrierNumbers.files.map((file, index) => (
-														<div
-															key={index}
-															className='flex items-center justify-between p-2 border rounded'
-														>
-															<div className='flex items-center space-x-2'>
-																<FileText className='w-4 h-4 text-gray-400' />
-																<span className='text-sm' title={file.filename}>
-																	{truncate(file.filename, 20)}
-																</span>
-															</div>
-															<Button
-																variant='ghost'
-																size='sm'
-																onClick={() =>
-																	downloadOrderFile(order.id, file.filename)
-																}
-															>
-																<Download className='w-4 h-4' />
-															</Button>
-														</div>
-													))}
-												</div>
-											</div>
-										)}
-									</div>
-								)}
-
-								{order.companyInfo && (
-									<div>
-										<h4 className='font-semibold text-gray-900 mb-4 flex items-center'>
-											<FileText className='w-4 h-4 mr-2' />
-											Company Information
-										</h4>
-										<div className='bg-gray-50 rounded-lg p-4 space-y-3'>
+					{role() !== UserRole.USER &&
+						(order.carrierNumbers || order.companyInfo) && (
+							<Card>
+								<CardHeader>
+									<CardTitle className='flex items-center text-lg'>
+										<Truck className='w-5 h-5 mr-2 text-green-500' />
+										Carrier Information
+									</CardTitle>
+								</CardHeader>
+								<CardContent className='space-y-6'>
+									{order.carrierNumbers && (
+										<div>
+											<h4 className='font-semibold text-gray-900 mb-4 flex items-center'>
+												<FileText className='w-4 h-4 mr-2' />
+												Carrier Numbers
+											</h4>
 											<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-												<div>
-													<p className='text-xs font-medium text-gray-600 mb-1'>
-														Company Name
-													</p>
-													<p className='font-semibold text-gray-900'>
-														{order.companyInfo.name}
-													</p>
-												</div>
-												{order.companyInfo.dba && (
-													<div>
-														<p className='text-xs font-medium text-gray-600 mb-1'>DBA</p>
-														<p className='font-semibold text-gray-900'>
-															{order.companyInfo.dba}
+												{order.carrierNumbers
+													.mcNumber && (
+													<div className='bg-gray-50 rounded-lg p-3'>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															MC Number
 														</p>
-													</div>
-												)}
-											</div>
-											<div>
-												<p className='text-xs font-medium text-gray-600 mb-1'>Address</p>
-												<p className='font-semibold text-gray-900'>
-													{order.companyInfo.address}, {order.companyInfo.city},{' '}
-													{order.companyInfo.state} {order.companyInfo.zip}
-												</p>
-											</div>
-											<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-												<div>
-													<p className='text-xs font-medium text-gray-600 mb-1'>Phone</p>
-													<div className='flex items-center space-x-1'>
-														<p className='font-semibold text-gray-900'>
-															{order.companyInfo.phone}
-														</p>
-														<Button
-															variant='ghost'
-															size='sm'
-															className='h-4 w-4 p-0'
-															onClick={() => copyToClipboard(order.companyInfo!.phone)}
-														>
-															<Copy className='w-3 h-3' />
-														</Button>
-													</div>
-												</div>
-												{order.companyInfo.fax && (
-													<div>
-														<p className='text-xs font-medium text-gray-600 mb-1'>Fax</p>
 														<div className='flex items-center space-x-1'>
 															<p className='font-semibold text-gray-900'>
-																{order.companyInfo.fax}
+																{
+																	order
+																		.carrierNumbers
+																		.mcNumber
+																}
 															</p>
 															<Button
 																variant='ghost'
 																size='sm'
 																className='h-4 w-4 p-0'
-																onClick={() => copyToClipboard(order.companyInfo!.fax!)}
+																onClick={() =>
+																	copyToClipboard(
+																		order.carrierNumbers!
+																			.mcNumber!,
+																	)
+																}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+												)}
+												{order.carrierNumbers
+													.dotNumber && (
+													<div className='bg-gray-50 rounded-lg p-3'>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															DOT Number
+														</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.carrierNumbers
+																		.dotNumber
+																}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() =>
+																	copyToClipboard(
+																		order.carrierNumbers!
+																			.dotNumber!,
+																	)
+																}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+												)}
+												{order.carrierNumbers
+													.einNumber && (
+													<div className='bg-gray-50 rounded-lg p-3'>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															EIN Number
+														</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.carrierNumbers
+																		.einNumber
+																}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() =>
+																	copyToClipboard(
+																		order.carrierNumbers!
+																			.einNumber!,
+																	)
+																}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+												)}
+												{order.carrierNumbers
+													.iftaNumber && (
+													<div className='bg-gray-50 rounded-lg p-3'>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															IFTA Number
+														</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.carrierNumbers
+																		.iftaNumber
+																}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() =>
+																	copyToClipboard(
+																		order.carrierNumbers!
+																			.iftaNumber!,
+																	)
+																}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+												)}
+												{order.carrierNumbers
+													.orNumber && (
+													<div className='bg-gray-50 rounded-lg p-3'>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															OR Number
+														</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.carrierNumbers
+																		.orNumber
+																}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() =>
+																	copyToClipboard(
+																		order.carrierNumbers!
+																			.orNumber!,
+																	)
+																}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+												)}
+												{order.carrierNumbers
+													.kyuNumber && (
+													<div className='bg-gray-50 rounded-lg p-3'>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															KYU Number
+														</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.carrierNumbers
+																		.kyuNumber
+																}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() =>
+																	copyToClipboard(
+																		order.carrierNumbers!
+																			.kyuNumber!,
+																	)
+																}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+												)}
+												{order.carrierNumbers
+													.txNumber && (
+													<div className='bg-gray-50 rounded-lg p-3'>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															TX Number
+														</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.carrierNumbers
+																		.txNumber
+																}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() =>
+																	copyToClipboard(
+																		order.carrierNumbers!
+																			.txNumber!,
+																	)
+																}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+												)}
+												{order.carrierNumbers
+													.tnNumber && (
+													<div className='bg-gray-50 rounded-lg p-3'>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															TN Number
+														</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.carrierNumbers
+																		.tnNumber
+																}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() =>
+																	copyToClipboard(
+																		order.carrierNumbers!
+																			.tnNumber!,
+																	)
+																}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+												)}
+												{order.carrierNumbers
+													.laNumber && (
+													<div className='bg-gray-50 rounded-lg p-3'>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															LA Number
+														</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.carrierNumbers
+																		.laNumber
+																}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() =>
+																	copyToClipboard(
+																		order.carrierNumbers!
+																			.laNumber!,
+																	)
+																}
 															>
 																<Copy className='w-3 h-3' />
 															</Button>
@@ -895,28 +1087,218 @@ export default function OrderDetailsPage() {
 													</div>
 												)}
 											</div>
-											<div>
-												<p className='text-xs font-medium text-gray-600 mb-1'>Email</p>
-												<div className='flex items-center space-x-1'>
-													<p className='font-semibold text-gray-900'>
-														{order.companyInfo.email}
+											{order.carrierNumbers.notes && (
+												<div className='mt-4'>
+													<p className='text-xs font-medium text-gray-600 mb-1'>
+														Notes
 													</p>
-													<Button
-														variant='ghost'
-														size='sm'
-														className='h-4 w-4 p-0'
-														onClick={() => copyToClipboard(order.companyInfo!.email)}
-													>
-														<Copy className='w-3 h-3' />
-													</Button>
+													<p className='text-sm text-gray-900 bg-gray-50 rounded-lg p-3'>
+														{
+															order.carrierNumbers
+																.notes
+														}
+													</p>
+												</div>
+											)}
+											{order.carrierNumbers.files &&
+												order.carrierNumbers.files
+													.length > 0 && (
+													<div className='mt-4'>
+														<p className='text-xs font-medium text-gray-600 mb-2'>
+															Carrier Files
+														</p>
+														<div className='space-y-2'>
+															{order.carrierNumbers.files.map(
+																(
+																	file,
+																	index,
+																) => (
+																	<div
+																		key={
+																			index
+																		}
+																		className='flex items-center justify-between p-2 border rounded'
+																	>
+																		<div className='flex items-center space-x-2'>
+																			<FileText className='w-4 h-4 text-gray-400' />
+																			<span
+																				className='text-sm'
+																				title={
+																					file.filename
+																				}
+																			>
+																				{truncate(
+																					file.filename,
+																					20,
+																				)}
+																			</span>
+																		</div>
+																		<Button
+																			variant='ghost'
+																			size='sm'
+																			onClick={() =>
+																				downloadOrderFile(
+																					order.id,
+																					file.filename,
+																				)
+																			}
+																		>
+																			<Download className='w-4 h-4' />
+																		</Button>
+																	</div>
+																),
+															)}
+														</div>
+													</div>
+												)}
+										</div>
+									)}
+
+									{order.companyInfo && (
+										<div>
+											<h4 className='font-semibold text-gray-900 mb-4 flex items-center'>
+												<FileText className='w-4 h-4 mr-2' />
+												Company Information
+											</h4>
+											<div className='bg-gray-50 rounded-lg p-4 space-y-3'>
+												<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+													<div>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															Company Name
+														</p>
+														<p className='font-semibold text-gray-900'>
+															{
+																order
+																	.companyInfo
+																	.name
+															}
+														</p>
+													</div>
+													{order.companyInfo.dba && (
+														<div>
+															<p className='text-xs font-medium text-gray-600 mb-1'>
+																DBA
+															</p>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.companyInfo
+																		.dba
+																}
+															</p>
+														</div>
+													)}
+												</div>
+												<div>
+													<p className='text-xs font-medium text-gray-600 mb-1'>
+														Address
+													</p>
+													<p className='font-semibold text-gray-900'>
+														{
+															order.companyInfo
+																.address
+														}
+														,{' '}
+														{order.companyInfo.city}
+														,{' '}
+														{
+															order.companyInfo
+																.state
+														}{' '}
+														{order.companyInfo.zip}
+													</p>
+												</div>
+												<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+													<div>
+														<p className='text-xs font-medium text-gray-600 mb-1'>
+															Phone
+														</p>
+														<div className='flex items-center space-x-1'>
+															<p className='font-semibold text-gray-900'>
+																{
+																	order
+																		.companyInfo
+																		.phone
+																}
+															</p>
+															<Button
+																variant='ghost'
+																size='sm'
+																className='h-4 w-4 p-0'
+																onClick={() =>
+																	copyToClipboard(
+																		order.companyInfo!
+																			.phone,
+																	)
+																}
+															>
+																<Copy className='w-3 h-3' />
+															</Button>
+														</div>
+													</div>
+													{order.companyInfo.fax && (
+														<div>
+															<p className='text-xs font-medium text-gray-600 mb-1'>
+																Fax
+															</p>
+															<div className='flex items-center space-x-1'>
+																<p className='font-semibold text-gray-900'>
+																	{
+																		order
+																			.companyInfo
+																			.fax
+																	}
+																</p>
+																<Button
+																	variant='ghost'
+																	size='sm'
+																	className='h-4 w-4 p-0'
+																	onClick={() =>
+																		copyToClipboard(
+																			order.companyInfo!
+																				.fax!,
+																		)
+																	}
+																>
+																	<Copy className='w-3 h-3' />
+																</Button>
+															</div>
+														</div>
+													)}
+												</div>
+												<div>
+													<p className='text-xs font-medium text-gray-600 mb-1'>
+														Email
+													</p>
+													<div className='flex items-center space-x-1'>
+														<p className='font-semibold text-gray-900'>
+															{
+																order
+																	.companyInfo
+																	.email
+															}
+														</p>
+														<Button
+															variant='ghost'
+															size='sm'
+															className='h-4 w-4 p-0'
+															onClick={() =>
+																copyToClipboard(
+																	order.companyInfo!
+																		.email,
+																)
+															}
+														>
+															<Copy className='w-3 h-3' />
+														</Button>
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-								)}
-							</CardContent>
-						</Card>
-					)}
+									)}
+								</CardContent>
+							</Card>
+						)}
 				</div>
 
 				<div className='space-y-6'>
@@ -929,37 +1311,59 @@ export default function OrderDetailsPage() {
 						</CardHeader>
 						<CardContent className='space-y-3'>
 							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>Order ID</span>
+								<span className='text-sm text-gray-600'>
+									Order ID
+								</span>
 								<div className='flex items-center space-x-1'>
-									<span className='font-medium text-gray-900'>{order.orderNumber}</span>
+									<span className='font-medium text-gray-900'>
+										{order.orderNumber}
+									</span>
 									<Button
 										variant='ghost'
 										size='sm'
 										className='h-4 w-4 p-0'
-										onClick={() => copyToClipboard(order.orderNumber)}
+										onClick={() =>
+											copyToClipboard(order.orderNumber)
+										}
 									>
 										<Copy className='w-3 h-3' />
 									</Button>
 								</div>
 							</div>
 							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>Status</span>
-								<Badge className={getStatusBadge(order.status)}>{formatStatus(order.status)}</Badge>
+								<span className='text-sm text-gray-600'>
+									Status
+								</span>
+								<Badge className={getStatusBadge(order.status)}>
+									{formatStatus(order.status)}
+								</Badge>
 							</div>
 							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>Contact</span>
-								<span className='font-medium text-gray-900'>{order.contact}</span>
-							</div>
-							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>Created</span>
+								<span className='text-sm text-gray-600'>
+									Contact
+								</span>
 								<span className='font-medium text-gray-900'>
-									{new Date(order.createdAt).toLocaleDateString()}
+									{order.contact}
 								</span>
 							</div>
 							<div className='flex justify-between'>
-								<span className='text-sm text-gray-600'>Last Updated</span>
+								<span className='text-sm text-gray-600'>
+									Created
+								</span>
 								<span className='font-medium text-gray-900'>
-									{new Date(order.updatedAt).toLocaleDateString()}
+									{new Date(
+										order.createdAt,
+									).toLocaleDateString()}
+								</span>
+							</div>
+							<div className='flex justify-between'>
+								<span className='text-sm text-gray-600'>
+									Last Updated
+								</span>
+								<span className='font-medium text-gray-900'>
+									{new Date(
+										order.updatedAt,
+									).toLocaleDateString()}
 								</span>
 							</div>
 						</CardContent>
@@ -977,17 +1381,28 @@ export default function OrderDetailsPage() {
 						<CardContent>
 							<div className='space-y-2'>
 								{order.files.map((file, index) => (
-									<div key={index} className='flex items-center justify-between p-2 border rounded'>
+									<div
+										key={index}
+										className='flex items-center justify-between p-2 border rounded'
+									>
 										<div className='flex items-center space-x-2'>
 											<FileText className='w-4 h-4 text-gray-400' />
-											<span className='text-sm' title={file.filename}>
+											<span
+												className='text-sm'
+												title={file.filename}
+											>
 												{truncate(file.filename, 20)}
 											</span>
 										</div>
 										<Button
 											variant='ghost'
 											size='sm'
-											onClick={() => downloadOrderFile(order.id, file.filename)}
+											onClick={() =>
+												downloadOrderFile(
+													order.id,
+													file.filename,
+												)
+											}
 										>
 											<Download className='w-4 h-4' />
 										</Button>
@@ -996,14 +1411,24 @@ export default function OrderDetailsPage() {
 
 								<FileUploader
 									maxFileSize={10}
-									acceptedTypes={['pdf', 'jpg', 'jpeg', 'png']}
+									acceptedTypes={[
+										'pdf',
+										'jpg',
+										'jpeg',
+										'png',
+									]}
 									uploadText='No files uploaded, upload a file'
 									selectedFile={selectedFile}
 									setSelectedFile={setSelectedFile}
 								/>
 
 								{selectedFile && (
-									<Button variant='outline' size='sm' className='w-full' onClick={uploadFileToOrder}>
+									<Button
+										variant='outline'
+										size='sm'
+										className='w-full'
+										onClick={uploadFileToOrder}
+									>
 										<Upload className='w-4 h-4' />
 										Upload to Order
 									</Button>

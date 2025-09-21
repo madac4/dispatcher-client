@@ -1,7 +1,14 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { UserRole } from '@/lib/models/auth.model'
 import { AuthService } from '@/lib/services/authService'
@@ -46,7 +53,8 @@ const passwordSchema = z.string().superRefine((password, ctx) => {
 	if (!/[@$!%*?&]/.test(password)) {
 		ctx.addIssue({
 			code: z.ZodIssueCode.custom,
-			message: 'Password must contain at least one special character (@$!%*?&)',
+			message:
+				'Password must contain at least one special character (@$!%*?&)',
 			path: [],
 		})
 	}
@@ -56,7 +64,6 @@ const registerFormSchema = z.object({
 	email: z.string().email('Invalid email address'),
 	password: passwordSchema,
 	role: z.nativeEnum(UserRole),
-	// inviteCode: z.string().min(1, 'Invite code is required'),
 })
 
 interface RegisterFormProps {
@@ -73,15 +80,18 @@ export default function RegisterForm({ role }: RegisterFormProps) {
 		defaultValues: {
 			email: '',
 			password: '',
-			role: role || UserRole.USER,
-			// inviteCode: inviteCode || '',
+			role: role,
 		},
 	})
 
 	async function onSubmit(values: z.infer<typeof registerFormSchema>) {
 		setIsLoading(true)
 		try {
-			const { message } = await AuthService.register(values.email, values.password, values.role)
+			const { message } = await AuthService.register(
+				values.email,
+				values.password,
+				values.role,
+			)
 			toast.success(message)
 
 			if (!role) router.push('/login')
@@ -100,7 +110,11 @@ export default function RegisterForm({ role }: RegisterFormProps) {
 						<FormItem>
 							<FormLabel>Email</FormLabel>
 							<FormControl>
-								<Input type='email' placeholder='Enter your email' {...field} />
+								<Input
+									type='email'
+									placeholder='Enter your email'
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -116,20 +130,26 @@ export default function RegisterForm({ role }: RegisterFormProps) {
 							<div className='relative'>
 								<FormControl>
 									<Input
-										type={showPassword ? 'text' : 'password'}
+										type={
+											showPassword ? 'text' : 'password'
+										}
 										placeholder='Enter your password'
 										{...field}
 									/>
 								</FormControl>
 								{showPassword ? (
 									<EyeOffIcon
-										onClick={() => setShowPassword(!showPassword)}
+										onClick={() =>
+											setShowPassword(!showPassword)
+										}
 										className='absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground'
 										size={18}
 									/>
 								) : (
 									<EyeIcon
-										onClick={() => setShowPassword(!showPassword)}
+										onClick={() =>
+											setShowPassword(!showPassword)
+										}
 										className='absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground'
 										size={18}
 									/>
@@ -162,7 +182,10 @@ export default function RegisterForm({ role }: RegisterFormProps) {
 				<Button type='submit' className='w-full' disabled={isLoading}>
 					{isLoading ? (
 						<>
-							<Loader2Icon className='animate-spin mr-2' size={16} />
+							<Loader2Icon
+								className='animate-spin mr-2'
+								size={16}
+							/>
 							Registering...
 						</>
 					) : (
@@ -175,7 +198,10 @@ export default function RegisterForm({ role }: RegisterFormProps) {
 				<div className='mt-6 text-center'>
 					<p className='text-sm text-gray-600'>
 						Already have an account?{' '}
-						<Link href='/login' className='text-primary hover:text-primary/80 font-medium'>
+						<Link
+							href='/login'
+							className='text-primary hover:text-primary/80 font-medium'
+						>
 							Sign in
 						</Link>
 					</p>

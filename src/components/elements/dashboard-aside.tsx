@@ -3,6 +3,7 @@
 import { AsideNavigation } from '@/constants/constants'
 import { useViewport } from '@/hooks/useViewports'
 import { useAsideStore } from '@/lib/store'
+import { useAuthStore } from '@/lib/stores/authStore'
 import { cn } from '@/lib/utils'
 import { PanelLeftClose, PanelRightClose } from 'lucide-react'
 import { DynamicIcon } from 'lucide-react/dynamic'
@@ -14,6 +15,7 @@ import { Logo } from './logo'
 
 export function DashboardAside() {
 	const { isAsideOpen, toggleAside } = useAsideStore()
+	const { role } = useAuthStore()
 	const navigation = AsideNavigation
 	const currentPath = usePathname()
 	const { width } = useViewport()
@@ -45,36 +47,40 @@ export function DashboardAside() {
 							!isAsideOpen && '!px-4',
 						)}
 					>
-						{navigation.map(item => (
-							<Tooltip key={item.label}>
-								<TooltipTrigger className='w-full' asChild>
-									<Link
-										href={item.url}
-										className={cn(
-											'flex cursor-pointer w-full items-center gap-3 text-gray-700 rounded-lg px-3 py-2 transition-colors hover:text-primary',
-											currentPath === item.url &&
-												'bg-gray-100 text-primary',
-											!isAsideOpen &&
-												'justify-center p-0 h-9 w-9',
-											item.disabled &&
-												'opacity-50 cursor-not-allowed pointer-events-none',
-										)}
+						{navigation.map(item => {
+							if (item.role && item.role !== role()) return null
+
+							return (
+								<Tooltip key={item.label}>
+									<TooltipTrigger className='w-full' asChild>
+										<Link
+											href={item.url}
+											className={cn(
+												'flex cursor-pointer w-full items-center gap-3 text-gray-700 rounded-lg px-3 py-2 transition-colors hover:text-primary',
+												currentPath === item.url &&
+													'bg-gray-100 text-primary',
+												!isAsideOpen &&
+													'justify-center p-0 h-9 w-9',
+												item.disabled &&
+													'opacity-50 cursor-not-allowed pointer-events-none',
+											)}
+										>
+											<DynamicIcon
+												name={item.icon || 'octagon'}
+												size={20}
+											/>
+											{isAsideOpen && item.label}
+										</Link>
+									</TooltipTrigger>
+									<TooltipContent
+										side='right'
+										className={cn(isAsideOpen && 'hidden')}
 									>
-										<DynamicIcon
-											name={item.icon || 'octagon'}
-											size={20}
-										/>
-										{isAsideOpen && item.label}
-									</Link>
-								</TooltipTrigger>
-								<TooltipContent
-									side='right'
-									className={cn(isAsideOpen && 'hidden')}
-								>
-									{item.label}
-								</TooltipContent>
-							</Tooltip>
-						))}
+										{item.label}
+									</TooltipContent>
+								</Tooltip>
+							)
+						})}
 					</nav>
 				)}
 			</div>

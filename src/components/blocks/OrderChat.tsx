@@ -2,11 +2,24 @@
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { useChat } from '@/hooks/useChat'
 import { useAuthStore } from '@/lib/stores/authStore'
-import { AlertCircle, Loader2, MessageCircle, Send, Wifi, WifiOff } from 'lucide-react'
+import {
+	AlertCircle,
+	Loader2,
+	MessageCircle,
+	Send,
+	Wifi,
+	WifiOff,
+} from 'lucide-react'
 import { useState } from 'react'
 import ChatMessage from './ChatMessage'
 import TypingIndicator from './TypingIndicator'
@@ -24,13 +37,11 @@ export default function OrderChat({ orderId }: OrderChatProps) {
 		messages,
 		typingUsers,
 		isConnected,
-		unreadCount,
 		isLoading,
 		error,
 		sendMessage,
 		startTyping,
 		stopTyping,
-		// markAsRead,
 	} = useChat(accessToken() || '', orderId)
 
 	const handleTyping = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -95,9 +106,6 @@ export default function OrderChat({ orderId }: OrderChatProps) {
 					<div className='flex items-center gap-2'>
 						<MessageCircle className='w-5 h-5 text-orange-500' />
 						Order Chat
-						{unreadCount > 0 && (
-							<span className='bg-red-500 text-white text-xs px-2 py-1 rounded-full'>{unreadCount}</span>
-						)}
 					</div>
 					{getConnectionStatus()}
 				</CardTitle>
@@ -115,7 +123,9 @@ export default function OrderChat({ orderId }: OrderChatProps) {
 					{isLoading ? (
 						<div className='flex items-center justify-center py-8'>
 							<Loader2 className='w-6 h-6 animate-spin text-gray-400' />
-							<span className='ml-2 text-gray-500'>Loading messages...</span>
+							<span className='ml-2 text-gray-500'>
+								Loading messages...
+							</span>
 						</div>
 					) : messages.length === 0 ? (
 						<div className='text-center py-8 text-gray-500'>
@@ -126,7 +136,10 @@ export default function OrderChat({ orderId }: OrderChatProps) {
 					) : (
 						<>
 							{messages.map(message => (
-								<ChatMessage key={message.id} message={message} />
+								<ChatMessage
+									key={message.id}
+									message={message}
+								/>
 							))}
 						</>
 					)}
@@ -147,16 +160,26 @@ export default function OrderChat({ orderId }: OrderChatProps) {
 				/>
 				<Button
 					onClick={handleSendMessage}
-					disabled={!newMessage.trim() || isLoading || !isConnected || isSending}
+					disabled={
+						!newMessage.trim() ||
+						isLoading ||
+						!isConnected ||
+						isSending
+					}
 					className='w-full'
 				>
-					{isSending ? <Loader2 className='w-4 h-4 animate-spin' /> : <Send className='w-4 h-4' />}
+					{isSending ? (
+						<Loader2 className='w-4 h-4 animate-spin' />
+					) : (
+						<Send className='w-4 h-4' />
+					)}
 					{isSending ? 'Sending...' : 'Send'}
 				</Button>
 
 				{!isConnected && (
 					<div className='text-xs text-destructive text-center'>
-						You&apos;re currently offline. Messages will be sent when you reconnect.
+						You&apos;re currently offline. Messages will be sent
+						when you reconnect.
 					</div>
 				)}
 			</CardFooter>

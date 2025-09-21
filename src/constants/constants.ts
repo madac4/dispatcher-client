@@ -1,5 +1,6 @@
 import { TrailersDataTable } from '@/app/dashboard/settings/inventory/components/trailers-data-table'
 import { TrucksDataTable } from '@/app/dashboard/settings/inventory/components/trucks-data-table'
+import { UserRole } from '@/lib/models/auth.model'
 import { SelectModel } from '@/lib/models/response.model'
 import { IconName } from 'lucide-react/dynamic'
 
@@ -20,6 +21,7 @@ export const AsideNavigation: NavigationItem[] = [
 		label: 'Settings',
 		icon: 'settings',
 		url: '/dashboard/settings/inventory',
+		role: UserRole.USER,
 	},
 ]
 
@@ -43,6 +45,7 @@ type NavigationItem = {
 	icon: IconName
 	url: string
 	disabled?: boolean
+	role?: UserRole
 }
 
 export const UsStates: SelectModel[] = [
