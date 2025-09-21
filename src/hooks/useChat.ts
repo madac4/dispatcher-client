@@ -1,5 +1,5 @@
 import { ChatMessage } from '@/lib/models/chat.model'
-import { chatService } from '@/lib/services/chatService'
+import { ChatService } from '@/lib/services/chatService'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { io, Socket } from 'socket.io-client'
 import { toast } from 'sonner'
@@ -13,7 +13,6 @@ export interface ChatState {
 	messages: ChatMessage[]
 	typingUsers: TypingUser[]
 	isConnected: boolean
-	unreadCount: number
 	isLoading: boolean
 	error: string | null
 }
@@ -23,7 +22,6 @@ export const useChat = (token: string, orderId: string) => {
 		messages: [],
 		typingUsers: [],
 		isConnected: false,
-		unreadCount: 0,
 		isLoading: true,
 		error: null,
 	})
@@ -37,7 +35,7 @@ export const useChat = (token: string, orderId: string) => {
 		try {
 			setState(prev => ({ ...prev, isLoading: true, error: null }))
 
-			const { data } = await chatService.getOrderMessages(orderId)
+			const { data } = await ChatService.getOrderMessages(orderId)
 
 			setState(prev => ({
 				...prev,
@@ -49,7 +47,10 @@ export const useChat = (token: string, orderId: string) => {
 		} catch (error) {
 			setState(prev => ({
 				...prev,
-				error: error instanceof Error ? error.message : 'Failed to load messages',
+				error:
+					error instanceof Error
+						? error.message
+						: 'Failed to load messages',
 				isLoading: false,
 			}))
 		}
@@ -69,9 +70,7 @@ export const useChat = (token: string, orderId: string) => {
 	const sendMessage = useCallback(
 		async (message: string) => {
 			if (!message.trim() || !socketRef.current || !orderId) return
-
-			await chatService.sendMessage(message.trim(), orderId)
-			socketRef.current.emit('mark-read', orderId)
+			await ChatService.sendMessage(message.trim(), orderId)
 		},
 		[orderId],
 	)
@@ -87,15 +86,8 @@ export const useChat = (token: string, orderId: string) => {
 
 		typingTimeoutRef.current = setTimeout(() => {
 			stopTyping()
-		}, 3000)
+		}, 1000)
 	}, [orderId, stopTyping])
-
-	const getUnreadCount = useCallback(async () => {
-		if (!orderId) return
-
-		const { data } = await chatService.getUnreadCount(orderId)
-		setState(prev => ({ ...prev, unreadCount: data?.count || 0 }))
-	}, [orderId])
 
 	useEffect(() => {
 		if (!token || !orderId) {
@@ -129,66 +121,64 @@ export const useChat = (token: string, orderId: string) => {
 			}))
 		})
 
-		socket.on('new-message', (data: { orderId: string; message: ChatMessage }) => {
-			if (data.orderId === orderId) {
-				setState(prev => ({
-					...prev,
-					messages: [...prev.messages, data.message],
-					unreadCount: prev.unreadCount + 1,
-				}))
-			}
-		})
+		socket.on(
+			'new-message',
+			(data: { orderId: string; message: ChatMessage }) => {
+				if (data.orderId === orderId) {
+					setState(prev => ({
+						...prev,
+						messages: [...prev.messages, data.message],
+					}))
+				}
+			},
+		)
 
-		socket.on('user-typing', (data: { email: string; orderId: string; isTyping: boolean }) => {
-			if (data.orderId === orderId) {
-				setState(prev => {
-					const existingUser = prev.typingUsers.find(user => user.email === data.email)
+		socket.on(
+			'user-typing',
+			(data: { email: string; orderId: string; isTyping: boolean }) => {
+				if (data.orderId === orderId) {
+					setState(prev => {
+						const existingUser = prev.typingUsers.find(
+							user => user.email === data.email,
+						)
 
-					if (existingUser) {
-						if (data.isTyping) {
+						if (existingUser) {
+							if (data.isTyping) {
+								return {
+									...prev,
+									typingUsers: prev.typingUsers.map(user =>
+										user.email === data.email
+											? { ...user, isTyping: true }
+											: user,
+									),
+								}
+							} else {
+								return {
+									...prev,
+									typingUsers: prev.typingUsers.filter(
+										user => user.email !== data.email,
+									),
+								}
+							}
+						} else if (data.isTyping) {
 							return {
 								...prev,
-								typingUsers: prev.typingUsers.map(user =>
-									user.email === data.email ? { ...user, isTyping: true } : user,
-								),
-							}
-						} else {
-							return {
-								...prev,
-								typingUsers: prev.typingUsers.filter(user => user.email !== data.email),
+								typingUsers: [
+									...prev.typingUsers,
+									{
+										userId: data.email,
+										email: data.email,
+										isTyping: true,
+									},
+								],
 							}
 						}
-					} else if (data.isTyping) {
-						return {
-							...prev,
-							typingUsers: [
-								...prev.typingUsers,
-								{
-									userId: data.email,
-									email: data.email,
-									isTyping: true,
-								},
-							],
-						}
-					}
 
-					return prev
-				})
-			}
-		})
-
-		socket.on('message-read', (data: { userId: string; orderId: string; timestamp: Date }) => {
-			if (data.orderId === orderId) {
-				setState(prev => ({
-					...prev,
-					messages: prev.messages.map(msg => ({
-						...msg,
-						isRead: true,
-					})),
-					unreadCount: 0,
-				}))
-			}
-		})
+						return prev
+					})
+				}
+			},
+		)
 
 		// socket.on('order-updated', (data: { orderId: string; update: any; timestamp: Date }) => {
 		// 	if (data.orderId === orderId) {
@@ -204,7 +194,6 @@ export const useChat = (token: string, orderId: string) => {
 		// 			senderType: 'system',
 		// 			createdAt: new Date(data.timestamp).toISOString(),
 		// 			updatedAt: new Date(data.timestamp).toISOString(),
-		// 			isRead: false,
 		// 		}
 
 		// 		setState(prev => ({
@@ -224,35 +213,11 @@ export const useChat = (token: string, orderId: string) => {
 		}
 	}, [token, orderId, loadMessages])
 
-	useEffect(() => {
-		if (token && orderId) getUnreadCount()
-	}, [token, orderId, getUnreadCount])
-
-	// Mark messages as read
-	// const markAsRead = useCallback(async () => {
-	// 	if (!socketRef.current || !orderId) return
-
-	// 	try {
-	// 		await chatService.markAsRead(orderId, token)
-	// 		socketRef.current.emit('mark-read', orderId)
-
-	// 		setState(prev => ({
-	// 			...prev,
-	// 			unreadCount: 0,
-	// 			messages: prev.messages.map(msg => ({ ...msg, isRead: true })),
-	// 		}))
-	// 	} catch (error) {
-	// 		console.error('Failed to mark messages as read:', error)
-	// 	}
-	// }, [token, orderId])
-
 	return {
 		...state,
 		sendMessage,
 		startTyping,
 		stopTyping,
-		// markAsRead,
-		getUnreadCount,
 		loadMessages,
 	}
 }
