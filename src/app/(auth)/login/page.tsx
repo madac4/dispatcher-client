@@ -1,7 +1,14 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { login } from '@/lib/services/authService'
 import { useAuthStore } from '@/lib/stores/authStore'
@@ -42,10 +49,11 @@ const passwordSchema = z.string().superRefine((password, ctx) => {
 			path: [],
 		})
 	}
-	if (!/[@$!%*?&]/.test(password)) {
+	if (!/[!"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(password)) {
 		ctx.addIssue({
 			code: z.ZodIssueCode.custom,
-			message: 'Password must contain at least one special character (@$!%*?&)',
+			message:
+				'Password must contain at least one special character (@$!%*?&)',
 			path: [],
 		})
 	}
@@ -92,7 +100,12 @@ export default function LoginPage() {
 						<FormItem>
 							<FormLabel>Email</FormLabel>
 							<FormControl>
-								<Input autoComplete='email' type='email' placeholder='Enter your email' {...field} />
+								<Input
+									autoComplete='email'
+									type='email'
+									placeholder='Enter your email'
+									{...field}
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -109,20 +122,26 @@ export default function LoginPage() {
 								<FormControl>
 									<Input
 										autoComplete='current-password'
-										type={showPassword ? 'text' : 'password'}
+										type={
+											showPassword ? 'text' : 'password'
+										}
 										placeholder='Enter your password'
 										{...field}
 									/>
 								</FormControl>
 								{showPassword ? (
 									<EyeOffIcon
-										onClick={() => setShowPassword(!showPassword)}
+										onClick={() =>
+											setShowPassword(!showPassword)
+										}
 										className='absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground'
 										size={18}
 									/>
 								) : (
 									<EyeIcon
-										onClick={() => setShowPassword(!showPassword)}
+										onClick={() =>
+											setShowPassword(!showPassword)
+										}
 										className='absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer text-muted-foreground hover:text-foreground'
 										size={18}
 									/>
@@ -154,7 +173,10 @@ export default function LoginPage() {
 			<div className='mt-6 text-center'>
 				<p className='text-sm text-gray-600'>
 					Don&apos;t have an account?{' '}
-					<Link href='/register' className='text-orange-500 hover:text-orange-600 font-medium'>
+					<Link
+						href='/register'
+						className='text-orange-500 hover:text-orange-600 font-medium'
+					>
 						Sign up
 					</Link>
 				</p>
