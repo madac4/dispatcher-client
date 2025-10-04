@@ -11,7 +11,7 @@ import {
 	setRole,
 } from '../cookies'
 import { UserRole } from '../models/auth.model'
-import { logout } from '../services/authService'
+import { AuthService } from '../services/authService'
 
 interface AuthState {
 	userId: string | null
@@ -54,7 +54,7 @@ export const useAuthStore = create<AuthState>(set => ({
 		refreshToken: getRefreshToken() || null,
 	}),
 	logout: async () => {
-		await logout()
+		await AuthService.logout()
 		removeTokens()
 		set({ userRole: null, userEmail: null, userId: null })
 		window.location.href = '/'

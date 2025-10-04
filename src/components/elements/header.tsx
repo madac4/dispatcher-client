@@ -2,18 +2,23 @@
 
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/lib/stores/authStore'
+import { cn } from '@/lib/utils'
 import { Clock, Mail, Phone, User } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Logo } from './logo'
 
 export function Header() {
 	const { isAuthenticated, logout } = useAuthStore()
 	const [isAuth, setIsAuth] = useState(false)
+	const pathname = usePathname()
 
 	useEffect(() => {
 		setIsAuth(isAuthenticated())
 	}, [isAuthenticated])
+
+	const isActive = (path: string) => pathname === path
 
 	return (
 		<header className='border-b'>
@@ -21,22 +26,22 @@ export function Header() {
 				<div className='fluid-container flex justify-between items-center text-sm'>
 					<div className='flex items-center gap-6'>
 						<div className='flex items-center gap-2'>
-							<Clock className='h-4 w-4 text-orange-500' />
+							<Clock className='h-4 w-4 text-primary' />
 							Mon-Sat 7am-7pm
 						</div>
 						<Link
-							href='tel:8335530483'
+							href='tel:+37378410220'
 							className='flex items-center gap-2'
 						>
-							<Phone className='h-4 w-4 text-orange-500' />
-							Call us 833.553.0483
+							<Phone className='h-4 w-4 text-primary' />
+							Call us +373 78 410 220
 						</Link>
 						<Link
-							href='mailto:sales@clickpermit.com'
+							href='mailto:clickpermit@gmail.com'
 							className='flex items-center gap-2'
 						>
-							<Mail className='h-4 w-4 text-orange-500' />
-							sales@clickpermit.com
+							<Mail className='h-4 w-4 text-primary' />
+							clickpermit@gmail.com
 						</Link>
 					</div>
 				</div>
@@ -49,39 +54,62 @@ export function Header() {
 					<nav className='hidden md:flex items-center space-x-4'>
 						<Link
 							href='/'
-							className='text-gray-900 hover:text-orange-500 px-4 py-2 text-sm font-semibold transition-colors relative group'
+							className={cn(
+								'text-gray-900 hover:text-primary px-4 py-2 text-sm font-semibold transition-colors relative group',
+								isActive('/') && 'text-primary',
+							)}
 						>
 							Home
-							<span className='absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 transform scale-x-100 transition-transform'></span>
+							<span
+								className={cn(
+									'absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 transition-transform',
+									isActive('/') && 'scale-x-100',
+								)}
+							></span>
 						</Link>
-
 						<Link
 							href='/about'
-							className='text-gray-600 hover:text-orange-500 px-4 py-2 text-sm font-semibold transition-colors relative group'
+							className={cn(
+								'text-gray-600 hover:text-primary px-4 py-2 text-sm font-semibold transition-colors relative group',
+								isActive('/about') && 'text-primary',
+							)}
 						>
-							About Us
-							<span className='absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform'></span>
+							General Information
+							<span
+								className={cn(
+									'absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 transition-transform',
+									isActive('/about') && 'scale-x-100',
+								)}
+							></span>
 						</Link>
-						<Link
+						{/* <Link
 							href='/services'
-							className='text-gray-600 hover:text-orange-500 px-4 py-2 text-sm font-semibold transition-colors relative group'
+							className='text-gray-600 hover:text-primary px-4 py-2 text-sm font-semibold transition-colors relative group'
 						>
 							Services
-							<span className='absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform'></span>
+							<span className='absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform'></span>
 						</Link>
 						<Link
 							href='/permits'
-							className='text-gray-600 hover:text-orange-500 px-4 py-2 text-sm font-semibold transition-colors relative group'
+							className='text-gray-600 hover:text-primary px-4 py-2 text-sm font-semibold transition-colors relative group'
 						>
 							Permits
-							<span className='absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform'></span>
-						</Link>
+							<span className='absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform'></span>
+						</Link> */}
 						<Link
 							href='/contact'
-							className='text-gray-600 hover:text-orange-500 px-4 py-2 text-sm font-semibold transition-colors relative group'
+							className={cn(
+								'text-gray-600 hover:text-primary px-4 py-2 text-sm font-semibold transition-colors relative group',
+								isActive('/contact') && 'text-primary',
+							)}
 						>
 							Contact Us
-							<span className='absolute bottom-0 left-0 w-full h-0.5 bg-orange-500 transform scale-x-0 group-hover:scale-x-100 transition-transform'></span>
+							<span
+								className={cn(
+									'absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 transition-transform',
+									isActive('/contact') && 'scale-x-100',
+								)}
+							></span>
 						</Link>
 					</nav>
 

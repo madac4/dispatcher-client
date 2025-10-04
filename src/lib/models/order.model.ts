@@ -68,6 +68,10 @@ export type OrderDTO = {
 	updatedAt: string
 	truck: TruckDTO
 	trailer: TrailerDTO
+	moderator: {
+		id: string
+		email: string
+	} | null
 	axleConfigs?: {
 		_id: string
 		tires: number
@@ -126,7 +130,12 @@ export enum OrderStatus {
 	FINISHED = 'finished',
 }
 
-export type OrderStatusType = 'active' | 'completed' | 'paid' | 'archived' | 'all'
+export type OrderStatusType =
+	| 'active'
+	| 'completed'
+	| 'paid'
+	| 'archived'
+	| 'all'
 
 export type OrderStatusDTO = {
 	value: OrderStatus

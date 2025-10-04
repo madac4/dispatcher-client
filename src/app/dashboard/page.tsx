@@ -1,8 +1,16 @@
+'use client'
+
 import { RecentActivity } from '@/components/blocks/RecentActivity'
 import { SectionCards } from '@/components/blocks/SectionCards'
 import { UsersList } from '@/components/blocks/UsersList'
+import { UserRole } from '@/lib/models/auth.model'
+import { useAuthStore } from '@/lib/stores/authStore'
 
 export default function DashboardPage() {
+	const { role } = useAuthStore()
+
+	const isAdmin = role() === UserRole.ADMIN
+
 	return (
 		<div className='space-y-6'>
 			<div>
@@ -12,12 +20,16 @@ export default function DashboardPage() {
 				</p>
 			</div>
 
-			<SectionCards />
+			{isAdmin && (
+				<>
+					<SectionCards />
 
-			<div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-				<RecentActivity />
-				<UsersList />
-			</div>
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+						<RecentActivity />
+						<UsersList />
+					</div>
+				</>
+			)}
 		</div>
 	)
 }

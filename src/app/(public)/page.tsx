@@ -18,28 +18,26 @@ import {
 	Mail,
 	MapPin,
 	Phone,
-	Shield,
 	Star,
 	Truck,
 	Users,
 	Zap,
 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Homepage() {
 	return (
 		<>
-			<section className='relative bg-gradient-to-br from-gray-50 via-white to-orange-50 py-20 overflow-hidden'>
-				<div className='absolute inset-0'>
-					<div
-						className='absolute inset-0'
-						style={{
-							backgroundImage: `url("/grid.svg")`,
-						}}
-					></div>
-				</div>
+			<section className='relative py-16 overflow-hidden'>
+				<div
+					className='absolute inset-0'
+					style={{
+						backgroundImage: `url("/grid.svg")`,
+					}}
+				></div>
 
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative'>
+				<div className='fluid-container relative'>
 					<div className='text-center max-w-5xl mx-auto'>
 						<div className='flex items-center justify-center space-x-4 mb-6'>
 							<Badge
@@ -47,14 +45,14 @@ export default function Homepage() {
 								className='bg-green-100 text-green-800 border-green-200'
 							>
 								<CheckCircle className='w-3 h-3 mr-1' />
-								20+ Years Experience
+								5+ Years Experience
 							</Badge>
 							<Badge
 								variant='secondary'
 								className='bg-blue-100 text-blue-800 border-blue-200'
 							>
 								<Star className='w-3 h-3 mr-1' />
-								Trusted by 1000+ Companies
+								Trusted by 100+ Companies
 							</Badge>
 							<Badge
 								variant='secondary'
@@ -67,7 +65,7 @@ export default function Homepage() {
 
 						<h1 className='text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight'>
 							Welcome to{' '}
-							<span className='text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600'>
+							<span className='text-transparent bg-clip-text bg-primary'>
 								Click Permit
 							</span>
 						</h1>
@@ -77,47 +75,46 @@ export default function Homepage() {
 						</div>
 
 						<div className='text-2xl md:text-3xl font-bold text-white mb-8'>
-							<span className='text-orange-500'>Oversize</span> •{' '}
-							<span className='text-orange-500'>Overweight</span>{' '}
-							•{' '}
-							<span className='text-orange-500'>High Value</span>
+							<span className='text-primary'>Oversize</span> •{' '}
+							<span className='text-primary'>Overweight</span> •{' '}
+							<span className='text-primary'>High Value</span>
 							<br />
-							Permitting & Insurance Needs
+							Permitting
 						</div>
 
-						<p className='text-lg md:text-xl text-gray-200 mb-12 max-w-4xl mx-auto leading-relaxed'>
-							Whether you need a single-state routine permit or
-							complex multi-state transportation requiring
-							additional insurance, escorts, and route surveys —
-							we&apos;re here to make it seamless.
+						<p className='text-lg md:text-xl text-gray-200 mb-8 max-w-4xl mx-auto leading-relaxed'>
+							Oversize or Overweight? We&apos;ve Got Your Permits
+							Covered! Navigating the road with heavy or oversized
+							loads requires more than horsepower — it demands
+							precision, compliance, and the right permits.
+							Whether you&apos;re hauling across one state or
+							coast-to-coast, we streamline the permit process so
+							you can stay focused on the road ahead.
 						</p>
 
-						<div className='flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6'>
-							<Button
-								size='lg'
-								className='bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-lg px-8 py-4 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-200'
-							>
-								<Phone className='w-5 h-5 mr-2' />
-								Call Now: 833 553 0343
-							</Button>
-						</div>
+						<Button size='lg' asChild className='w-fit'>
+							<Link href='/contact'>
+								<Mail className='w-5 h-5' />
+								Contact Us Now
+							</Link>
+						</Button>
 					</div>
 				</div>
 			</section>
 
-			<section className='bg-white py-16 border-b border-gray-100'>
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+			<section className='py-12'>
+				<div className='fluid-container'>
 					<div className='grid grid-cols-2 md:grid-cols-4 gap-8'>
 						<div className='text-center'>
-							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>
-								20+
+							<div className='text-3xl md:text-4xl font-bold text-primary mb-2'>
+								5+
 							</div>
 							<div className='text-gray-600 font-medium'>
 								Years Experience
 							</div>
 						</div>
 						<div className='text-center'>
-							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>
+							<div className='text-3xl md:text-4xl font-bold text-primary mb-2'>
 								50K+
 							</div>
 							<div className='text-gray-600 font-medium'>
@@ -125,15 +122,15 @@ export default function Homepage() {
 							</div>
 						</div>
 						<div className='text-center'>
-							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>
-								1000+
+							<div className='text-3xl md:text-4xl font-bold text-primary mb-2'>
+								100+
 							</div>
 							<div className='text-gray-600 font-medium'>
 								Happy Clients
 							</div>
 						</div>
 						<div className='text-center'>
-							<div className='text-3xl md:text-4xl font-bold text-orange-500 mb-2'>
+							<div className='text-3xl md:text-4xl font-bold text-primary mb-2'>
 								24/7
 							</div>
 							<div className='text-gray-600 font-medium'>
@@ -144,10 +141,10 @@ export default function Homepage() {
 				</div>
 			</section>
 
-			<section className='bg-gradient-to-br from-gray-50 to-white py-20'>
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+			<section className='bg-gray-50 py-16'>
+				<div className='fluid-container'>
 					<div className='text-center mb-12'>
-						<h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
+						<h2 className='text-3xl md:text-4xl font-bold  mb-4'>
 							Precision in Every Detail
 						</h2>
 						<p className='text-xl text-gray-600 max-w-3xl mx-auto'>
@@ -166,22 +163,20 @@ export default function Homepage() {
 				</div>
 			</section>
 
-			<section className='bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-20 relative overflow-hidden'>
-				<div className='absolute inset-0'>
-					<div
-						className='absolute inset-0'
-						style={{
-							backgroundImage: `url("/grid.svg")`,
-						}}
-					></div>
-				</div>
+			<section className='py-16 relative overflow-hidden'>
+				<div
+					className='absolute inset-0'
+					style={{
+						backgroundImage: `url("/grid.svg")`,
+					}}
+				></div>
 
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative'>
+				<div className='fluid-container relative'>
 					<div className='text-center mb-16'>
 						<h2 className='text-4xl md:text-5xl font-bold text-white mb-6'>
-							How it works:{' '}
-							<span className='text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-500'>
-								It&apos;s Easy
+							Easy Permit{' '}
+							<span className='text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-primary'>
+								Process
 							</span>
 						</h2>
 						<p className='text-xl text-gray-300 max-w-3xl mx-auto'>
@@ -190,7 +185,7 @@ export default function Homepage() {
 						</p>
 					</div>
 
-					<div className='grid grid-cols-1 md:grid-cols-5 gap-8 lg:gap-12'>
+					<div className='grid grid-cols-1 md:grid-cols-4 gap-6 lg:gap-8 space-y-8'>
 						{[
 							{
 								step: 1,
@@ -202,32 +197,24 @@ export default function Homepage() {
 							},
 							{
 								step: 2,
-								icon: FileText,
-								title: 'Choose a Product',
-								description:
-									'Select permitting, staff insurance or superload services based on your specific needs.',
-								color: 'from-green-500 to-green-600',
-							},
-							{
-								step: 3,
 								icon: Mail,
 								title: 'Send us a Request',
 								description:
 									'Fill out our simple form and upload any documents that are required for processing.',
-								color: 'from-purple-500 to-purple-600',
+								color: 'from-green-500 to-green-600',
 							},
 							{
-								step: 4,
+								step: 3,
 								icon: Phone,
 								title: 'Get Your Quote',
 								description:
 									'Our experienced team reviews your request and provides you with a detailed quote.',
-								color: 'from-orange-500 to-orange-600',
+								color: 'from-primary to-primary-600',
 							},
 							{
-								step: 5,
+								step: 4,
 								icon: CheckCircle,
-								title: 'Sit Back and Relax',
+								title: 'Let us handle the rest',
 								description:
 									'We take care of everything while you focus on what you do best - moving freight safely.',
 								color: 'from-emerald-500 to-emerald-600',
@@ -236,17 +223,15 @@ export default function Homepage() {
 							<div key={index} className='text-center group'>
 								<div className='relative mb-6'>
 									<div
-										className={`w-20 h-20 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-transform duration-300`}
+										className={`w-20 h-20 bg-gradient-to-br ${item.color} rounded-2xl flex items-center justify-center mx-auto shadow-2xl group-hover:scale-110 transition-transform duration-300 relative`}
 									>
 										<item.icon className='w-10 h-10 text-white' />
-									</div>
-									<div className='absolute -top-2 -right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg'>
-										<span className='text-sm font-bold text-gray-900'>
+										<div className='absolute -top-3 -right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg text-sm font-bold '>
 											{item.step}
-										</span>
+										</div>
 									</div>
 								</div>
-								<h3 className='text-white font-bold text-lg mb-3 group-hover:text-orange-400 transition-colors'>
+								<h3 className='text-white font-bold text-lg mb-3 group-hover:text-primary-300 transition-colors'>
 									{item.title}
 								</h3>
 								<p className='text-gray-300 text-sm leading-relaxed'>
@@ -256,34 +241,34 @@ export default function Homepage() {
 						))}
 					</div>
 
-					<div className='text-center mt-16'>
-						<Button
-							size='lg'
-							className='bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-lg px-10 py-4 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-200'
-						>
-							<Phone className='w-5 h-5 mr-2' />
-							Start Your Journey: 833 553 0343
+					<div className='flex items-center justify-center'>
+						<Button size='lg' asChild>
+							<Link href='/contact'>
+								<Mail className='w-5 h-5' />
+								Send us a request
+							</Link>
 						</Button>
 					</div>
 				</div>
 			</section>
 
-			<section className='bg-gradient-to-br from-gray-50 via-white to-blue-50 py-20'>
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-					<div className='text-center mb-16'>
-						<Badge className='bg-orange-100 text-orange-800 border-orange-200 mb-4'>
+			<section className='bg-gray-50 py-16'>
+				<div className='fluid-container'>
+					<div className='text-center mb-10'>
+						<Badge className='bg-primary-100 text-primary-800 border-primary-200 mb-4'>
 							CLICK PERMIT SOLUTIONS
 						</Badge>
-						<h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6'>
-							Always Quick, Accurate, No Hassle
+						<h2 className='text-4xl md:text-5xl font-bold  mb-6'>
+							Professional & Clear
 						</h2>
 						<p className='text-xl text-gray-600 max-w-4xl mx-auto'>
-							Comprehensive products for all your oversize,
-							overweight and high-value shipment needs
+							Consistently fast, precise, and stress-free
+							solutions for all your oversize, overweight, and
+							high-value freight needs.
 						</p>
 					</div>
 
-					<div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
 						{[
 							{
 								icon: FileText,
@@ -300,20 +285,6 @@ export default function Homepage() {
 								bgColor: 'from-blue-50 to-blue-100',
 							},
 							{
-								icon: Shield,
-								title: 'Insurance',
-								description:
-									"Protect shipments valued above your cargo policy limit. Don't risk losing thousands because of inadequate coverage. Our experienced team provides instant access to cargo coverage when you need it most.",
-								features: [
-									'High-value coverage',
-									'Instant quotes',
-									'Flexible terms',
-									'Claims support',
-								],
-								color: 'from-green-500 to-green-600',
-								bgColor: 'from-green-50 to-green-100',
-							},
-							{
 								icon: Truck,
 								title: 'Superloads',
 								description:
@@ -324,8 +295,8 @@ export default function Homepage() {
 									'Permit management',
 									'Expert logistics',
 								],
-								color: 'from-purple-500 to-purple-600',
-								bgColor: 'from-purple-50 to-purple-100',
+								color: 'from-primary to-primary-600',
+								bgColor: 'from-primary-50 to-primary-100',
 							},
 						].map((service, index) => (
 							<Card
@@ -341,7 +312,7 @@ export default function Homepage() {
 										>
 											<service.icon className='w-8 h-8 text-white' />
 										</div>
-										<h3 className='text-2xl font-bold text-gray-900'>
+										<h3 className='text-2xl font-bold '>
 											{service.title}
 										</h3>
 									</div>
@@ -379,12 +350,12 @@ export default function Homepage() {
 				</div>
 			</section>
 
-			<section className='bg-white py-20'>
-				<div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+			<section className='py-16'>
+				<div className='fluid-container'>
 					<div className='grid grid-cols-1 lg:grid-cols-2 gap-16 items-center'>
 						<div className='order-2 lg:order-1'>
 							<div className='relative'>
-								<div className='absolute inset-0 bg-gradient-to-br from-orange-100 to-blue-100 rounded-3xl transform rotate-3'></div>
+								<div className='absolute inset-0 bg-gradient-to-br from-primary-100 to-blue-100 rounded-3xl transform rotate-3'></div>
 								<div className='relative bg-white rounded-3xl p-8 shadow-2xl'>
 									<Image
 										src='/support.webp'
@@ -398,10 +369,10 @@ export default function Homepage() {
 						</div>
 
 						<div className='order-1 lg:order-2'>
-							<Badge className='bg-orange-100 text-orange-800 border-orange-200 mb-4'>
+							<Badge className='bg-primary-100 text-primary-800 border-primary-200 mb-4'>
 								CLICK PERMIT SUPPORT
 							</Badge>
-							<h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6'>
+							<h2 className='text-4xl md:text-5xl font-bold  mb-6'>
 								We&apos;re Here to Help You Succeed
 							</h2>
 							<p className='text-xl text-gray-600 mb-8 leading-relaxed'>
@@ -419,7 +390,7 @@ export default function Homepage() {
 										<Clock className='w-5 h-5 text-green-600' />
 									</div>
 									<div>
-										<div className='font-semibold text-gray-900'>
+										<div className='font-semibold '>
 											Quick Turnaround
 										</div>
 										<div className='text-sm text-gray-600'>
@@ -433,11 +404,11 @@ export default function Homepage() {
 										<Award className='w-5 h-5 text-blue-600' />
 									</div>
 									<div>
-										<div className='font-semibold text-gray-900'>
+										<div className='font-semibold '>
 											Expert Team
 										</div>
 										<div className='text-sm text-gray-600'>
-											20+ years experience
+											5+ years experience
 										</div>
 									</div>
 								</div>
@@ -447,7 +418,7 @@ export default function Homepage() {
 										<MapPin className='w-5 h-5 text-purple-600' />
 									</div>
 									<div>
-										<div className='font-semibold text-gray-900'>
+										<div className='font-semibold '>
 											Nationwide Coverage
 										</div>
 										<div className='text-sm text-gray-600'>
@@ -457,11 +428,11 @@ export default function Homepage() {
 								</div>
 
 								<div className='flex items-center space-x-3'>
-									<div className='w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center'>
-										<Zap className='w-5 h-5 text-orange-600' />
+									<div className='w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center'>
+										<Zap className='w-5 h-5 text-primary-600' />
 									</div>
 									<div>
-										<div className='font-semibold text-gray-900'>
+										<div className='font-semibold '>
 											24/7 Support
 										</div>
 										<div className='text-sm text-gray-600'>
@@ -471,22 +442,21 @@ export default function Homepage() {
 								</div>
 							</div>
 
-							<Button
-								size='lg'
-								className='bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-lg px-8 py-4 shadow-xl'
-							>
-								<Phone className='w-5 h-5 mr-2' />
-								Get Expert Help: 833 553 0343
+							<Button size='lg' asChild>
+								<Link href='/contact'>
+									<Mail className='w-5 h-5' />
+									Get Expert Help
+								</Link>
 							</Button>
 						</div>
 					</div>
 				</div>
 			</section>
 
-			<section className='bg-gradient-to-br from-gray-50 via-white to-orange-50 py-20'>
+			<section className='bg-gray-50 py-16'>
 				<div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8'>
 					<div className='text-center mb-10'>
-						<h2 className='text-4xl md:text-5xl font-bold text-gray-900 mb-6'>
+						<h2 className='text-4xl md:text-5xl font-bold  mb-6'>
 							Frequently Asked Questions
 						</h2>
 						<p className='text-xl text-gray-600'>
@@ -551,10 +521,13 @@ export default function Homepage() {
 						</p>
 						<Button
 							variant='outline'
-							className='border-2 border-orange-500 text-orange-600 hover:bg-orange-50 bg-transparent'
+							className='border-2 border-primary text-primary-600 hover:bg-primary-50 bg-transparent'
+							asChild
 						>
-							Contact Our Experts
-							<ArrowRight className='w-4 h-4 ml-2' />
+							<Link href='/contact'>
+								Contact Our Experts
+								<ArrowRight className='w-4 h-4 ml-2' />
+							</Link>
 						</Button>
 					</div>
 				</div>

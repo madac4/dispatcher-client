@@ -8,16 +8,16 @@ export function Footer() {
 				<div className='grid grid-cols-1 md:grid-cols-4 gap-12'>
 					<div className='md:col-span-2'>
 						<div className='flex items-center space-x-3 mb-6'>
-							<div className='w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg'>
+							<div className='w-10 h-10 bg-gradient-to-br from-primary to-primary-600 rounded-xl flex items-center justify-center shadow-lg'>
 								<span className='text-white font-bold text-lg'>
-									O
+									CP
 								</span>
 							</div>
 							<div>
 								<span className='text-2xl font-bold'>
 									CLICK
 								</span>
-								<span className='text-2xl font-bold text-orange-500 ml-1'>
+								<span className='text-2xl font-bold text-primary ml-1'>
 									PERMIT
 								</span>
 							</div>
@@ -30,17 +30,20 @@ export function Footer() {
 						</p>
 						<div className='flex items-center space-x-4 mb-6'>
 							<div className='flex items-center space-x-2'>
-								<Phone className='w-4 h-4 text-orange-500' />
+								<Phone className='w-4 h-4 text-primary' />
 								<span className='text-gray-300'>
-									833 553 0343
+									+373 78 410 220
 								</span>
 							</div>
-							<div className='flex items-center space-x-2'>
-								<Mail className='w-4 h-4 text-orange-500' />
+							<a
+								href='mailto:clickpermit@gmail.com'
+								className='flex items-center space-x-2'
+							>
+								<Mail className='w-4 h-4 text-primary' />
 								<span className='text-gray-300'>
-									sales@clickpermit.com
+									clickpermit@gmail.com
 								</span>
-							</div>
+							</a>
 						</div>
 						<Button
 							variant='outline'
@@ -65,7 +68,7 @@ export function Footer() {
 								<li key={link}>
 									<a
 										href='#'
-										className='hover:text-orange-400 transition-colors'
+										className='hover:text-primary-400 transition-colors'
 									>
 										{link}
 									</a>
@@ -81,19 +84,19 @@ export function Footer() {
 						<div className='flex space-x-4 mb-6'>
 							<a
 								href='#'
-								className='w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-orange-500 transition-colors'
+								className='w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors'
 							>
 								<Facebook className='w-5 h-5' />
 							</a>
 							<a
 								href='#'
-								className='w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-orange-500 transition-colors'
+								className='w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors'
 							>
 								<Twitter className='w-5 h-5' />
 							</a>
 							<a
 								href='#'
-								className='w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-orange-500 transition-colors'
+								className='w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-primary transition-colors'
 							>
 								<Linkedin className='w-5 h-5' />
 							</a>

@@ -18,10 +18,15 @@ export const AsideNavigation: NavigationItem[] = [
 		url: '/dashboard/orders',
 	},
 	{
+		label: 'Notifications',
+		icon: 'bell',
+		url: '/dashboard/notifications',
+		disabled: true,
+	},
+	{
 		label: 'Settings',
 		icon: 'settings',
 		url: '/dashboard/settings/inventory',
-		role: UserRole.USER,
 	},
 ]
 
