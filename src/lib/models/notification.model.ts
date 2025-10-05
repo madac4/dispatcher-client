@@ -9,25 +9,17 @@ export enum NotificationType {
   SYSTEM_ANNOUNCEMENT = 'system_announcement',
 }
 
-export enum NotificationPriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  URGENT = 'urgent',
-}
-
 export enum NotificationStatus {
   UNREAD = 'unread',
   READ = 'read',
   ARCHIVED = 'archived',
 }
 
-export interface Notification {
+export interface NotificationDTO {
   id: string;
   recipientId: string;
   senderId?: string;
   type: NotificationType;
-  priority: NotificationPriority;
   status: NotificationStatus;
   title: string;
   message: string;
@@ -55,7 +47,6 @@ export interface NotificationCreateRequest {
   recipientId: string;
   senderId?: string;
   type: NotificationType;
-  priority?: NotificationPriority;
   title: string;
   message: string;
   metadata?: {
@@ -80,30 +71,12 @@ export interface NotificationUpdateRequest {
 export interface NotificationQuery {
   recipientId?: string;
   type?: NotificationType;
-  priority?: NotificationPriority;
   status?: NotificationStatus;
   page?: number;
   limit?: number;
-  sortBy?: 'createdAt' | 'priority' | 'status';
+  sortBy?: 'createdAt' | 'status';
   sortOrder?: 'asc' | 'desc';
   unreadOnly?: boolean;
-}
-
-export interface NotificationStats {
-  total: number;
-  unread: number;
-  byType: Record<NotificationType, number>;
-  byPriority: Record<NotificationPriority, number>;
-}
-
-export interface NotificationResponse {
-  success: boolean;
-  message: string;
-  data?: Notification | Notification[];
-  stats?: NotificationStats;
-  total?: number;
-  page?: number;
-  limit?: number;
 }
 
 export interface NotificationBulkResponse {
