@@ -3,21 +3,26 @@
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { ContactFormData, ContactService } from '@/lib/services/contactService';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Send } from 'lucide-react';
+import { Loader2, Send } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { Textarea } from '../ui/textarea';
 
 const contactFormSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
-  email: z.string().email('Invalid email address'),
-  phone: z.string().min(1, 'Phone is required'),
-  subject: z.string().min(1, 'Subject is required'),
-  company: z.string(),
-  message: z.string(),
+  firstName: z.string().min(1, 'First name is required').max(50, 'First name must be less than 50 characters'),
+  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name must be less than 50 characters'),
+  email: z.string().email('Invalid email address').max(100, 'Email must be less than 100 characters'),
+  phone: z.string().min(1, 'Phone is required').max(20, 'Phone number must be less than 20 characters'),
+  subject: z.string().min(1, 'Subject is required').max(100, 'Subject must be less than 100 characters'),
+  company: z.string().max(100, 'Company name must be less than 100 characters').optional(),
+  message: z
+    .string()
+    .min(10, 'Message must be at least 10 characters')
+    .max(1000, 'Message must be less than 1000 characters'),
 });
 
 export default function ContactForm() {
@@ -38,8 +43,37 @@ export default function ContactForm() {
 
   async function onSubmit(values: z.infer<typeof contactFormSchema>) {
     setIsLoading(true);
-    console.log(values);
-    setIsLoading(false);
+
+    try {
+      const contactData: ContactFormData = {
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        email: values.email.trim().toLowerCase(),
+        phone: values.phone.trim(),
+        subject: values.subject.trim(),
+        company: values.company?.trim() || '',
+        message: values.message.trim(),
+      };
+
+      console.log(contactData);
+
+      await ContactService.submit(contactData);
+
+      toast.success('Message sent successfully!', {
+        description: 'We will get back to you soon.',
+        duration: 5000,
+      });
+
+      form.reset();
+    } catch (error) {
+      console.error('Contact form submission error:', error);
+      toast.error('Failed to send message', {
+        description: 'Please try again or contact us directly.',
+        duration: 5000,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -106,7 +140,7 @@ export default function ContactForm() {
           name="company"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Subject</FormLabel>
+              <FormLabel>Company</FormLabel>
               <FormControl>
                 <Input type="text" placeholder="Your Company" className="h-12" {...field} />
               </FormControl>
@@ -136,7 +170,14 @@ export default function ContactForm() {
             <FormItem className="col-span-full">
               <FormLabel>Message</FormLabel>
               <FormControl>
-                <Textarea placeholder="Type your message here..." className="resize-none min-h-[120px]" {...field} />
+                <div className="relative">
+                  <Textarea
+                    placeholder="Type your message here..."
+                    className="resize-none min-h-[120px] pr-16"
+                    {...field}
+                  />
+                  <div className="absolute bottom-2 right-2 text-xs text-gray-500">{field.value?.length || 0}/1000</div>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,8 +186,17 @@ export default function ContactForm() {
 
         <div className="col-span-full space-y-2">
           <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
-            <Send className="w-5 h-5" />
-            Send Message
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send className="w-5 h-5 mr-2" />
+                Send Message
+              </>
+            )}
           </Button>
 
           <p className="text-sm text-gray-500 text-center">

@@ -5,12 +5,14 @@ import {
   Award,
   CheckCircle,
   Clock,
+  Download,
   Facebook,
   HeadphonesIcon,
   Linkedin,
   Mail,
   MapPin,
   Phone,
+  Send,
   Twitter,
   Users,
 } from 'lucide-react';
@@ -51,6 +53,21 @@ export default function ContactUsPage() {
             </div>
 
             <div className="space-y-4">
+              <Card className="p-4 hover:shadow-lg transition-shadow border-l-4 border-l-[#25A6E5]">
+                <div className="flex items-start space-x-4">
+                  <div className="w-10 h-10 bg-[#25A6E5] rounded-lg flex items-center justify-center">
+                    <Send className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-bold text-gray-900">Telegram</h3>
+                    <p className="text-gray-600 text-sm">Send us a message</p>
+                    <a href="https://t.me/clickpermit" className="font-semibold text-[#25A6E5]">
+                      @clickpermit
+                    </a>
+                  </div>
+                </div>
+              </Card>
+
               <Card className="p-4 hover:shadow-lg transition-shadow border-l-4 border-l-primary">
                 <div className="flex items-start space-x-4">
                   <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
@@ -101,10 +118,28 @@ export default function ContactUsPage() {
                     <h3 className="font-bold text-gray-900">Business Hours</h3>
                     <p className="text-gray-600 text-sm">When you can reach us</p>
                     <div className="space-y-1 mt-3">
-                      <p className="text-sm font-medium text-gray-900">Monday - Friday: 7:00 AM - 7:00 PM CST</p>
-                      <p className="text-sm font-medium text-gray-900">Saturday: 8:00 AM - 4:00 PM CST</p>
-                      <p className="text-sm font-medium text-gray-900">Sunday: Emergency support only</p>
+                      <p className="text-sm font-medium text-gray-900">Monday - Friday: 7:00 AM - 5:00 PM</p>
+                      <p className="text-sm font-medium text-gray-900">Saturday: 8:00 AM - 12:00 PM</p>
                     </div>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-4 hover:shadow-lg transition-shadow border-l-4 border-l-orange-500">
+                <div className="flex items-start space-x-4">
+                  <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <Download className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div className="space-y-1">
+                    <h3 className="font-bold text-gray-900">Company Brochure</h3>
+                    <p className="text-gray-600 text-sm">Download our company information</p>
+                    <a
+                      href="/ClickPermit-1.pdf"
+                      download="ClickPermit-1.pdf"
+                      className="font-semibold text-orange-600 hover:text-orange-700 transition-colors"
+                    >
+                      Download PDF
+                    </a>
                   </div>
                 </div>
               </Card>
@@ -169,8 +204,8 @@ export default function ContactUsPage() {
               <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300">
                 <HeadphonesIcon className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">24/7 Support</h3>
-              <p className="text-gray-600">Emergency support available around the clock</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Customer Support</h3>
+              <p className="text-gray-600">Emergency support available</p>
             </div>
 
             <div className="text-center group">
