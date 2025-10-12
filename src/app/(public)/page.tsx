@@ -266,10 +266,12 @@ export default function Homepage() {
                       ))}
                     </div>
 
-                    <Button className="w-full">
-                      Learn More
-                      <ArrowRight className="w-4 h-4" />
-                    </Button>
+                    <Link href="/general-info">
+                      <Button className="w-full">
+                        Learn More
+                        <ArrowRight className="w-4 h-4" />
+                      </Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
