@@ -1,7 +1,26 @@
 import { Facebook, Linkedin, Mail, Phone, Twitter } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '../ui/button';
 
 export function Footer() {
+  const links = [
+    {
+      label: 'Home',
+      href: '/',
+    },
+    {
+      label: 'General Information',
+      href: '/general-info',
+    },
+    {
+      label: 'Permits',
+      href: '/permits',
+    },
+    {
+      label: 'Contact Us',
+      href: '/contact',
+    },
+  ];
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,18 +53,18 @@ export function Footer() {
               variant="outline"
               className="text-white border-white hover:bg-white hover:text-gray-900 bg-transparent"
             >
-              Learn More About Us
+              <Link href="/general-info">Learn More About Us</Link>
             </Button>
           </div>
 
           <div>
             <h3 className="font-bold text-lg mb-6">Quick Links</h3>
             <ul className="space-y-3 text-gray-300">
-              {['Home', 'General Information', 'Permits', 'Contact Us'].map((link) => (
-                <li key={link}>
-                  <a href="#" className="hover:text-primary-400 transition-colors">
-                    {link}
-                  </a>
+              {links.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} className="hover:text-primary-400 transition-colors">
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>
