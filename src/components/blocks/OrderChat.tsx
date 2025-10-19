@@ -104,7 +104,7 @@ export default function OrderChat({ orderId }: OrderChatProps) {
 			<CardHeader>
 				<CardTitle className='flex items-center justify-between'>
 					<div className='flex items-center gap-2'>
-						<MessageCircle className='w-5 h-5 text-orange-500' />
+						<MessageCircle className='w-5 h-5 text-primary' />
 						Order Chat
 					</div>
 					{getConnectionStatus()}

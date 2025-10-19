@@ -47,6 +47,7 @@ import {
 	OrderStatus,
 } from '@/lib/models/order.model'
 import { getOrderByNumber, OrderService } from '@/lib/services/orderService'
+import { SettingsService } from '@/lib/services/settingsService'
 import { useAuthStore } from '@/lib/stores/authStore'
 import { formatDate, formatDimensions, truncate } from '@/utils/formatters'
 
@@ -66,6 +67,7 @@ import {
 	Trash,
 	Truck,
 	Upload,
+	UserCheck,
 	X,
 	Zap,
 } from 'lucide-react'
@@ -119,22 +121,23 @@ export default function OrderDetailsPage() {
 				setLoading(true)
 				const { data } = await getOrderByNumber(number)
 				setOrder(data)
-
-				console.log(role(), data?.status)
-
-				if (
-					role() === UserRole.ADMIN &&
-					data?.status === OrderStatus.PENDING
-				) {
-					updateOrderStatus(OrderStatus.PROCESSING, data.id)
-				}
 			} finally {
 				setLoading(false)
 				fetchingRef.current = false
 			}
 		},
-		[role, updateOrderStatus],
+		[]
 	)
+
+	const moderateOrder = useCallback(async (orderId: string) => {
+		try {
+			const { data, message } = await OrderService.moderateOrder(orderId)
+			toast.success(message)
+			setOrder(data)
+		} catch (error) {
+			console.error('Error moderating order:', error)
+		}
+	}, [])
 
 	useEffect(() => {
 		if (orderNumber) fetchOrder(orderNumber)
@@ -150,6 +153,19 @@ export default function OrderDetailsPage() {
 			const { message } = await OrderService.downloadOrderFile(
 				orderId,
 				filename,
+			)
+			toast.success(message)
+		} catch (error) {
+			console.error('Error downloading file:', error)
+			toast.error('Failed to download file')
+		}
+	}
+
+	const downloadCarrierFile = async (filename: string) => {
+		try {
+			const { message } = await SettingsService.downloadCarrierFile(
+				filename,
+				order!.userId,
 			)
 			toast.success(message)
 		} catch (error) {
@@ -218,8 +234,8 @@ export default function OrderDetailsPage() {
 		<>
 			<div className='flex items-center justify-between'>
 				<div className='flex items-center gap-3'>
-					<div className='w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center'>
-						<FileText size='16' className='text-orange-500' />
+					<div className='w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center'>
+						<FileText size='16' className='text-primary' />
 					</div>
 
 					<div>
@@ -237,97 +253,110 @@ export default function OrderDetailsPage() {
 					</div>
 				</div>
 
-				<Dialog>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant='outline' size='md'>
-								<Zap size='16' />
-								Quick Actions
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent>
-							<DialogTrigger asChild>
-								<DropdownMenuItem>
-									<RefreshCcwDot size='16' />
-									Update Status
-								</DropdownMenuItem>
-							</DialogTrigger>
-
-							<DropdownMenuItem disabled={true}>
-								<Edit size='16' />
-								Edit Order
-							</DropdownMenuItem>
-							<DropdownMenuItem disabled={true}>
-								<Copy size='16' />
-								Duplicate Order
-							</DropdownMenuItem>
-							<DropdownMenuItem disabled={true}>
-								<X size='16' />
-								Cancel Order
-							</DropdownMenuItem>
-							<DropdownMenuItem disabled={true}>
-								<Trash size='16' />
-								Delete Order
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-
-					<DialogContent className='sm:max-w-md'>
-						<DialogHeader>
-							<DialogTitle>Update Status</DialogTitle>
-							<DialogDescription>
-								Update the status of the order.
-							</DialogDescription>
-						</DialogHeader>
-						<div className='flex items-center gap-2'>
-							<div className='grid flex-1 gap-2'>
-								<Label htmlFor='status' className='sr-only'>
-									Status
-								</Label>
-								<Select
-									value={selectedStatus || ''}
-									onValueChange={setSelectedStatus}
-								>
-									<SelectTrigger className='w-full'>
-										<SelectValue placeholder='Select a status' />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectGroup>
-											{statuses.map(status => (
-												<SelectItem
-													key={status.value}
-													value={status.value}
-												>
-													{status.label}{' '}
-													<span className='text-primary'>
-														{status.value ===
-														order.status
-															? '(Current)'
-															: ''}
-													</span>
-												</SelectItem>
-											))}
-										</SelectGroup>
-									</SelectContent>
-								</Select>
-							</div>
-						</div>
-						<DialogFooter className='sm:justify-start'>
+				<div className='flex items-center gap-3'>
+					{(role() === UserRole.ADMIN ||
+						role() === UserRole.MODERATOR) &&
+						!order.moderator && (
 							<Button
-								type='button'
-								variant='secondary'
-								onClick={() =>
-									updateOrderStatus(
-										selectedStatus as OrderStatus,
-										order.id,
-									)
-								}
+								size='md'
+								onClick={() => moderateOrder(order.id)}
 							>
-								Update Status
+								<UserCheck size='16' />
+								Moderate Order
 							</Button>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>
+						)}
+					<Dialog>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button variant='outline' size='md'>
+									<Zap size='16' />
+									Quick Actions
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent>
+								<DialogTrigger asChild>
+									<DropdownMenuItem>
+										<RefreshCcwDot size='16' />
+										Update Status
+									</DropdownMenuItem>
+								</DialogTrigger>
+
+								<DropdownMenuItem disabled={true}>
+									<Edit size='16' />
+									Edit Order
+								</DropdownMenuItem>
+								<DropdownMenuItem disabled={true}>
+									<Copy size='16' />
+									Duplicate Order
+								</DropdownMenuItem>
+								<DropdownMenuItem disabled={true}>
+									<X size='16' />
+									Cancel Order
+								</DropdownMenuItem>
+								<DropdownMenuItem disabled={true}>
+									<Trash size='16' />
+									Delete Order
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+
+						<DialogContent className='sm:max-w-md'>
+							<DialogHeader>
+								<DialogTitle>Update Status</DialogTitle>
+								<DialogDescription>
+									Update the status of the order.
+								</DialogDescription>
+							</DialogHeader>
+							<div className='flex items-center gap-2'>
+								<div className='grid flex-1 gap-2'>
+									<Label htmlFor='status' className='sr-only'>
+										Status
+									</Label>
+									<Select
+										value={selectedStatus || ''}
+										onValueChange={setSelectedStatus}
+									>
+										<SelectTrigger className='w-full'>
+											<SelectValue placeholder='Select a status' />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectGroup>
+												{statuses.map(status => (
+													<SelectItem
+														key={status.value}
+														value={status.value}
+													>
+														{status.label}{' '}
+														<span className='text-primary'>
+															{status.value ===
+															order.status
+																? '(Current)'
+																: ''}
+														</span>
+													</SelectItem>
+												))}
+											</SelectGroup>
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
+							<DialogFooter className='sm:justify-start'>
+								<Button
+									type='button'
+									variant='secondary'
+									onClick={() =>
+										updateOrderStatus(
+											selectedStatus as OrderStatus,
+											order.id,
+										)
+									}
+								>
+									Update Status
+								</Button>
+							</DialogFooter>
+						</DialogContent>
+					</Dialog>
+				</div>
 			</div>
 
 			<div className='grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-6'>
@@ -335,7 +364,7 @@ export default function OrderDetailsPage() {
 					<Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<Package className='w-5 h-5 mr-2 text-orange-500' />
+								<Package className='w-5 h-5 mr-2 text-primary' />
 								Load Details
 							</CardTitle>
 						</CardHeader>
@@ -462,7 +491,7 @@ export default function OrderDetailsPage() {
 							<Card>
 								<CardHeader>
 									<CardTitle className='flex items-center text-lg'>
-										<Ruler className='w-5 h-5 mr-2 text-orange-500' />
+										<Ruler className='w-5 h-5 mr-2 text-primary' />
 										Axle Configuration
 									</CardTitle>
 								</CardHeader>
@@ -550,7 +579,7 @@ export default function OrderDetailsPage() {
 											</TableRow>
 										</TableBody>
 										<TableFooter>
-											<TableRow className='bg-orange-50 font-semibold'>
+											<TableRow className='bg-primary-50 font-semibold'>
 												<TableCell className='text-left'>
 													Gross Weight:
 												</TableCell>
@@ -558,7 +587,7 @@ export default function OrderDetailsPage() {
 													colSpan={
 														order.axleConfigs.length
 													}
-													className='text-right font-semibold text-orange-600'
+													className='text-right font-semibold text-primary-600'
 												>
 													{order.axleConfigs
 														.reduce(
@@ -583,7 +612,7 @@ export default function OrderDetailsPage() {
 					<Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<Route className='w-5 h-5 mr-2 text-orange-500' />
+								<Route className='w-5 h-5 mr-2 text-primary' />
 								Route Information
 							</CardTitle>
 						</CardHeader>
@@ -1137,8 +1166,7 @@ export default function OrderDetailsPage() {
 																			variant='ghost'
 																			size='sm'
 																			onClick={() =>
-																				downloadOrderFile(
-																					order.id,
+																				downloadCarrierFile(
 																					file.filename,
 																				)
 																			}
@@ -1301,11 +1329,11 @@ export default function OrderDetailsPage() {
 						)}
 				</div>
 
-				<div className='space-y-6'>
+				<div className='space-y-6 sticky top-4'>
 					<Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<FileText className='w-5 h-5 mr-2 text-orange-500' />
+								<FileText className='w-5 h-5 mr-2 text-primary' />
 								Order Summary
 							</CardTitle>
 						</CardHeader>
@@ -1374,7 +1402,7 @@ export default function OrderDetailsPage() {
 					<Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<FileText className='w-5 h-5 mr-2 text-orange-500' />
+								<FileText className='w-5 h-5 mr-2 text-primary' />
 								Files ({order.files.length})
 							</CardTitle>
 						</CardHeader>

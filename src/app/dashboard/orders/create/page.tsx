@@ -6,19 +6,46 @@ import { SingleDatePicker } from '@/components/elements/SingleDatePicker'
 import { EntitySelectModal } from '@/components/modals/EntitySelectModal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableFooter,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table'
 import { OrderPayload } from '@/lib/models/order.model'
 import { TrailerDTO } from '@/lib/models/trailer.model'
 import { TruckDTO } from '@/lib/models/truck.model'
-import { orderFormDefaultValues, orderFormSchema } from '@/lib/schemas/order.schema'
+import {
+	orderFormDefaultValues,
+	orderFormSchema,
+} from '@/lib/schemas/order.schema'
 import { createOrder } from '@/lib/services/orderService'
 import { getTrailerById } from '@/lib/services/trailerService'
 import { getTruckById } from '@/lib/services/truckService'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CircleCheckBig, FileText, Loader2, Package, Truck as TruckIcon, Upload, User, X } from 'lucide-react'
+import {
+	CircleCheckBig,
+	FileText,
+	Loader2,
+	Package,
+	Truck as TruckIcon,
+	Upload,
+	User,
+	X,
+} from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useForm, UseFormReturn } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -40,7 +67,9 @@ export default function NewOrderForm() {
 	const legalWeight = form.watch('legalWeight')
 	const axleConfigs = form.watch('axleConfigs')
 	const totalAxles = (truck?.nrOfAxles || 0) + (trailer?.nrOfAxles || 0)
-	const grossWeight = axleConfigs?.reduce((sum, config) => sum + (config?.weight || 0), 0) || 0
+	const grossWeight =
+		axleConfigs?.reduce((sum, config) => sum + (config?.weight || 0), 0) ||
+		0
 
 	const updateAxleConfigs = useCallback(() => {
 		if (legalWeight === 'no' && totalAxles > 0 && truck && trailer) {
@@ -113,20 +142,22 @@ export default function NewOrderForm() {
 
 	return (
 		<div className='relative'>
-			<div className='text-center mb-6'>
-				<div className='w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-					<FileText className='w-8 h-8 text-orange-500' />
+			<div className='text-center mb-6 space-y-3'>
+				<div className='w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto'>
+					<FileText className='w-8 h-8 text-primary' />
 				</div>
-				<h1 className='text-3xl font-bold text-gray-900 mb-2'>New Order Form</h1>
-				<p className='text-gray-600'>Create a new shipping order for your oversized load</p>
+				<h1 className='text-3xl font-bold  mb-2'>Create new Order</h1>
 			</div>
 
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-6'>
+				<form
+					onSubmit={form.handleSubmit(handleSubmit)}
+					className='space-y-6'
+				>
 					<Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<User className='w-5 h-5 mr-2 text-orange-500' />
+								<User className='w-5 h-5 mr-2 text-primary' />
 								Order Information
 							</CardTitle>
 						</CardHeader>
@@ -138,10 +169,16 @@ export default function NewOrderForm() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>
-												Contact <span className='text-red-500'>*</span>
+												Contact{' '}
+												<span className='text-red-500'>
+													*
+												</span>
 											</FormLabel>
 											<FormControl>
-												<Input placeholder='Enter contact information' {...field} />
+												<Input
+													placeholder='Enter contact information'
+													{...field}
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -154,10 +191,16 @@ export default function NewOrderForm() {
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>
-												Permit Start Date <span className='text-red-500'>*</span>
+												Permit Start Date{' '}
+												<span className='text-red-500'>
+													*
+												</span>
 											</FormLabel>
 											<FormControl>
-												<SingleDatePicker onChange={field.onChange} minDate={new Date()} />
+												<SingleDatePicker
+													onChange={field.onChange}
+													minDate={new Date()}
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -170,7 +213,7 @@ export default function NewOrderForm() {
 					<Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<TruckIcon className='w-5 h-5 mr-2 text-orange-500' />
+								<TruckIcon className='w-5 h-5 mr-2 text-primary' />
 								Vehicle Selection
 							</CardTitle>
 						</CardHeader>
@@ -178,18 +221,24 @@ export default function NewOrderForm() {
 							<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 								<div className='space-y-2'>
 									{!truck && (
-										<EntitySelectModal type='truck' onSelect={handleTruckSelect}>
-											<div className='border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-orange-400 hover:bg-orange-50/20 transition-all duration-200'>
+										<EntitySelectModal
+											type='truck'
+											onSelect={handleTruckSelect}
+										>
+											<div className='border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-primary-400 hover:bg-primary-50/20 transition-all duration-200'>
 												<div className='w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3'>
 													<TruckIcon className='w-6 h-6 text-gray-400' />
 												</div>
-												<h3 className='text-lg font-semibold text-gray-900 mb-2'>
+												<h3 className='text-lg font-semibold  mb-2'>
 													No Truck Selected
 												</h3>
 												<p className='text-gray-500 mb-3'>
-													Choose a truck from your fleet inventory
+													Choose a truck from your
+													fleet inventory
 												</p>
-												<Button type='button'>Select Truck</Button>
+												<Button type='button'>
+													Select Truck
+												</Button>
 											</div>
 										</EntitySelectModal>
 									)}
@@ -202,17 +251,26 @@ export default function NewOrderForm() {
 														<TruckIcon className='w-6 h-6 text-white' />
 													</div>
 													<div>
-														<h3 className='text-lg font-bold text-gray-900'>
-															Unit #{truck.unitNumber}
+														<h3 className='text-lg font-bold '>
+															Unit #
+															{truck.unitNumber}
 														</h3>
 														<p className='text-blue-600 font-semibold text-sm'>
-															{truck.year} {truck.make}
+															{truck.year}{' '}
+															{truck.make}
 														</p>
 													</div>
 												</div>
 
-												<EntitySelectModal type='truck' onSelect={handleTruckSelect}>
-													<Button variant='outline' size='sm' type='button'>
+												<EntitySelectModal
+													type='truck'
+													onSelect={handleTruckSelect}
+												>
+													<Button
+														variant='outline'
+														size='sm'
+														type='button'
+													>
 														Change truck
 													</Button>
 												</EntitySelectModal>
@@ -222,25 +280,33 @@ export default function NewOrderForm() {
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														License Plate
 													</h6>
-													<p className='font-semibold text-gray-900'>{truck.licencePlate}</p>
+													<p className='font-semibold '>
+														{truck.licencePlate}
+													</p>
 												</div>
 												<div className='bg-white/70 rounded-lg p-2 space-y-1'>
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														State
 													</h6>
-													<p className='font-semibold text-gray-900'>{truck.state}</p>
+													<p className='font-semibold '>
+														{truck.state}
+													</p>
 												</div>
 												<div className='bg-white/70 rounded-lg p-2 space-y-1'>
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														Axles
 													</h6>
-													<p className='font-semibold text-gray-900'>{truck.nrOfAxles}</p>
+													<p className='font-semibold '>
+														{truck.nrOfAxles}
+													</p>
 												</div>
 												<div className='bg-white/70 rounded-lg p-2 space-y-1'>
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														VIN Number
 													</h6>
-													<p className='font-semibold text-gray-900'>{truck.vin}</p>
+													<p className='font-semibold '>
+														{truck.vin}
+													</p>
 												</div>
 											</div>
 										</div>
@@ -248,18 +314,24 @@ export default function NewOrderForm() {
 								</div>
 								<div className='space-y-2'>
 									{!trailer && (
-										<EntitySelectModal type='trailer' onSelect={handleTrailerSelect}>
-											<div className='border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-orange-400 hover:bg-orange-50/20 transition-all duration-200'>
+										<EntitySelectModal
+											type='trailer'
+											onSelect={handleTrailerSelect}
+										>
+											<div className='border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-parimary-400 hover:bg-parimary-50/20 transition-all duration-200'>
 												<div className='w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3'>
 													<Package className='w-6 h-6 text-gray-400' />
 												</div>
-												<h3 className='text-lg font-semibold text-gray-900 mb-2'>
+												<h3 className='text-lg font-semibold  mb-2'>
 													No Trailer Selected
 												</h3>
 												<p className='text-gray-500 mb-3'>
-													Choose a trailer from your fleet inventory
+													Choose a trailer from your
+													fleet inventory
 												</p>
-												<Button type='button'>Select Trailer</Button>
+												<Button type='button'>
+													Select Trailer
+												</Button>
 											</div>
 										</EntitySelectModal>
 									)}
@@ -272,19 +344,29 @@ export default function NewOrderForm() {
 														<Package className='w-6 h-6 text-white' />
 													</div>
 													<div>
-														<h3 className='text-lg font-bold text-gray-900'>
+														<h3 className='text-lg font-bold '>
 															{trailer.unitNumber
 																? `Unit #${trailer.unitNumber}`
 																: 'Trailer'}
 														</h3>
 														<p className='text-purple-600 font-semibold text-sm'>
-															{trailer.year} {trailer.make}
+															{trailer.year}{' '}
+															{trailer.make}
 														</p>
 													</div>
 												</div>
 
-												<EntitySelectModal type='trailer' onSelect={handleTrailerSelect}>
-													<Button variant='outline' size='sm' type='button'>
+												<EntitySelectModal
+													type='trailer'
+													onSelect={
+														handleTrailerSelect
+													}
+												>
+													<Button
+														variant='outline'
+														size='sm'
+														type='button'
+													>
 														Change trailer
 													</Button>
 												</EntitySelectModal>
@@ -294,15 +376,16 @@ export default function NewOrderForm() {
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														License Plate
 													</h6>
-													<p className='font-semibold text-gray-900'>
-														{trailer.licencePlate || '—'}
+													<p className='font-semibold '>
+														{trailer.licencePlate ||
+															'—'}
 													</p>
 												</div>
 												<div className='bg-white/70 rounded-lg p-2 space-y-1'>
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														State
 													</h6>
-													<p className='font-semibold text-gray-900'>
+													<p className='font-semibold '>
 														{trailer.state || '—'}
 													</p>
 												</div>
@@ -310,29 +393,36 @@ export default function NewOrderForm() {
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														Length
 													</h6>
-													<p className='font-semibold text-gray-900'>
-														{trailer.length ? `${trailer.length}` : '—'}
+													<p className='font-semibold '>
+														{trailer.length
+															? `${trailer.length}`
+															: '—'}
 													</p>
 												</div>
 												<div className='bg-white/70 rounded-lg p-2 space-y-1'>
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														Type
 													</h6>
-													<p className='font-semibold text-gray-900'>{trailer.type || '—'}</p>
+													<p className='font-semibold '>
+														{trailer.type || '—'}
+													</p>
 												</div>
 												<div className='bg-white/70 rounded-lg p-2 space-y-1'>
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														Axles
 													</h6>
-													<p className='font-semibold text-gray-900'>
-														{trailer.nrOfAxles || '—'}
+													<p className='font-semibold '>
+														{trailer.nrOfAxles ||
+															'—'}
 													</p>
 												</div>
 												<div className='bg-white/70 rounded-lg p-2 space-y-1'>
 													<h6 className='text-xs font-medium text-gray-600 uppercase'>
 														VIN Number
 													</h6>
-													<p className='font-semibold text-gray-900'>{trailer.vin || '—'}</p>
+													<p className='font-semibold '>
+														{trailer.vin || '—'}
+													</p>
 												</div>
 											</div>
 										</div>
@@ -345,7 +435,7 @@ export default function NewOrderForm() {
 					<Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<Package className='w-5 h-5 mr-2 text-orange-500' />
+								<Package className='w-5 h-5 mr-2 text-primary' />
 								Load Information
 							</CardTitle>
 						</CardHeader>
@@ -356,10 +446,16 @@ export default function NewOrderForm() {
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>
-											Commodity <span className='text-red-500'>*</span>
+											Commodity{' '}
+											<span className='text-red-500'>
+												*
+											</span>
 										</FormLabel>
 										<FormControl>
-											<Input placeholder='Enter commodity description' {...field} />
+											<Input
+												placeholder='Enter commodity description'
+												{...field}
+											/>
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -374,7 +470,10 @@ export default function NewOrderForm() {
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel>
-													Load Dims <span className='text-red-500'>*</span>
+													Load Dims{' '}
+													<span className='text-red-500'>
+														*
+													</span>
 												</FormLabel>
 												<FormControl>
 													<Input
@@ -391,7 +490,8 @@ export default function NewOrderForm() {
 
 								<div className='bg-gray-50 rounded-lg p-4 space-y-2'>
 									<FormLabel>
-										Overall Length <span className='text-red-500'>*</span>
+										Overall Length{' '}
+										<span className='text-red-500'>*</span>
 									</FormLabel>
 									<div className='grid grid-cols-2 gap-2'>
 										<FormField
@@ -409,6 +509,7 @@ export default function NewOrderForm() {
 															/>
 														</FormControl>
 														<Button
+															tabIndex={-1}
 															variant='outline'
 															className='text-sm border-l-0 rounded-l-none text-gray-600 font-medium bg-transparent'
 															type='button'
@@ -435,6 +536,7 @@ export default function NewOrderForm() {
 															/>
 														</FormControl>
 														<Button
+															tabIndex={-1}
 															variant='outline'
 															className='text-sm border-l-0 rounded-l-none text-gray-600 font-medium bg-transparent'
 															type='button'
@@ -452,7 +554,8 @@ export default function NewOrderForm() {
 
 								<div className='bg-gray-50 rounded-lg p-4 space-y-2'>
 									<FormLabel>
-										Overall Width <span className='text-red-500'>*</span>
+										Overall Width{' '}
+										<span className='text-red-500'>*</span>
 									</FormLabel>
 									<div className='grid grid-cols-2 gap-2'>
 										<FormField
@@ -470,6 +573,7 @@ export default function NewOrderForm() {
 															/>
 														</FormControl>
 														<Button
+															tabIndex={-1}
 															variant='outline'
 															className='text-sm border-l-0 rounded-l-none text-gray-600 font-medium bg-transparent'
 															type='button'
@@ -497,6 +601,7 @@ export default function NewOrderForm() {
 															/>
 														</FormControl>
 														<Button
+															tabIndex={-1}
 															variant='outline'
 															className='text-sm border-l-0 rounded-l-none text-gray-600 font-medium bg-transparent'
 															type='button'
@@ -515,7 +620,8 @@ export default function NewOrderForm() {
 							<div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
 								<div className='bg-gray-50 rounded-lg p-4 space-y-2'>
 									<FormLabel>
-										Overall Height <span className='text-red-500'>*</span>
+										Overall Height{' '}
+										<span className='text-red-500'>*</span>
 									</FormLabel>
 
 									<div className='grid grid-cols-2 gap-2'>
@@ -534,6 +640,7 @@ export default function NewOrderForm() {
 															/>
 														</FormControl>
 														<Button
+															tabIndex={-1}
 															variant='outline'
 															className='text-sm border-l-0 rounded-l-none text-gray-600 font-medium bg-transparent'
 															type='button'
@@ -561,6 +668,7 @@ export default function NewOrderForm() {
 															/>
 														</FormControl>
 														<Button
+															tabIndex={-1}
 															variant='outline'
 															className='text-sm border-l-0 rounded-l-none text-gray-600 font-medium bg-transparent'
 															type='button'
@@ -577,7 +685,8 @@ export default function NewOrderForm() {
 
 								<div className='bg-gray-50 rounded-lg p-4 space-y-2'>
 									<FormLabel>
-										Rear Overhang <span className='text-red-500'>*</span>
+										Rear Overhang{' '}
+										<span className='text-red-500'>*</span>
 									</FormLabel>
 
 									<div className='grid grid-cols-2 gap-2'>
@@ -596,6 +705,7 @@ export default function NewOrderForm() {
 															/>
 														</FormControl>
 														<Button
+															tabIndex={-1}
 															variant='outline'
 															className='text-sm border-l-0 rounded-l-none text-gray-600 font-medium bg-transparent'
 															type='button'
@@ -623,6 +733,7 @@ export default function NewOrderForm() {
 															/>
 														</FormControl>
 														<Button
+															tabIndex={-1}
 															variant='outline'
 															className='text-sm border-l-0 rounded-l-none text-gray-600 font-medium bg-transparent'
 															type='button'
@@ -646,7 +757,10 @@ export default function NewOrderForm() {
 										<FormItem>
 											<FormLabel>Make/Model</FormLabel>
 											<FormControl>
-												<Input placeholder='Enter make and model' {...field} />
+												<Input
+													placeholder='Enter make and model'
+													{...field}
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -660,7 +774,10 @@ export default function NewOrderForm() {
 										<FormItem>
 											<FormLabel>Serial#</FormLabel>
 											<FormControl>
-												<Input placeholder='Enter serial number' {...field} />
+												<Input
+													placeholder='Enter serial number'
+													{...field}
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -672,9 +789,14 @@ export default function NewOrderForm() {
 									name='singleMultiple'
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Single/Multiple pcs</FormLabel>
+											<FormLabel>
+												Single/Multiple pcs
+											</FormLabel>
 											<FormControl>
-												<Input placeholder='Enter quantity' {...field} />
+												<Input
+													placeholder='Enter quantity'
+													{...field}
+												/>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
@@ -695,165 +817,256 @@ export default function NewOrderForm() {
 												className='flex space-x-4'
 											>
 												<div className='flex items-center space-x-1.5'>
-													<RadioGroupItem value='yes' id='yes' />
-													<FormLabel htmlFor='yes'>Yes</FormLabel>
+													<RadioGroupItem
+														value='yes'
+														id='yes'
+													/>
+													<FormLabel htmlFor='yes'>
+														Yes
+													</FormLabel>
 												</div>
 												<div className='flex items-center space-x-1.5'>
-													<RadioGroupItem value='no' id='no' />
-													<FormLabel htmlFor='no'>No</FormLabel>
+													<RadioGroupItem
+														value='no'
+														id='no'
+													/>
+													<FormLabel htmlFor='no'>
+														No
+													</FormLabel>
 												</div>
 											</RadioGroup>
 										</FormControl>
-										{legalWeight === 'no' && (!truck || !trailer) && (
-											<p className='text-amber-600 font-medium text-sm'>
-												Please select a truck and trailer before adding axle configuration
-											</p>
-										)}
+										{legalWeight === 'no' &&
+											(!truck || !trailer) && (
+												<p className='text-amber-600 font-medium text-sm'>
+													Please select a truck and
+													trailer before adding axle
+													configuration
+												</p>
+											)}
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
 
-							{legalWeight === 'no' && truck && trailer && axleConfigs && axleConfigs.length > 0 && (
-								<Table>
-									<TableHeader>
-										<TableRow>
-											<TableHead>Number of Axles</TableHead>
-											{axleConfigs.map((_, i) => (
-												<TableHead key={i} className='text-center'>
-													{i + 1}
+							{legalWeight === 'no' &&
+								truck &&
+								trailer &&
+								axleConfigs &&
+								axleConfigs.length > 0 && (
+									<Table>
+										<TableHeader>
+											<TableRow>
+												<TableHead>
+													Number of Axles
 												</TableHead>
-											))}
-										</TableRow>
-									</TableHeader>
-									<TableBody>
-										<TableRow>
-											<TableHead>No of Tires</TableHead>
-											{axleConfigs.map((config, i) => (
-												<TableCell key={i}>
-													<FormField
-														control={form.control}
-														name={`axleConfigs.${i}.tires`}
-														render={({ field }) => (
-															<FormItem>
-																<FormControl>
-																	<Input
-																		type='number'
-																		{...field}
-																		value={field.value || config.tires}
-																		onChange={e =>
-																			field.onChange(
-																				parseInt(e.target.value) || 0,
-																			)
-																		}
-																		className='text-center'
-																	/>
-																</FormControl>
-																<FormMessage />
-															</FormItem>
-														)}
-													/>
+												{axleConfigs.map((_, i) => (
+													<TableHead
+														key={i}
+														className='text-center'
+													>
+														{i + 1}
+													</TableHead>
+												))}
+											</TableRow>
+										</TableHeader>
+										<TableBody>
+											<TableRow>
+												<TableHead>
+													No of Tires
+												</TableHead>
+												{axleConfigs.map(
+													(config, i) => (
+														<TableCell key={i}>
+															<FormField
+																control={
+																	form.control
+																}
+																name={`axleConfigs.${i}.tires`}
+																render={({
+																	field,
+																}) => (
+																	<FormItem>
+																		<FormControl>
+																			<Input
+																				type='number'
+																				{...field}
+																				value={
+																					field.value ||
+																					config.tires
+																				}
+																				onChange={e =>
+																					field.onChange(
+																						parseInt(
+																							e
+																								.target
+																								.value,
+																						) ||
+																							0,
+																					)
+																				}
+																				className='text-center'
+																			/>
+																		</FormControl>
+																		<FormMessage />
+																	</FormItem>
+																)}
+															/>
+														</TableCell>
+													),
+												)}
+											</TableRow>
+											<TableRow>
+												<TableHead>
+													Axle Spacing
+												</TableHead>
+												<TableCell></TableCell>
+												{axleConfigs
+													.slice(1)
+													.map((config, i) => (
+														<TableCell key={i}>
+															<FormField
+																control={
+																	form.control
+																}
+																name={`axleConfigs.${
+																	i + 1
+																}.spacing`}
+																render={({
+																	field,
+																}) => (
+																	<FormItem>
+																		<FormControl>
+																			<Input
+																				type='text'
+																				{...field}
+																				value={
+																					field.value ||
+																					config.spacing ||
+																					0
+																				}
+																				className='text-center'
+																			/>
+																		</FormControl>
+																		<FormMessage />
+																	</FormItem>
+																)}
+															/>
+														</TableCell>
+													))}
+											</TableRow>
+											<TableRow>
+												<TableHead>
+													Tire Width
+												</TableHead>
+												{axleConfigs.map(
+													(config, i) => (
+														<TableCell key={i}>
+															<FormField
+																control={
+																	form.control
+																}
+																name={`axleConfigs.${i}.tireWidth`}
+																render={({
+																	field,
+																}) => (
+																	<FormItem>
+																		<FormControl>
+																			<Input
+																				type='number'
+																				{...field}
+																				value={
+																					field.value ||
+																					config.tireWidth
+																				}
+																				onChange={e =>
+																					field.onChange(
+																						parseFloat(
+																							e
+																								.target
+																								.value,
+																						) ||
+																							0,
+																					)
+																				}
+																				className='text-center'
+																			/>
+																		</FormControl>
+																		<FormMessage />
+																	</FormItem>
+																)}
+															/>
+														</TableCell>
+													),
+												)}
+											</TableRow>
+											<TableRow>
+												<TableHead>
+													Axle Weights
+												</TableHead>
+												{axleConfigs.map(
+													(config, i) => (
+														<TableCell key={i}>
+															<FormField
+																control={
+																	form.control
+																}
+																name={`axleConfigs.${i}.weight`}
+																render={({
+																	field,
+																}) => (
+																	<FormItem>
+																		<FormControl>
+																			<Input
+																				type='number'
+																				{...field}
+																				value={
+																					field.value ||
+																					config.weight
+																				}
+																				onChange={e =>
+																					field.onChange(
+																						parseInt(
+																							e
+																								.target
+																								.value,
+																						) ||
+																							0,
+																					)
+																				}
+																				className='text-center'
+																			/>
+																		</FormControl>
+																		<FormMessage />
+																	</FormItem>
+																)}
+															/>
+														</TableCell>
+													),
+												)}
+											</TableRow>
+										</TableBody>
+										<TableFooter>
+											<TableRow>
+												<TableCell>
+													Gross Weight:
 												</TableCell>
-											))}
-										</TableRow>
-										<TableRow>
-											<TableHead>Axle Spacing</TableHead>
-											<TableCell></TableCell>
-											{axleConfigs.slice(1).map((config, i) => (
-												<TableCell key={i}>
-													<FormField
-														control={form.control}
-														name={`axleConfigs.${i + 1}.spacing`}
-														render={({ field }) => (
-															<FormItem>
-																<FormControl>
-																	<Input
-																		type='text'
-																		{...field}
-																		value={field.value || config.spacing || 0}
-																		className='text-center'
-																	/>
-																</FormControl>
-																<FormMessage />
-															</FormItem>
-														)}
-													/>
+												<TableCell
+													colSpan={axleConfigs.length}
+													className='text-right'
+												>
+													{grossWeight}lbs
 												</TableCell>
-											))}
-										</TableRow>
-										<TableRow>
-											<TableHead>Tire Width</TableHead>
-											{axleConfigs.map((config, i) => (
-												<TableCell key={i}>
-													<FormField
-														control={form.control}
-														name={`axleConfigs.${i}.tireWidth`}
-														render={({ field }) => (
-															<FormItem>
-																<FormControl>
-																	<Input
-																		type='number'
-																		{...field}
-																		value={field.value || config.tireWidth}
-																		onChange={e =>
-																			field.onChange(
-																				parseFloat(e.target.value) || 0,
-																			)
-																		}
-																		className='text-center'
-																	/>
-																</FormControl>
-																<FormMessage />
-															</FormItem>
-														)}
-													/>
-												</TableCell>
-											))}
-										</TableRow>
-										<TableRow>
-											<TableHead>Axle Weights</TableHead>
-											{axleConfigs.map((config, i) => (
-												<TableCell key={i}>
-													<FormField
-														control={form.control}
-														name={`axleConfigs.${i}.weight`}
-														render={({ field }) => (
-															<FormItem>
-																<FormControl>
-																	<Input
-																		type='number'
-																		{...field}
-																		value={field.value || config.weight}
-																		onChange={e =>
-																			field.onChange(
-																				parseInt(e.target.value) || 0,
-																			)
-																		}
-																		className='text-center'
-																	/>
-																</FormControl>
-																<FormMessage />
-															</FormItem>
-														)}
-													/>
-												</TableCell>
-											))}
-										</TableRow>
-									</TableBody>
-									<TableFooter>
-										<TableRow>
-											<TableCell>Gross Weight:</TableCell>
-											<TableCell colSpan={axleConfigs.length} className='text-right'>
-												{grossWeight}lbs
-											</TableCell>
-										</TableRow>
-									</TableFooter>
-								</Table>
-							)}
+											</TableRow>
+										</TableFooter>
+									</Table>
+								)}
 						</CardContent>
 					</Card>
 
-					<RouteBuilder form={form as unknown as UseFormReturn<RouteFormData>} />
+					<RouteBuilder
+						form={form as unknown as UseFormReturn<RouteFormData>}
+					/>
 
 					<FormField
 						control={form.control}
@@ -863,10 +1076,16 @@ export default function NewOrderForm() {
 								<FormControl>
 									<Input
 										{...field}
-										value={field.value ? JSON.stringify(field.value) : ''}
+										value={
+											field.value
+												? JSON.stringify(field.value)
+												: ''
+										}
 										onChange={e => {
 											try {
-												const parsed = JSON.parse(e.target.value)
+												const parsed = JSON.parse(
+													e.target.value,
+												)
 												field.onChange(parsed)
 											} catch {
 												field.onChange([])
@@ -878,12 +1097,15 @@ export default function NewOrderForm() {
 						)}
 					/>
 
-					<OrderChatLocal setMessages={setMessages} messages={messages} />
+					<OrderChatLocal
+						setMessages={setMessages}
+						messages={messages}
+					/>
 
 					<Card>
 						<CardHeader className='block'>
 							<CardTitle className='flex items-center text-lg'>
-								<Upload className='w-5 h-5 mr-2 text-orange-500' />
+								<Upload className='w-5 h-5 mr-2 text-primary' />
 								List of files for #
 							</CardTitle>
 						</CardHeader>
@@ -895,53 +1117,90 @@ export default function NewOrderForm() {
 								render={({ field }) => (
 									<FormItem>
 										<div className='min-h-[80px] border-2 border-dashed rounded-lg p-4'>
-											{field.value && Array.isArray(field.value) && field.value.length > 0 ? (
+											{field.value &&
+											Array.isArray(field.value) &&
+											field.value.length > 0 ? (
 												<div className='space-y-2'>
-													<p className='text-sm font-medium text-gray-700'>Selected files:</p>
-													{(field.value as File[])?.map((file: File, index: number) => (
-														<div
-															key={index}
-															className='flex items-center justify-between bg-gray-50 rounded-lg p-2'
-														>
-															<div className='flex items-center space-x-2'>
-																<FileText className='w-4 h-4 text-gray-500' />
-																<span className='text-sm text-gray-700'>
-																	{file.name}
-																</span>
+													<p className='text-sm font-medium text-gray-700'>
+														Selected files:
+													</p>
+													{(
+														field.value as File[]
+													)?.map(
+														(
+															file: File,
+															index: number,
+														) => (
+															<div
+																key={index}
+																className='flex items-center justify-between bg-gray-50 rounded-lg p-2'
+															>
+																<div className='flex items-center space-x-2'>
+																	<FileText className='w-4 h-4 text-gray-500' />
+																	<span className='text-sm text-gray-700'>
+																		{
+																			file.name
+																		}
+																	</span>
+																</div>
+																<div className='flex items-center space-x-2'>
+																	<span className='text-xs text-gray-500'>
+																		{(
+																			file.size /
+																			(1024 *
+																				1024)
+																		).toFixed(
+																			2,
+																		)}{' '}
+																		MB
+																	</span>
+																	<Button
+																		type='button'
+																		variant='ghost'
+																		size='sm'
+																		onClick={() => {
+																			const newFiles =
+																				(
+																					field.value as File[]
+																				)?.filter(
+																					(
+																						_: File,
+																						i: number,
+																					) =>
+																						i !==
+																						index,
+																				)
+																			field.onChange(
+																				newFiles,
+																			)
+																		}}
+																		className='h-6 w-6 p-0 text-destructive hover:text-destructive/80'
+																	>
+																		<X className='w-4 h-4' />
+																	</Button>
+																</div>
 															</div>
-															<div className='flex items-center space-x-2'>
-																<span className='text-xs text-gray-500'>
-																	{(file.size / (1024 * 1024)).toFixed(2)} MB
-																</span>
-																<Button
-																	type='button'
-																	variant='ghost'
-																	size='sm'
-																	onClick={() => {
-																		const newFiles = (
-																			field.value as File[]
-																		)?.filter((_: File, i: number) => i !== index)
-																		field.onChange(newFiles)
-																	}}
-																	className='h-6 w-6 p-0 text-destructive hover:text-destructive/80'
-																>
-																	<X className='w-4 h-4' />
-																</Button>
-															</div>
-														</div>
-													))}
+														),
+													)}
 												</div>
 											) : (
 												<div className='flex flex-col items-center justify-center text-gray-500 space-y-1'>
-													<div>No files associated with this order</div>
+													<div>
+														No files associated with
+														this order
+													</div>
 													<div className='text-xs text-gray-400'>
-														Maximum file size: 10MB per file
+														Maximum file size: 10MB
+														per file
 													</div>
 												</div>
 											)}
 
 											<div className='flex justify-center mt-2'>
-												<Button className=' relative' type='button'>
+												<Button
+													className=' relative'
+													type='button'
+												>
 													<FormField
 														control={form.control}
 														name='files'
@@ -952,30 +1211,57 @@ export default function NewOrderForm() {
 																		type='file'
 																		multiple
 																		onChange={e => {
-																			const files = Array.from(
-																				e.target.files || [],
-																			)
+																			const files =
+																				Array.from(
+																					e
+																						.target
+																						.files ||
+																						[],
+																				)
 
-																			const maxSize = 10 * 1024 * 1024
-																			const oversizedFiles = files.filter(
-																				file => file.size > maxSize,
-																			)
+																			const maxSize =
+																				10 *
+																				1024 *
+																				1024
+																			const oversizedFiles =
+																				files.filter(
+																					file =>
+																						file.size >
+																						maxSize,
+																				)
 
-																			if (oversizedFiles.length > 0) {
-																				const fileNames = oversizedFiles
-																					.map(file => file.name)
-																					.join(', ')
+																			if (
+																				oversizedFiles.length >
+																				0
+																			) {
+																				const fileNames =
+																					oversizedFiles
+																						.map(
+																							file =>
+																								file.name,
+																						)
+																						.join(
+																							', ',
+																						)
 																				toast.error(
 																					`Files larger than 10MB: ${fileNames}`,
 																				)
 																				return
 																			}
 
-																			field.onChange(files)
+																			field.onChange(
+																				files,
+																			)
 																		}}
-																		onBlur={field.onBlur}
-																		name={field.name}
-																		ref={field.ref}
+																		onBlur={
+																			field.onBlur
+																		}
+																		name={
+																			field.name
+																		}
+																		ref={
+																			field.ref
+																		}
 																	/>
 																</FormControl>
 																<FormMessage />
@@ -996,7 +1282,7 @@ export default function NewOrderForm() {
 					{/* <Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<Calculator className='w-5 h-5 mr-2 text-orange-500' />
+								<Calculator className='w-5 h-5 mr-2 text-primary' />
 								Approximate Costs
 							</CardTitle>
 						</CardHeader>
@@ -1031,7 +1317,7 @@ export default function NewOrderForm() {
 									</TableRow>
 								</TableHeader>
 								<TableFooter>
-									<TableRow className='bg-orange-50 font-semibold text-right'>
+									<TableRow className='bg-primary-50 font-semibold text-right'>
 										<TableCell className='text-left'>
 											Totals
 										</TableCell>

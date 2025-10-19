@@ -1,7 +1,13 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { formatChatTime } from '@/lib/utils'
 import { MessageCircle, Send } from 'lucide-react'
@@ -12,7 +18,10 @@ interface OrderChatProps {
 	messages: string[]
 }
 
-export default function OrderChatLocal({ setMessages, messages }: OrderChatProps) {
+export default function OrderChatLocal({
+	setMessages,
+	messages,
+}: OrderChatProps) {
 	const [newMessage, setNewMessage] = useState('')
 
 	const handleSendMessage = async () => {
@@ -31,7 +40,7 @@ export default function OrderChatLocal({ setMessages, messages }: OrderChatProps
 		<Card>
 			<CardHeader>
 				<CardTitle className='flex items-center gap-2'>
-					<MessageCircle className='w-5 h-5 text-orange-500' />
+					<MessageCircle className='w-5 h-5 text-primary' />
 					Order Chat
 				</CardTitle>
 			</CardHeader>
@@ -48,18 +57,26 @@ export default function OrderChatLocal({ setMessages, messages }: OrderChatProps
 						<>
 							{messages.map((message, index) => (
 								<div key={index} className='flex justify-end'>
-									<div className='max-w-[90%] rounded-lg p-2 bg-primary text-white'>
+									<div className='max-w-[90%] rounded-lg p-2 bg-primary-700 text-white'>
 										<div className='flex items-center space-x-2 justify-between mb-2 text-sm '>
-											<span className='font-medium'>You</span>
+											<span className='font-medium'>
+												You
+											</span>
 											<span className='opacity-75'>
-												{formatChatTime(new Date().toISOString())}
+												{formatChatTime(
+													new Date().toISOString(),
+												)}
 											</span>
 										</div>
 
-										<p className='text-sm leading-normal break-words'>{message}</p>
+										<p className='text-sm leading-normal break-words'>
+											{message}
+										</p>
 
 										<div className='flex items-center justify-end space-x-1 mt-1'>
-											<span className='text-xs opacity-75'>Delivered</span>
+											<span className='text-xs opacity-75'>
+												Delivered
+											</span>
 										</div>
 									</div>
 								</div>
@@ -77,7 +94,11 @@ export default function OrderChatLocal({ setMessages, messages }: OrderChatProps
 					onKeyUp={handleKeyPress}
 					className='min-h-[80px] resize-none flex-1'
 				/>
-				<Button onClick={handleSendMessage} disabled={!newMessage.trim()} className='w-full'>
+				<Button
+					onClick={handleSendMessage}
+					disabled={!newMessage.trim()}
+					className='w-full'
+				>
 					<Send className='w-4 h-4' />
 					Send
 				</Button>

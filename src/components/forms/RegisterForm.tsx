@@ -80,12 +80,15 @@ export default function RegisterForm({ role }: RegisterFormProps) {
 		defaultValues: {
 			email: '',
 			password: '',
-			role: role,
+			role: role || UserRole.USER,
 		},
 	})
 
 	async function onSubmit(values: z.infer<typeof registerFormSchema>) {
+		console.log(values)
+
 		setIsLoading(true)
+
 		try {
 			const { message } = await AuthService.register(
 				values.email,
@@ -93,6 +96,8 @@ export default function RegisterForm({ role }: RegisterFormProps) {
 				values.role,
 			)
 			toast.success(message)
+
+			form.reset()
 
 			if (!role) router.push('/login')
 		} finally {
@@ -182,10 +187,7 @@ export default function RegisterForm({ role }: RegisterFormProps) {
 				<Button type='submit' className='w-full' disabled={isLoading}>
 					{isLoading ? (
 						<>
-							<Loader2Icon
-								className='animate-spin mr-2'
-								size={16}
-							/>
+							<Loader2Icon className='animate-spin' size={16} />
 							Registering...
 						</>
 					) : (

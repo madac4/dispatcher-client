@@ -7,8 +7,20 @@ import { FilePlus, PackagePlus, Plus, UserRoundPlus } from 'lucide-react'
 import Link from 'next/link'
 import RegisterForm from '../forms/RegisterForm'
 import { Button } from '../ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu'
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '../ui/dialog'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+} from '../ui/dropdown-menu'
+import { HeaderNotifications } from './HeaderNotifications'
 
 export function DashboardHeader() {
 	const { logout, role } = useAuthStore()
@@ -36,15 +48,15 @@ export function DashboardHeader() {
 				return (
 					<>
 						<DropdownMenuItem asChild>
-							<Link href='/dashboard/quote'>
-								<FilePlus />
-								New Quote
-							</Link>
-						</DropdownMenuItem>
-						<DropdownMenuItem asChild>
 							<Link href='/dashboard/orders/create'>
 								<PackagePlus />
 								New Order
+							</Link>
+						</DropdownMenuItem>
+						<DropdownMenuItem asChild>
+							<Link href='/dashboard/quote'>
+								<FilePlus />
+								New Quote
 							</Link>
 						</DropdownMenuItem>
 					</>
@@ -56,6 +68,7 @@ export function DashboardHeader() {
 		<header className='flex min-h-14 items-center justify-between gap-2 sm:gap-4 border-b bg-background px-4 lg:min-h-16 lg:px-6'>
 			<span></span>
 			<div className='flex items-center gap-2'>
+				<HeaderNotifications />
 				{userRole !== UserRole.MODERATOR && (
 					<Dialog>
 						<DropdownMenu>
@@ -85,8 +98,12 @@ export function DashboardHeader() {
 						{userRole === UserRole.ADMIN && (
 							<DialogContent className='sm:max-w-md'>
 								<DialogHeader>
-									<DialogTitle>Register Moderator</DialogTitle>
-									<DialogDescription>Register a new moderator.</DialogDescription>
+									<DialogTitle>
+										Register Moderator
+									</DialogTitle>
+									<DialogDescription>
+										Register a new moderator.
+									</DialogDescription>
 								</DialogHeader>
 								<RegisterForm role={UserRole.MODERATOR} />
 							</DialogContent>

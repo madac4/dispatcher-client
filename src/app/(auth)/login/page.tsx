@@ -10,7 +10,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { login } from '@/lib/services/authService'
+import { AuthService } from '@/lib/services/authService'
 import { useAuthStore } from '@/lib/stores/authStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { EyeIcon, EyeOffIcon, Loader2Icon } from 'lucide-react'
@@ -80,8 +80,9 @@ export default function LoginPage() {
 
 	async function onSubmit(values: z.infer<typeof loginFormSchema>) {
 		setIsLoading(true)
+		const { email, password } = values
 		try {
-			const { data } = await login(values)
+			const { data } = await AuthService.login(email, password)
 			setUser(data!.accessToken, data!.refreshToken)
 
 			router.push('/dashboard')
@@ -175,7 +176,7 @@ export default function LoginPage() {
 					Don&apos;t have an account?{' '}
 					<Link
 						href='/register'
-						className='text-orange-500 hover:text-orange-600 font-medium'
+						className='text-primary hover:text-primary-600 font-medium'
 					>
 						Sign up
 					</Link>

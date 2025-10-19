@@ -1,6 +1,5 @@
 'use client'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
 	Form,
@@ -71,6 +70,7 @@ const updatePasswordSchema = z
 export default function ResetPasswordForm() {
 	const [showPassword, setShowPassword] = useState(false)
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+	const [showCurrentPassword, setShowCurrentPassword] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 
 	const form = useForm<z.infer<typeof updatePasswordSchema>>({
@@ -83,7 +83,6 @@ export default function ResetPasswordForm() {
 	})
 
 	const password = form.watch('password')
-	const confirmPassword = form.watch('confirmPassword')
 
 	const requirements = [
 		{
@@ -109,23 +108,13 @@ export default function ResetPasswordForm() {
 		},
 	]
 
-	const metRequirements = requirements.filter(req => req.met).length
-	const passwordStrength = (metRequirements / requirements.length) * 100
-	const passwordsMatch = password === confirmPassword && password?.length > 0
-
-	const getStrengthText = () => {
-		if (passwordStrength < 40) return 'Weak'
-		if (passwordStrength < 80) return 'Medium'
-		return 'Strong'
-	}
-
 	async function onSubmit(values: z.infer<typeof updatePasswordSchema>) {
 		setIsLoading(true)
 		try {
 			const { message } = await updatePassword(values)
 			toast.success(message)
 			setIsLoading(false)
-			form.reset()
+			// form.reset()
 		} finally {
 			setIsLoading(false)
 		}
@@ -146,7 +135,7 @@ export default function ResetPasswordForm() {
 										<FormControl>
 											<Input
 												type={
-													showPassword
+													showCurrentPassword
 														? 'text'
 														: 'password'
 												}
@@ -156,11 +145,14 @@ export default function ResetPasswordForm() {
 										</FormControl>
 										<button
 											className='absolute right-3 top-0 h-full cursor-pointer'
+											type='button'
 											onClick={() =>
-												setShowPassword(!showPassword)
+												setShowCurrentPassword(
+													!showCurrentPassword,
+												)
 											}
 										>
-											{showPassword ? (
+											{showCurrentPassword ? (
 												<EyeOff className='h-4 w-4' />
 											) : (
 												<Eye className='h-4 w-4' />
@@ -193,6 +185,7 @@ export default function ResetPasswordForm() {
 										</FormControl>
 										<button
 											className='absolute right-3 top-0 h-full cursor-pointer'
+											type='button'
 											onClick={() =>
 												setShowPassword(!showPassword)
 											}
@@ -204,24 +197,6 @@ export default function ResetPasswordForm() {
 											)}
 										</button>
 									</div>
-									{password && (
-										<div className='flex items-center justify-between'>
-											<span className='text-sm text-gray-600'>
-												Password strength
-											</span>
-											<Badge
-												variant={
-													passwordStrength >= 80
-														? 'default'
-														: passwordStrength >= 40
-														? 'secondary'
-														: 'destructive'
-												}
-											>
-												{getStrengthText()}
-											</Badge>
-										</div>
-									)}
 									<FormMessage />
 								</FormItem>
 							)}
@@ -247,6 +222,7 @@ export default function ResetPasswordForm() {
 										</FormControl>
 										<button
 											className='absolute right-3 top-0 h-full cursor-pointer'
+											type='button'
 											onClick={() =>
 												setShowConfirmPassword(
 													!showConfirmPassword,
@@ -260,26 +236,6 @@ export default function ResetPasswordForm() {
 											)}
 										</button>
 									</div>
-									{confirmPassword && (
-										<div className='flex items-center space-x-2'>
-											{passwordsMatch ? (
-												<>
-													<CheckCircle className='h-4 w-4 text-green-500' />
-													<span className='text-sm text-green-600'>
-														Passwords match
-													</span>
-												</>
-											) : (
-												<>
-													<XCircle className='h-4 w-4 text-destructive' />
-													<span className='text-sm text-destructive'>
-														Passwords don&apos;t
-														match
-													</span>
-												</>
-											)}
-										</div>
-									)}
 									<FormMessage />
 								</FormItem>
 							)}
