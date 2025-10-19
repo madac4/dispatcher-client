@@ -125,10 +125,10 @@ export default function ContactUsPage() {
                 </div>
               </Card>
 
-              <Card className="p-4 hover:shadow-lg transition-shadow border-l-4 border-l-orange-500">
+              <Card className="p-4 hover:shadow-lg transition-shadow border-l-4 border-l-primary">
                 <div className="flex items-start space-x-4">
-                  <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <Download className="w-5 h-5 text-orange-600" />
+                  <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
+                    <Download className="w-5 h-5 text-primary-600" />
                   </div>
                   <div className="space-y-1">
                     <h3 className="font-bold text-gray-900">Company Brochure</h3>
@@ -136,7 +136,7 @@ export default function ContactUsPage() {
                     <a
                       href="/ClickPermit-1.pdf"
                       download="ClickPermit-1.pdf"
-                      className="font-semibold text-orange-600 hover:text-orange-700 transition-colors"
+                      className="font-semibold text-primary-600 hover:text-primary-700 transition-colors"
                     >
                       Download PDF
                     </a>

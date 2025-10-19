@@ -25,7 +25,7 @@ export default function GeneralInformationPage() {
             <Badge className="bg-primary-100 text-primary-800 border-primary-200 mb-6">PERMITS</Badge>
 
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-primary-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-600">
                 Low Cost, Fast Turnaround{' '}
               </span>
               and Years of Experience-Best Results in the Industry!
@@ -90,7 +90,7 @@ export default function GeneralInformationPage() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
                   <Weight className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -174,9 +174,9 @@ export default function GeneralInformationPage() {
               </div>
             </Card>
 
-            <Card className="bg-gradient-to-br from-orange-50 to-white max-w-5xl mx-auto border-0 p-8">
+            <Card className="bg-gradient-to-br from-primary-50 to-white max-w-5xl mx-auto border-0 p-8">
               <div className="flex items-start space-x-4 mb-4">
-                <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
                 <div>

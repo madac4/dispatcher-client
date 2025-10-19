@@ -1,30 +1,30 @@
-'use client'
+'use client';
 
-import { EntitySelectModal } from '@/components/modals/EntitySelectModal'
-import { Button } from '@/components/ui/button'
-import { TrailerDTO } from '@/lib/models/trailer.model'
-import { TruckDTO } from '@/lib/models/truck.model'
-import { Package, Truck as TruckIcon } from 'lucide-react'
+import { EntitySelectModal } from '@/components/modals/EntitySelectModal';
+import { Button } from '@/components/ui/button';
+import { TrailerDTO } from '@/lib/models/trailer.model';
+import { TruckDTO } from '@/lib/models/truck.model';
+import { Package, Truck as TruckIcon } from 'lucide-react';
 
 interface EntitySelectorProps {
-  type: 'truck' | 'trailer'
-  entity: TruckDTO | TrailerDTO | null
-  onSelect: (id: string) => void
-  className?: string
+  type: 'truck' | 'trailer';
+  entity: TruckDTO | TrailerDTO | null;
+  onSelect: (id: string) => void;
+  className?: string;
 }
 
 export function EntitySelector({ type, entity, onSelect, className }: EntitySelectorProps) {
-  const isTruck = type === 'truck'
-  const Icon = isTruck ? TruckIcon : Package
-  const bgColor = isTruck ? 'bg-blue-50' : 'bg-purple-50'
-  const borderColor = isTruck ? 'border-blue-500' : 'border-purple-500'
-  const iconBgColor = isTruck ? 'bg-blue-600' : 'bg-purple-600'
+  const isTruck = type === 'truck';
+  const Icon = isTruck ? TruckIcon : Package;
+  const bgColor = isTruck ? 'bg-blue-50' : 'bg-purple-50';
+  const borderColor = isTruck ? 'border-blue-500' : 'border-purple-500';
+  const iconBgColor = isTruck ? 'bg-blue-600' : 'bg-purple-600';
 
   if (!entity) {
     return (
       <EntitySelectModal type={type} onSelect={onSelect}>
         <div
-          className={`border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-orange-400 hover:bg-orange-50/20 transition-all duration-200 ${className}`}
+          className={`border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-primary-400 hover:bg-primary-50/20 transition-all duration-200 ${className}`}
         >
           <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
             <Icon className="w-6 h-6 text-gray-400" />
@@ -34,7 +34,7 @@ export function EntitySelector({ type, entity, onSelect, className }: EntitySele
           <Button type="button">Select {type}</Button>
         </div>
       </EntitySelectModal>
-    )
+    );
   }
 
   return (
@@ -94,5 +94,5 @@ export function EntitySelector({ type, entity, onSelect, className }: EntitySele
         )}
       </div>
     </div>
-  )
+  );
 }

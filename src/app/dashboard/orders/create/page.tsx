@@ -318,7 +318,7 @@ export default function NewOrderForm() {
 											type='trailer'
 											onSelect={handleTrailerSelect}
 										>
-											<div className='border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-orange-400 hover:bg-orange-50/20 transition-all duration-200'>
+											<div className='border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-parimary-400 hover:bg-parimary-50/20 transition-all duration-200'>
 												<div className='w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3'>
 													<Package className='w-6 h-6 text-gray-400' />
 												</div>
@@ -1317,7 +1317,7 @@ export default function NewOrderForm() {
 									</TableRow>
 								</TableHeader>
 								<TableFooter>
-									<TableRow className='bg-orange-50 font-semibold text-right'>
+									<TableRow className='bg-primary-50 font-semibold text-right'>
 										<TableCell className='text-left'>
 											Totals
 										</TableCell>

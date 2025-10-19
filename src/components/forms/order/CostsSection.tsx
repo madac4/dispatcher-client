@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import { FormSection } from '@/components/forms/common/FormSection'
-import { Table, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Calculator } from 'lucide-react'
+import { FormSection } from '@/components/forms/common/FormSection';
+import { Table, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Calculator } from 'lucide-react';
 
 export function CostsSection() {
   return (
@@ -21,7 +21,7 @@ export function CostsSection() {
           </TableRow>
         </TableHeader>
         <TableFooter>
-          <TableRow className="bg-orange-50 font-semibold text-right">
+          <TableRow className="bg-primary-50 font-semibold text-right">
             <TableCell className="text-left">Totals</TableCell>
             <TableCell>$0</TableCell>
             <TableCell>$0</TableCell>
@@ -34,5 +34,5 @@ export function CostsSection() {
         </TableFooter>
       </Table>
     </FormSection>
-  )
+  );
 }

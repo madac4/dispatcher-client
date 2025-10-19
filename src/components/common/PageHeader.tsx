@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import { cn } from '@/lib/utils'
-import { LucideIcon } from 'lucide-react'
+import { cn } from '@/lib/utils';
+import { LucideIcon } from 'lucide-react';
 
 interface PageHeaderProps {
-  title: string
-  description?: string
-  icon?: LucideIcon
-  iconBgColor?: string
-  iconColor?: string
-  actions?: React.ReactNode
-  className?: string
+  title: string;
+  description?: string;
+  icon?: LucideIcon;
+  iconBgColor?: string;
+  iconColor?: string;
+  actions?: React.ReactNode;
+  className?: string;
 }
 
 export function PageHeader({
   title,
   description,
   icon: Icon,
-  iconBgColor = 'bg-orange-100',
-  iconColor = 'text-orange-500',
+  iconBgColor = 'bg-primary-100',
+  iconColor = 'text-primary',
   actions,
   className,
 }: PageHeaderProps) {
@@ -33,5 +33,5 @@ export function PageHeader({
       {description && <p className="text-gray-600">{description}</p>}
       {actions && <div className="mt-4">{actions}</div>}
     </div>
-  )
+  );
 }

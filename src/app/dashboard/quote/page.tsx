@@ -59,8 +59,8 @@ export default function QuotePage() {
 	return (
 		<div className='relative'>
 			<div className='text-center mb-6'>
-				<div className='w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-					<Calculator className='w-8 h-8 text-orange-500' />
+				<div className='w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4'>
+					<Calculator className='w-8 h-8 text-primary' />
 				</div>
 				<h1 className='text-3xl font-bold text-gray-900 mb-2'>Quote Calculator</h1>
 				<p className='text-gray-600'>Calculate shipping costs for your oversized loads</p>
@@ -71,7 +71,7 @@ export default function QuotePage() {
 					<Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<Package className='w-5 h-5 mr-2 text-orange-500' />
+								<Package className='w-5 h-5 mr-2 text-primary' />
 								Load Dimensions
 							</CardTitle>
 						</CardHeader>
@@ -262,7 +262,7 @@ export default function QuotePage() {
 									</div>
 								</div>
 
-								<div className='bg-orange-50 rounded-lg p-4 space-y-2'>
+								<div className='bg-primary-50 rounded-lg p-4 space-y-2'>
 									<FormLabel>
 										Overall Weight <span className='text-red-500'>*</span>
 									</FormLabel>
@@ -325,7 +325,7 @@ export default function QuotePage() {
 					<Card>
 						<CardHeader>
 							<CardTitle className='flex items-center text-lg'>
-								<Calculator className='w-5 h-5 mr-2 text-orange-500' />
+								<Calculator className='w-5 h-5 mr-2 text-primary' />
 								Route Pricing Breakdown
 							</CardTitle>
 						</CardHeader>
@@ -334,26 +334,26 @@ export default function QuotePage() {
 								<Table>
 									<TableHeader>
 										<TableRow>
-											<TableHead className='font-semibold text-gray-900'>State</TableHead>
-											<TableHead className='text-right font-semibold text-gray-900'>
+											<TableHead className='font-semibold'>State</TableHead>
+											<TableHead className='text-right font-semibold'>
 												Oversize
 											</TableHead>
-											<TableHead className='text-right font-semibold text-gray-900'>
+											<TableHead className='text-right font-semibold'>
 												Overweight
 											</TableHead>
-											<TableHead className='text-right font-semibold text-gray-900'>
+											<TableHead className='text-right font-semibold'>
 												Superload
 											</TableHead>
-											<TableHead className='text-right font-semibold text-gray-900'>
+											<TableHead className='text-right font-semibold'>
 												Service Fee
 											</TableHead>
-											<TableHead className='text-right font-semibold text-gray-900'>
+											<TableHead className='text-right font-semibold'>
 												Escort
 											</TableHead>
-											<TableHead className='text-right font-semibold text-gray-900'>
+											<TableHead className='text-right font-semibold'>
 												Distance
 											</TableHead>
-											<TableHead className='text-right font-semibold text-gray-900'>
+											<TableHead className='text-right font-semibold'>
 												Total
 											</TableHead>
 										</TableRow>
@@ -400,7 +400,7 @@ export default function QuotePage() {
 													Pennsylvania
 													<div className='flex items-center mt-1'>
 														<div className='w-2 h-2 bg-blue-500 rounded-full mr-1'></div>
-														<div className='w-2 h-2 bg-orange-500 rounded-full mr-1'></div>
+														<div className='w-2 h-2 bg-primary rounded-full mr-1'></div>
 														<div className='w-2 h-2 bg-gray-400 rounded-full'></div>
 													</div>
 												</div>
@@ -418,7 +418,7 @@ export default function QuotePage() {
 												<div>
 													Maryland
 													<div className='flex items-center mt-1'>
-														<div className='w-2 h-2 bg-orange-500 rounded-full mr-1'></div>
+														<div className='w-2 h-2 bg-primary rounded-full mr-1'></div>
 														<div className='w-2 h-2 bg-gray-400 rounded-full'></div>
 													</div>
 												</div>
@@ -443,23 +443,23 @@ export default function QuotePage() {
 										</TableRow>
 									</TableBody>
 									<TableFooter>
-										<TableRow className='bg-orange-50 hover:bg-orange-50'>
+										<TableRow className='bg-primary-50 hover:bg-primary-50'>
 											<TableCell className='font-bold text-gray-900 text-lg'>Totals</TableCell>
-											<TableCell className='text-right font-bold text-orange-600'>
+											<TableCell className='text-right font-bold text-primary-600'>
 												$203.10
 											</TableCell>
-											<TableCell className='text-right font-bold text-orange-600'>$0</TableCell>
+											<TableCell className='text-right font-bold text-primary-600'>$0</TableCell>
 											<TableCell className='text-right font-bold text-gray-500'>??</TableCell>
-											<TableCell className='text-right font-bold text-orange-600'>
+											<TableCell className='text-right font-bold text-primary-600'>
 												$430.00
 											</TableCell>
-											<TableCell className='text-right font-bold text-orange-600'>
+											<TableCell className='text-right font-bold text-primary-600'>
 												$1219.71
 											</TableCell>
-											<TableCell className='text-right font-bold text-orange-600'>
+											<TableCell className='text-right font-bold text-primary-600'>
 												349.4 mi
 											</TableCell>
-											<TableCell className='text-right font-bold text-orange-600 text-xl'>
+											<TableCell className='text-right font-bold text-primary-600 text-xl'>
 												$1852.81
 											</TableCell>
 										</TableRow>

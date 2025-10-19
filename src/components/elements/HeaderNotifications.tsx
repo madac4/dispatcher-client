@@ -68,7 +68,7 @@ export function HeaderNotifications() {
               Loading notifications...
             </div>
           ) : notifications.length === 0 ? (
-            <div className="text-center text-muted-foreground flex flex-col items-center gap-2">
+            <div className="text-center text-muted-foreground flex flex-col items-center gap-2 py-8">
               <Bell className="h-8 w-8 text-muted-foreground/50" />
               <p>No notifications yet</p>
               <p className="text-xs">You&apos;ll see updates here when they arrive</p>
