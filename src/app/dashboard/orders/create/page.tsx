@@ -107,8 +107,6 @@ export default function NewOrderForm() {
 
 		setIsLoading(true)
 
-		console.log(messages)
-
 		const payload: OrderPayload = {
 			...data,
 			truckId: truck._id,

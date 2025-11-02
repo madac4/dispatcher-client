@@ -55,8 +55,6 @@ export default function ContactForm() {
         message: values.message.trim(),
       };
 
-      console.log(contactData);
-
       await ContactService.submit(contactData);
 
       toast.success('Message sent successfully!', {
