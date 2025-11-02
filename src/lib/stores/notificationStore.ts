@@ -34,8 +34,6 @@ export const useNotificationStore = create<NotificationState>()(
 
         try {
           const { data } = await NotificationService.getNotifications(payload);
-          console.log(data);
-
           set({
             notifications: data,
             hasUnread: data.some((notification) => notification.status === NotificationStatus.UNREAD),

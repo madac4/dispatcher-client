@@ -1,24 +1,24 @@
-'use client'
+'use client';
 
-import Loading from '@/app/loading'
-import FilesModal from '@/components/modals/FilesModal'
-import UploadCarrierFile from '@/components/modals/UploadCarrierFile'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
-import { getCarrierNumbers, updateCarrierNumbers } from '@/lib/services/settingsService'
-import { useSettingsStore } from '@/lib/stores/settingsStore'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Ban, FileText, Loader2, Save, Truck, Upload } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
+import Loading from '@/app/loading';
+import FilesModal from '@/components/modals/FilesModal';
+import UploadCarrierFile from '@/components/modals/UploadCarrierFile';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
+import { getCarrierNumbers, updateCarrierNumbers } from '@/lib/services/settingsService';
+import { useSettingsStore } from '@/lib/stores/settingsStore';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Ban, FileText, Loader2, Save, Truck, Upload } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 const carrierFormSchema = z.object({
   mcNumber: z.string().min(1, 'MC number is required'),
@@ -31,12 +31,12 @@ const carrierFormSchema = z.object({
   tnNumber: z.string().optional(),
   laNumber: z.string().optional(),
   notes: z.string().optional(),
-})
+});
 
 export default function CarrierNumbersPage() {
-  const { carrierNumbers, setCarrierNumbers } = useSettingsStore()
-  const [isFetching, setIsFetching] = useState(true)
-  const [isLoading, setIsLoading] = useState(false)
+  const { carrierNumbers, setCarrierNumbers } = useSettingsStore();
+  const [isFetching, setIsFetching] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof carrierFormSchema>>({
     resolver: zodResolver(carrierFormSchema),
@@ -52,13 +52,13 @@ export default function CarrierNumbersPage() {
       laNumber: '',
       notes: '',
     },
-  })
+  });
 
   const carrierNumbersFields = [
     { name: 'mcNumber', label: 'MC#', description: 'Motor Carrier Number', required: true },
     { name: 'dotNumber', label: 'DOT#', description: 'Department of Transportation', required: true },
     { name: 'einNumber', label: 'EIN#', description: 'Employer Identification Number', required: true },
-  ]
+  ];
 
   const statePermitsFields = [
     { name: 'iftaNumber', label: 'IFTA', description: 'International Fuel Tax Agreement' },
@@ -67,14 +67,14 @@ export default function CarrierNumbersPage() {
     { name: 'txNumber', label: 'TX', description: 'Texas Permit' },
     { name: 'tnNumber', label: 'TN', description: 'Tennessee Permit' },
     { name: 'laNumber', label: 'LA', description: 'Louisiana Permit' },
-  ]
+  ];
 
   const fetchCarrierNumbers = useCallback(async () => {
-    setIsFetching(true)
+    setIsFetching(true);
     try {
-      const { data } = await getCarrierNumbers()
+      const { data } = await getCarrierNumbers();
 
-      setCarrierNumbers(data)
+      setCarrierNumbers(data);
 
       form.reset({
         mcNumber: data?.mcNumber || '',
@@ -87,30 +87,28 @@ export default function CarrierNumbersPage() {
         tnNumber: data?.tnNumber || '',
         laNumber: data?.laNumber || '',
         notes: data?.notes || '',
-      })
+      });
     } finally {
-      setIsFetching(false)
+      setIsFetching(false);
     }
-  }, [form, setCarrierNumbers])
+  }, [form, setCarrierNumbers]);
 
   useEffect(() => {
-    fetchCarrierNumbers()
-  }, [fetchCarrierNumbers])
+    fetchCarrierNumbers();
+  }, [fetchCarrierNumbers]);
 
   const isCarrierNumbersIncomplete = () => {
-    if (!carrierNumbers) return true
+    if (!carrierNumbers) return true;
 
-    return !carrierNumbers.mcNumber || !carrierNumbers.dotNumber || !carrierNumbers.einNumber
-  }
+    return !carrierNumbers.mcNumber || !carrierNumbers.dotNumber || !carrierNumbers.einNumber;
+  };
 
   async function onSubmit(values: z.infer<typeof carrierFormSchema>) {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const { message, data } = await updateCarrierNumbers(values)
-      toast.success(message)
-      setCarrierNumbers(data)
-
-      console.log(data)
+      const { message, data } = await updateCarrierNumbers(values);
+      toast.success(message);
+      setCarrierNumbers(data);
 
       form.reset({
         mcNumber: data?.mcNumber || '',
@@ -123,14 +121,14 @@ export default function CarrierNumbersPage() {
         tnNumber: data?.tnNumber || '',
         laNumber: data?.laNumber || '',
         notes: data?.notes || '',
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
   if (isFetching) {
-    return <Loading />
+    return <Loading />;
   }
 
   return (
@@ -177,7 +175,7 @@ export default function CarrierNumbersPage() {
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-4">
-                  {carrierNumbersFields.map(item => (
+                  {carrierNumbersFields.map((item) => (
                     <FormField
                       key={item.name}
                       control={form.control}
@@ -207,7 +205,7 @@ export default function CarrierNumbersPage() {
                   <Badge variant="outline">Optional</Badge>
                 </div>
                 <div className="grid md:grid-cols-3 gap-4">
-                  {statePermitsFields.map(permit => (
+                  {statePermitsFields.map((permit) => (
                     <FormField
                       key={permit.name}
                       control={form.control}
@@ -279,5 +277,5 @@ export default function CarrierNumbersPage() {
         </CardContent>
       </Card>
     </>
-  )
+  );
 }
