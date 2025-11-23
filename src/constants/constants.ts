@@ -18,6 +18,11 @@ export const AsideNavigation: NavigationItem[] = [
     url: '/dashboard/orders',
   },
   {
+    label: 'Invoices',
+    icon: 'receipt',
+    url: '/dashboard/invoices',
+  },
+  {
     label: 'Notifications',
     icon: 'bell',
     url: '/dashboard/notifications',
