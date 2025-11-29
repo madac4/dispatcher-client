@@ -1,76 +1,86 @@
-'use client'
+'use client';
 
-import { pageSizeOptions } from '@/constants/constants'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from '../ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { pageSizeOptions } from '@/constants/constants';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 type PaginationProps = {
-  itemsPerPage: number
-  currentPage: number
-  totalPages: number
-  totalItems: number
-  itemsLength: number
-  onPaginationChange: (pageSize: number, page: number) => void
-}
+  itemsPerPage: number;
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsLength: number;
+  hidePageSizeSelector?: boolean;
+  onPaginationChange: (pageSize: number, page: number) => void;
+};
 
-export function Pagination({ itemsPerPage, currentPage, totalPages, totalItems, onPaginationChange }: PaginationProps) {
+export function Pagination({
+  itemsPerPage,
+  currentPage,
+  totalPages,
+  totalItems,
+  onPaginationChange,
+  hidePageSizeSelector = false,
+}: PaginationProps) {
   const getPages = () => {
-    const maxPagesToShow = 2
-    const pages: (number | string)[] = []
-    const ellipsis = '...'
+    const maxPagesToShow = 2;
+    const pages: (number | string)[] = [];
+    const ellipsis = '...';
 
     if (totalPages <= 4) {
-      return Array.from({ length: totalPages }, (_, index) => index + 1)
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
     }
 
-    pages.push(1)
+    pages.push(1);
 
-    let startPage = Math.max(2, currentPage - Math.floor(maxPagesToShow / 2))
-    let endPage = Math.min(totalPages - 1, currentPage + Math.floor(maxPagesToShow / 2))
+    let startPage = Math.max(2, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages - 1, currentPage + Math.floor(maxPagesToShow / 2));
 
     if (endPage - startPage + 1 < maxPagesToShow) {
       if (currentPage < totalPages / 2) {
-        endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1)
+        endPage = Math.min(totalPages - 1, startPage + maxPagesToShow - 1);
       } else {
-        startPage = Math.max(2, endPage - maxPagesToShow + 1)
+        startPage = Math.max(2, endPage - maxPagesToShow + 1);
       }
     }
 
-    if (startPage > 2) pages.push(ellipsis)
+    if (startPage > 2) pages.push(ellipsis);
 
     for (let i = startPage; i <= endPage; i++) {
-      pages.push(i)
+      pages.push(i);
     }
 
-    if (endPage < totalPages - 1) pages.push(ellipsis)
+    if (endPage < totalPages - 1) pages.push(ellipsis);
 
-    if (totalPages > 1) pages.push(totalPages)
+    if (totalPages > 1) pages.push(totalPages);
 
-    return pages
-  }
+    return pages;
+  };
 
   const goToPage = (page: number) => {
-    onPaginationChange(itemsPerPage, page)
-  }
+    onPaginationChange(itemsPerPage, page);
+  };
 
   return (
     totalItems > itemsPerPage && (
       <div className="flex items-center mt-2 sm:mt-0 justify-between">
-        <Select value={itemsPerPage.toString()} onValueChange={value => onPaginationChange(Number(value), 1)}>
-          <SelectTrigger>
-            <SelectValue placeholder="10" />
-          </SelectTrigger>
-          <SelectContent>
-            {pageSizeOptions.map(size => (
-              <SelectItem key={size} value={size.toString()}>
-                {size}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {!hidePageSizeSelector && (
+          <Select value={itemsPerPage.toString()} onValueChange={(value) => onPaginationChange(Number(value), 1)}>
+            <SelectTrigger>
+              <SelectValue placeholder="10" />
+            </SelectTrigger>
+            <SelectContent>
+              {pageSizeOptions.map((size) => (
+                <SelectItem key={size} value={size.toString()}>
+                  {size}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
-        <nav className="flex flex-row items-center gap-1">
+        <nav className={`flex flex-row items-center gap-1 ${hidePageSizeSelector ? 'ml-auto' : ''}`}>
           <Button
             variant="secondary"
             size="icon-sm"
@@ -80,7 +90,7 @@ export function Pagination({ itemsPerPage, currentPage, totalPages, totalItems, 
             <ChevronLeft size={16} />
           </Button>
 
-          {getPages().map(page => (
+          {getPages().map((page) => (
             <Button
               key={page}
               variant={currentPage === page ? 'outline' : 'ghost'}
@@ -103,5 +113,5 @@ export function Pagination({ itemsPerPage, currentPage, totalPages, totalItems, 
         </nav>
       </div>
     )
-  )
+  );
 }
