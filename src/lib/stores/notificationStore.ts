@@ -1,13 +1,14 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { NotificationDTO, NotificationStatus } from '../models/notification.model';
-import { RequestModel } from '../models/response.model';
+import { PaginationMeta, RequestModel } from '../models/response.model';
 import { NotificationService } from '../services/notificationService';
 
 interface NotificationState {
   notifications: NotificationDTO[];
   isLoading: boolean;
   hasUnread: boolean;
+  pagination: PaginationMeta;
 
   fetchNotifications: (payload: RequestModel) => Promise<void>;
   markAsRead: (notificationIds: string[]) => Promise<void>;
@@ -17,11 +18,19 @@ interface NotificationState {
   reset: () => void;
 }
 
+const initialPagination: PaginationMeta = {
+  totalItems: 0,
+  totalPages: 0,
+  currentPage: 1,
+  itemsPerPage: 20,
+};
+
 const initialState = {
   notifications: [],
   stats: null,
   isLoading: false,
   unreadCount: 0,
+  pagination: initialPagination,
 };
 
 export const useNotificationStore = create<NotificationState>()(
@@ -33,10 +42,11 @@ export const useNotificationStore = create<NotificationState>()(
         set({ isLoading: true });
 
         try {
-          const { data } = await NotificationService.getNotifications(payload);
+          const { data, meta } = await NotificationService.getNotifications(payload);
           set({
             notifications: data,
             hasUnread: data.some((notification) => notification.status === NotificationStatus.UNREAD),
+            pagination: meta || initialPagination,
           });
         } finally {
           set({ isLoading: false });
