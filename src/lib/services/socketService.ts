@@ -48,19 +48,16 @@ class SocketService {
 
     // Listen for real-time notifications
     this.socket.on('notification', (notification: NotificationDTO) => {
-      console.log('Received notification:', notification);
       this.emit('notification', notification);
     });
 
     // Listen for order updates
     this.socket.on('order-updated', (data: { orderId: string; update: unknown; timestamp: Date }) => {
-      console.log('Order updated:', data);
       this.emit('order-updated', data);
     });
 
     // Listen for new messages
     this.socket.on('new-message', (data: { orderId: string; message: unknown; timestamp: Date }) => {
-      console.log('New message:', data);
       this.emit('new-message', data);
     });
   }
