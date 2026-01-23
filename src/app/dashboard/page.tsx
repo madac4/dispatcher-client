@@ -9,19 +9,12 @@ export default function DashboardPage() {
   const { role } = useAuthStore();
 
   const isAdmin = role() === UserRole.ADMIN;
-  const currentRole = role();
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground">Welcome to your click permit dashboard</p>
-        {/* Debug info - remove in production */}
-        {process.env.NODE_ENV === 'development' && (
-          <p className="text-xs text-gray-500 mt-2">
-            Current role: {currentRole || 'Not set'} | Is Admin: {isAdmin ? 'Yes' : 'No'}
-          </p>
-        )}
       </div>
 
       {isAdmin && (
