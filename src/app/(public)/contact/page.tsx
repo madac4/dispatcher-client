@@ -134,8 +134,8 @@ export default function ContactUsPage() {
                     <h3 className="font-bold text-gray-900">Company Brochure</h3>
                     <p className="text-gray-600 text-sm">Download our company information</p>
                     <a
-                      href="/ClickPermit-1.pdf"
-                      download="ClickPermit-1.pdf"
+                      href="/ClickPermit.pdf"
+                      download="ClickPermit.pdf"
                       className="font-semibold text-primary-600 hover:text-primary-700 transition-colors"
                     >
                       Download PDF

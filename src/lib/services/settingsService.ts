@@ -8,7 +8,7 @@ const baseURL = '/settings';
 export const SettingsService = {
   async downloadCarrierFile(filename: string, userId?: string): Promise<ApiResponse<null>> {
     try {
-      const response = await api.get(`${baseURL}/carrier-numbers/files/${filename}/${userId || ''}`, {
+      const response = await api.get(`${baseURL}/carrier-numbers/files/${filename}?userId=${userId || ''}`, {
         responseType: 'blob',
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));

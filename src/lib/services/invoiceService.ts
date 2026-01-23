@@ -7,6 +7,7 @@ import {
   UpdateInvoiceRequest,
   UserForInvoice,
 } from '../models/invoice.model';
+import { PaginatedOrderDTO } from '../models/order.model';
 import { ApiResponse, PaginationResponse, RequestModel } from '../models/response.model';
 
 const baseURL = '/invoices';
@@ -17,6 +18,15 @@ export const InvoiceService = {
    */
   async getUsersForInvoice(): Promise<ApiResponse<UserForInvoice[]>> {
     return apiRequest<UserForInvoice[]>(() => api.get(`${baseURL}/users`).then((res) => res.data));
+  },
+
+  /**
+   * Get orders for invoice preview (admin only)
+   */
+  async getOrdersForInvoicePreview(payload: RequestModel): Promise<PaginationResponse<PaginatedOrderDTO>> {
+    return apiRequestPaginated<PaginatedOrderDTO>(() =>
+      api.get(`${baseURL}/preview-orders`, { params: payload }).then((res) => res.data),
+    );
   },
 
   /**

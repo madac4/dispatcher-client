@@ -23,7 +23,7 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn('text-center mb-6', className)}>
+    <div className={cn('text-center mb-4', className)}>
       {Icon && (
         <div className={cn('w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4', iconBgColor)}>
           <Icon className={cn('w-8 h-8', iconColor)} />

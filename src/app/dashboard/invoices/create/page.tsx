@@ -2,6 +2,7 @@
 
 import { PageHeader } from '@/components/common/PageHeader';
 import { SingleDatePicker } from '@/components/elements/SingleDatePicker';
+import { OrdersTable } from '@/components/tables/orders-table';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -10,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { UsStates } from '@/constants/constants';
 import { CreateInvoiceRequest, InvoiceCharge, UserForInvoice } from '@/lib/models/invoice.model';
+import { PaginatedOrderDTO } from '@/lib/models/order.model';
+import { RequestModel } from '@/lib/models/response.model';
 import { InvoiceService } from '@/lib/services/invoiceService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building2, FileText, Loader2, Plus, ReceiptIcon, Trash2, X } from 'lucide-react';
@@ -44,6 +47,8 @@ export default function CreateInvoicePage() {
   const [users, setUsers] = useState<UserForInvoice[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [selectedUser, setSelectedUser] = useState<UserForInvoice | null>(null);
+  const [previewOrders, setPreviewOrders] = useState<PaginatedOrderDTO[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
   const form = useForm<InvoiceFormData>({
     resolver: zodResolver(invoiceFormSchema),
@@ -67,6 +72,8 @@ export default function CreateInvoicePage() {
 
   const charges = form.watch('charges');
   const selectedUserId = form.watch('userId');
+  const startDate = form.watch('startDate');
+  const endDate = form.watch('endDate');
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -89,6 +96,38 @@ export default function CreateInvoicePage() {
       setSelectedUser(null);
     }
   }, [selectedUserId, users]);
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      if (!selectedUserId || !startDate || !endDate) {
+        setPreviewOrders([]);
+        return;
+      }
+
+      const payload: RequestModel = new RequestModel();
+      payload.userId = selectedUserId;
+      payload.startDate = startDate.toISOString();
+      payload.endDate = endDate.toISOString();
+      payload.page = 1;
+      payload.limit = 100;
+      payload.search = '';
+      setLoadingOrders(true);
+
+      try {
+        const response = await InvoiceService.getOrdersForInvoicePreview(payload);
+        if (response.data) {
+          setPreviewOrders(response.data);
+          if (response.data.length === 0) {
+            toast.info('No orders with status "Requires Invoice" found for the selected period');
+          }
+        }
+      } finally {
+        setLoadingOrders(false);
+      }
+    };
+
+    loadOrders();
+  }, [selectedUserId, startDate, endDate]);
 
   const calculateChargeTotal = useCallback((charge: InvoiceCharge) => {
     if (!charge) return 0;
@@ -272,7 +311,7 @@ export default function CreateInvoicePage() {
               </div>
 
               {selectedUser?.companyInfo && (
-                <div className="mt-4 p-4 bg-muted/50 rounded-lg space-y-2">
+                <div className="p-4 bg-muted/50 rounded-lg space-y-2">
                   <div className="flex items-center gap-2 mb-3">
                     <Building2 className="w-4 h-4 text-primary" />
                     <h3 className="font-semibold">Company Information</h3>
@@ -314,6 +353,16 @@ export default function CreateInvoicePage() {
                     </div>
                   </div>
                 </div>
+              )}
+
+              {!loadingOrders && previewOrders.length > 0 && (
+                <>
+                  <div className="flex items-center gap-2 mb-3">
+                    <FileText className="w-4 h-4 text-primary" />
+                    <h3 className="font-semibold">Orders Preview</h3>
+                  </div>
+                  <OrdersTable data={previewOrders} payload={new RequestModel()} />
+                </>
               )}
             </CardContent>
 
