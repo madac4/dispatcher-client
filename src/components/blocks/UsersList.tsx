@@ -148,17 +148,13 @@ export function UsersList({ roleFilter = 'all', title }: UsersListProps) {
 
       const requestPayload = new RequestModel({ page: payload.page, limit: itemsPerPage });
 
-      // Add role filter if specified
       if (roleFilter === 'users') {
         requestPayload.role = UserRole.USER;
       } else if (roleFilter === 'moderators') {
         requestPayload.role = UserRole.MODERATOR;
       }
 
-      // Add search term
-      if (searchTerm) {
-        requestPayload.search = searchTerm;
-      }
+      if (searchTerm) requestPayload.search = searchTerm;
 
       const response = await UserService.getAllUsersWithSettings(requestPayload);
       if (response.success && response.data) {
@@ -173,13 +169,10 @@ export function UsersList({ roleFilter = 'all', title }: UsersListProps) {
           });
         }
       }
-    } catch (error: unknown) {
-      console.error('Failed to fetch users:', error);
-      setError(error instanceof Error ? error.message : 'Failed to load users. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  }, [payload.page, payload.limit, roleFilter, searchTerm]);
+  }, [payload.page, roleFilter, searchTerm, itemsPerPage]);
 
   useEffect(() => {
     fetchUsers();
