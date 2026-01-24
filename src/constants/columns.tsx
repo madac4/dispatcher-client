@@ -9,6 +9,7 @@ import { RequestModel } from '@/lib/models/response.model';
 import { TrailerDTO } from '@/lib/models/trailer.model';
 import { TruckDTO } from '@/lib/models/truck.model';
 import { useDialogStore } from '@/lib/store';
+import { useOrdersStore } from '@/lib/stores/ordersStore';
 import { useTrailersStore } from '@/lib/stores/trailerStore';
 import { useTrucksStore } from '@/lib/stores/truckStore';
 import { ColumnDef } from '@tanstack/react-table';
@@ -353,14 +354,31 @@ export const orderColumns: ColumnDef<PaginatedOrderDTO>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const order = row.original;
+      const { duplicateOrder } = useOrdersStore.getState();
+      const { setIsDialogOpen } = useDialogStore.getState();
 
       const actions: TableAction<PaginatedOrderDTO>[] = [
         {
           label: 'Duplicate Order',
           icon: 'copy',
-          action: () => {
-            toast.warning('Functionality not implemented yet');
-          },
+          dialogContent: (item) => (
+            <ConfirmModal
+              title="Duplicate Order"
+              description={`Are you sure you want to duplicate order ${item.orderNumber}? This will create a new order with the same details.`}
+              onConfirm={async () => {
+                const loading = toast.loading('Duplicating order...');
+                try {
+                  await duplicateOrder(item.id);
+                  toast.success('Order duplicated successfully');
+                  setIsDialogOpen(false);
+                } finally {
+                  window.location.reload();
+                  toast.dismiss(loading);
+                }
+              }}
+            />
+          ),
+          action: () => {},
         },
         {
           label: 'View Order',

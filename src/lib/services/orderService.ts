@@ -43,6 +43,10 @@ export const OrderService = {
     return apiRequest<OrderDTO>(() => api.post(`${baseURL}/${orderId}/moderate`).then((res) => res.data));
   },
 
+  async duplicateOrder(orderId: string) {
+    return apiRequest<OrderDTO>(() => api.post(`${baseURL}/duplicate/${orderId}`).then((res) => res.data));
+  },
+
   async uploadOrderFile(orderId: string, file: File) {
     const formData = new FormData();
     formData.append('file', file);
