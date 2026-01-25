@@ -27,7 +27,7 @@ export function Header() {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-primary" />
-              Mon-Sat 7am-7pm
+              Mon-Sat 7am-6pm
             </div>
             <Link href="tel:+37378410220" className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-primary" />

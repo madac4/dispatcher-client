@@ -61,10 +61,20 @@ export default function OrderDetailsPage() {
   const { role } = useAuthStore();
   const router = useRouter();
 
-  const statuses = Object.entries(OrderStatus).map(([, value]) => ({
-    value: value,
-    label: formatStatus(value),
-  }));
+  const statuses = Object.entries(OrderStatus)
+    .map(([, value]) => {
+      if (
+        role() === UserRole.MODERATOR &&
+        (value === OrderStatus.REQUIRES_CHARGE || value === OrderStatus.CHARGED || value === OrderStatus.FINISHED)
+      ) {
+        return null;
+      }
+      return {
+        value: value,
+        label: formatStatus(value),
+      };
+    })
+    .filter((status) => status !== null);
 
   const updateOrderStatus = useCallback(async (status: OrderStatus | null, orderId: string) => {
     if (!status) {
@@ -524,7 +534,6 @@ export default function OrderDetailsPage() {
               </CardContent>
             </Card>
 
-            {/* Trailer */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center text-lg">

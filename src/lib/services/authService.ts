@@ -1,5 +1,7 @@
 import { apiRequest } from '@/middleware/errorHandler';
+import { toast } from 'sonner';
 import api from '../api';
+import { removeTokens } from '../cookies';
 import { LoginResponse, UserRole } from '../models/auth.model';
 import { ApiResponse } from '../models/response.model';
 
@@ -16,6 +18,14 @@ export const AuthService = {
 
   async logout(): Promise<ApiResponse<null>> {
     return apiRequest<null>(() => api.post(`${baseURL}/logout`).then((res) => res.data));
+  },
+
+  logoutUser() {
+    removeTokens();
+    toast.info('You are being logged out...');
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 2000);
   },
 };
 

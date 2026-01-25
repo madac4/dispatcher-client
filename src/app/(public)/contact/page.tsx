@@ -118,7 +118,7 @@ export default function ContactUsPage() {
                     <h3 className="font-bold text-gray-900">Business Hours</h3>
                     <p className="text-gray-600 text-sm">When you can reach us</p>
                     <div className="space-y-1 mt-3">
-                      <p className="text-sm font-medium text-gray-900">Monday - Friday: 7:00 AM - 5:00 PM</p>
+                      <p className="text-sm font-medium text-gray-900">Monday - Friday: 7:00 AM - 6:00 PM</p>
                       <p className="text-sm font-medium text-gray-900">Saturday: 8:00 AM - 12:00 PM</p>
                     </div>
                   </div>

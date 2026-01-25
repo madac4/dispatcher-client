@@ -7,7 +7,6 @@ import { useAuthStore } from '@/lib/stores/authStore';
 
 export default function DashboardPage() {
   const { role } = useAuthStore();
-
   const isAdmin = role() === UserRole.ADMIN;
 
   return (
@@ -22,8 +21,8 @@ export default function DashboardPage() {
           <SectionCards />
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <UsersList roleFilter="users" title="Users" />
-            <UsersList roleFilter="moderators" title="Moderators" />
+            <UsersList role={UserRole.USER} title="Users" />
+            <UsersList role={UserRole.MODERATOR} title="Moderators" />
           </div>
         </>
       )}

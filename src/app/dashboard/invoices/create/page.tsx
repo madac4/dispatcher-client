@@ -16,6 +16,7 @@ import { RequestModel } from '@/lib/models/response.model';
 import { InvoiceService } from '@/lib/services/invoiceService';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building2, FileText, Loader2, Plus, ReceiptIcon, Trash2, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -28,7 +29,7 @@ const invoiceFormSchema = z.object({
   charges: z
     .array(
       z.object({
-        state: z.string().min(1, 'State is required'),
+        state: z.string(),
         oversize: z.number().min(0, 'Must be 0 or greater'),
         overweight: z.number().min(0, 'Must be 0 or greater'),
         superload: z.number().min(0, 'Must be 0 or greater'),
@@ -49,6 +50,7 @@ export default function CreateInvoicePage() {
   const [selectedUser, setSelectedUser] = useState<UserForInvoice | null>(null);
   const [previewOrders, setPreviewOrders] = useState<PaginatedOrderDTO[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+  const router = useRouter();
 
   const form = useForm<InvoiceFormData>({
     resolver: zodResolver(invoiceFormSchema),
@@ -191,6 +193,11 @@ export default function CreateInvoicePage() {
         return;
       }
 
+      if (data.charges.some((charge) => !charge.state)) {
+        toast.error('All charges must have a selected state');
+        return;
+      }
+
       const payload: CreateInvoiceRequest = {
         userId: data.userId,
         startDate: data.startDate.toISOString(),
@@ -207,6 +214,7 @@ export default function CreateInvoicePage() {
       if (response.data) {
         toast.success('Invoice created successfully');
         form.reset();
+        router.push(`/dashboard/invoices/${response.data._id}`);
         setSelectedUser(null);
       }
     } finally {
@@ -492,7 +500,6 @@ export default function CreateInvoicePage() {
             </CardContent>
           </Card>
 
-          {/* Submit Button */}
           <div className="flex justify-end gap-4">
             <Button
               type="button"

@@ -67,6 +67,7 @@ export type InvoiceQuery = {
   endDate?: string;
   page?: number;
   limit?: number;
+  search?: string;
 };
 
 export type UserForInvoice = {

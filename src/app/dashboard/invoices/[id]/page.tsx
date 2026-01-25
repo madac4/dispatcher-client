@@ -93,16 +93,15 @@ export default function InvoiceDetailPage() {
               <CardTitle className="text-2xl mb-2">Invoice #{invoice.invoiceNumber}</CardTitle>
               <p className="text-sm text-muted-foreground">Created: {formatDate(invoice.createdAt)}</p>
             </div>
-            <div className="text-right">
+            {/* <div className="text-right">
               <p className="text-sm text-muted-foreground">Issued By:</p>
               <p className="font-semibold">Seven Summits Consulting, LLC</p>
               <p className="text-sm">55 W Monroe St, Suite 3330</p>
               <p className="text-sm">Chicago, IL 60603</p>
-            </div>
+            </div> */}
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Company Information */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -138,7 +137,6 @@ export default function InvoiceDetailPage() {
             </div>
           </div>
 
-          {/* Orders Section */}
           {invoice.orders && invoice.orders.length > 0 && (
             <div>
               <h3 className="font-semibold mb-4">Loads</h3>
@@ -223,7 +221,6 @@ export default function InvoiceDetailPage() {
             </div>
           )}
 
-          {/* Charges Table */}
           <div>
             <h3 className="font-semibold mb-4">Charges</h3>
             <Table>
