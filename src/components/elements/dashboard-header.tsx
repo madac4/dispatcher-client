@@ -3,7 +3,7 @@
 import { UserRole } from '@/lib/models/auth.model';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { FilePlus, PackagePlus, Plus, UserRoundPlus } from 'lucide-react';
+import { PackagePlus, Plus, UserRoundPlus } from 'lucide-react';
 import Link from 'next/link';
 import RegisterForm from '../forms/RegisterForm';
 import { Button } from '../ui/button';
@@ -42,12 +42,12 @@ export function DashboardHeader() {
                 New Order
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+            {/* <DropdownMenuItem asChild>
               <Link href="/dashboard/quote">
                 <FilePlus />
                 New Quote
               </Link>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </>
         );
     }

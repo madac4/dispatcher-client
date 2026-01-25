@@ -1,5 +1,5 @@
-import { Footer } from '@/components/elements/footer'
-import { Header } from '@/components/elements/header'
+import { Footer } from '@/components/elements/footer';
+import { Header } from '@/components/elements/header';
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,5 +8,5 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <main className="flex-1">{children}</main>
       <Footer />
     </div>
-  )
+  );
 }
