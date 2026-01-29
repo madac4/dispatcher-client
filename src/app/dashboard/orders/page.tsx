@@ -7,7 +7,7 @@ import { OrdersTable } from '@/components/tables/orders-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useOrdersPage } from '@/hooks/useOrdersPage';
 import { OrderStatusType } from '@/lib/models/order.model';
-import { CheckCircle, Clock, DollarSign, Package, Truck } from 'lucide-react';
+import { CheckCircle, Clock, CreditCard, DollarSign, Package, Truck } from 'lucide-react';
 
 export default function OrdersPage() {
   const {
@@ -25,6 +25,7 @@ export default function OrdersPage() {
     getCompletedOrders,
     getPaidOrders,
     getArchivedOrders,
+    getWaitingForPaymentOrders,
   } = useOrdersPage();
 
   const tabs = [
@@ -36,6 +37,21 @@ export default function OrdersPage() {
         <Card>
           <CardHeader>
             <CardTitle>Active Orders</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <OrdersTable data={orders} payload={payload} />
+          </CardContent>
+        </Card>
+      ),
+    },
+    {
+      value: 'waiting-for-payment',
+      label: 'Waiting for Payment',
+      icon: CreditCard,
+      content: (
+        <Card>
+          <CardHeader>
+            <CardTitle>Waiting for Payment</CardTitle>
           </CardHeader>
           <CardContent>
             <OrdersTable data={orders} payload={payload} />
@@ -99,6 +115,8 @@ export default function OrdersPage() {
       getPaidOrders();
     } else if (value === 'archived') {
       getArchivedOrders();
+    } else if (value === 'waiting-for-payment') {
+      getWaitingForPaymentOrders();
     } else {
       getActiveOrders();
     }

@@ -131,7 +131,7 @@ export enum OrderStatus {
   FINISHED = 'finished',
 }
 
-export type OrderStatusType = 'active' | 'completed' | 'paid' | 'archived' | 'all';
+export type OrderStatusType = 'active' | 'completed' | 'paid' | 'archived' | 'all' | 'requires_invoice';
 
 export type OrderStatusDTO = {
   value: OrderStatus;
