@@ -1,95 +1,102 @@
-'use client'
+'use client';
 
-import { OrderStatus, OrderStatusType } from '@/lib/models/order.model'
-import { RequestModel } from '@/lib/models/response.model'
-import { useOrdersStore } from '@/lib/stores/ordersStore'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { OrderStatus, OrderStatusType } from '@/lib/models/order.model';
+import { RequestModel } from '@/lib/models/response.model';
+import { useOrdersStore } from '@/lib/stores/ordersStore';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export function useOrdersPage() {
-	const [searchTerm, setSearchTerm] = useState('')
-	const [statusFilter, setStatusFilter] = useState('all')
-	const [activeTab, setActiveTab] = useState<OrderStatusType>('active')
-	const { getOrders, orders, getStatuses, statuses } = useOrdersStore()
-	const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState<OrderStatusType>('active');
+  const { getOrders, orders, getStatuses, statuses } = useOrdersStore();
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-	const activeStatuses = useMemo(() => [OrderStatus.PENDING, OrderStatus.PROCESSING], [])
+  const activeStatuses = useMemo(() => [OrderStatus.PENDING, OrderStatus.PROCESSING], []);
 
-	const completedStatuses = useMemo(() => [OrderStatus.REQUIRES_CHARGE, OrderStatus.REQUIRES_INVOICE], [])
+  const completedStatuses = useMemo(() => [OrderStatus.REQUIRES_CHARGE], []);
 
-	const paidStatuses = useMemo(() => [OrderStatus.CHARGED], [])
+  const paidStatuses = useMemo(() => [OrderStatus.CHARGED], []);
 
-	const archivedStatuses = useMemo(() => [OrderStatus.FINISHED, OrderStatus.CANCELLED], [])
+  const archivedStatuses = useMemo(() => [OrderStatus.FINISHED, OrderStatus.CANCELLED], []);
 
-	const payload = useMemo(() => new RequestModel(), [])
+  const payload = useMemo(() => new RequestModel(), []);
 
-	const getActiveOrders = useCallback(() => {
-		payload.status = activeStatuses
-		getOrders(payload)
-		getStatuses('active')
-	}, [getOrders, payload, getStatuses, activeStatuses])
+  const getActiveOrders = useCallback(() => {
+    payload.status = activeStatuses;
+    getOrders(payload);
+    getStatuses('active');
+  }, [getOrders, payload, getStatuses, activeStatuses]);
 
-	const getCompletedOrders = useCallback(() => {
-		payload.status = completedStatuses
-		getOrders(payload)
-		getStatuses('completed')
-	}, [getOrders, payload, getStatuses, completedStatuses])
+  const getWaitingForPaymentOrders = useCallback(() => {
+    payload.status = [OrderStatus.REQUIRES_INVOICE];
+    getOrders(payload);
+    getStatuses('requires_invoice');
+  }, [getOrders, payload, getStatuses]);
 
-	const getPaidOrders = useCallback(() => {
-		payload.status = paidStatuses
-		getOrders(payload)
-		getStatuses('paid')
-	}, [getOrders, payload, getStatuses, paidStatuses])
+  const getCompletedOrders = useCallback(() => {
+    payload.status = completedStatuses;
+    getOrders(payload);
+    getStatuses('completed');
+  }, [getOrders, payload, getStatuses, completedStatuses]);
 
-	const getArchivedOrders = useCallback(() => {
-		payload.status = archivedStatuses
-		getOrders(payload)
-		getStatuses('archived')
-	}, [getOrders, payload, getStatuses, archivedStatuses])
+  const getPaidOrders = useCallback(() => {
+    payload.status = paidStatuses;
+    getOrders(payload);
+    getStatuses('paid');
+  }, [getOrders, payload, getStatuses, paidStatuses]);
 
-	useEffect(() => {
-		getActiveOrders()
-	}, [getActiveOrders])
+  const getArchivedOrders = useCallback(() => {
+    payload.status = archivedStatuses;
+    getOrders(payload);
+    getStatuses('archived');
+  }, [getOrders, payload, getStatuses, archivedStatuses]);
 
-	const clearFilters = () => {
-		setSearchTerm('')
-		setStatusFilter('all')
-		payload.status = activeStatuses
-		getOrders(payload)
-	}
+  useEffect(() => {
+    getActiveOrders();
+  }, [getActiveOrders]);
 
-	const handleStatusChange = (value: string) => {
-		setStatusFilter(value)
-		payload.status = value === 'all' ? activeStatuses : [value]
-		getOrders(payload)
-	}
+  const clearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+    payload.status = activeStatuses;
+    getOrders(payload);
+  };
 
-	const handleSearchChange = (value: string) => {
-		setSearchTerm(value)
+  const handleStatusChange = (value: string) => {
+    setStatusFilter(value);
+    payload.status = value === 'all' ? activeStatuses : [value];
+    getOrders(payload);
+  };
 
-		if (searchTimeoutRef.current) {
-			clearTimeout(searchTimeoutRef.current)
-		}
+  const handleSearchChange = (value: string) => {
+    setSearchTerm(value);
 
-		searchTimeoutRef.current = setTimeout(() => {
-			payload.search = value
-			getOrders(payload)
-		}, 300)
-	}
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
 
-	return {
-		searchTerm,
-		statusFilter,
-		activeTab,
-		orders,
-		statuses,
-		setActiveTab,
-		clearFilters,
-		handleStatusChange,
-		handleSearchChange,
-		getActiveOrders,
-		getCompletedOrders,
-		getPaidOrders,
-		getArchivedOrders,
-		payload,
-	}
+    searchTimeoutRef.current = setTimeout(() => {
+      payload.search = value;
+      getOrders(payload);
+    }, 300);
+  };
+
+  return {
+    searchTerm,
+    statusFilter,
+    activeTab,
+    orders,
+    statuses,
+    setActiveTab,
+    clearFilters,
+    handleStatusChange,
+    handleSearchChange,
+    getActiveOrders,
+    getCompletedOrders,
+    getPaidOrders,
+    getArchivedOrders,
+    getWaitingForPaymentOrders,
+    payload,
+  };
 }
