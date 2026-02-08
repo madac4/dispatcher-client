@@ -175,7 +175,7 @@ export default function ContactUsPage() {
       <section className="bg-white py-16">
         <div className="fluid-container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <Badge className="bg-primary-100 text-primary-800 border-primary-200 mb-4">WHY CHOOSE OSOW EXPRESS</Badge>
+            <Badge className="bg-primary-100 text-primary-800 border-primary-200 mb-4">WHY CHOOSE CLICK PERMIT </Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Experience the Difference</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               When you contact us, you&apos;re not just getting a service provider – you&apos;re getting a trusted
