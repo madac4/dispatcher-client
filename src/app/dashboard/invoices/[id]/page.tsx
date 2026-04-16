@@ -4,8 +4,10 @@ import { PageHeader } from '@/components/common/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { UserRole } from '@/lib/models/auth.model';
 import { Invoice } from '@/lib/models/invoice.model';
 import { InvoiceService } from '@/lib/services/invoiceService';
+import { useAuthStore } from '@/lib/stores/authStore';
 import { formatCurrency, formatDate } from '@/utils/formatters';
 import { ArrowLeft, Building2, FileText, Loader2, Printer, ReceiptIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -19,6 +21,7 @@ export default function InvoiceDetailPage() {
 
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isAdmin = useAuthStore().role() === UserRole.ADMIN;
 
   useEffect(() => {
     const loadInvoice = async () => {
@@ -93,12 +96,27 @@ export default function InvoiceDetailPage() {
               <CardTitle className="text-2xl mb-2">Invoice #{invoice.invoiceNumber}</CardTitle>
               <p className="text-sm text-muted-foreground">Created: {formatDate(invoice.createdAt)}</p>
             </div>
-            {/* <div className="text-right">
-              <p className="text-sm text-muted-foreground">Issued By:</p>
-              <p className="font-semibold">Seven Summits Consulting, LLC</p>
-              <p className="text-sm">55 W Monroe St, Suite 3330</p>
-              <p className="text-sm">Chicago, IL 60603</p>
-            </div> */}
+
+            {!isAdmin && (
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">Issued By:</p>
+                <p className="font-semibold">CLICK PERMIT LLC</p>
+                <p className="text-sm">340 W BUTTERFIELD RD 2B</p>
+                <p className="text-sm">Elmhurst, IL 60126</p>
+                <p className="text-sm">
+                  Phone:{' '}
+                  <a href="tel:+14015525425" className="underline">
+                    +1 (401) 552-5425
+                  </a>
+                </p>
+                <p className="text-sm">
+                  Email:{' '}
+                  <a href="mailto:billing@click-permit.com" className="underline">
+                    billing@click-permit.com
+                  </a>
+                </p>
+              </div>
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -108,6 +126,7 @@ export default function InvoiceDetailPage() {
                 <Building2 className="w-4 h-4 text-primary" />
                 <h3 className="font-semibold">Client Information</h3>
               </div>
+
               <div className="space-y-1 text-sm">
                 <p className="font-semibold">{invoice.companyInfo.name}</p>
                 {invoice.companyInfo.dba && <p className="text-muted-foreground">DBA: {invoice.companyInfo.dba}</p>}
