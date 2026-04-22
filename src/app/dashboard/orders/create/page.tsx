@@ -123,6 +123,13 @@ export default function NewOrderForm() {
 		try {
 			const { message } = await createOrder(payload)
 			toast.success(message)
+			setTruck(null)
+			setTrailer(null)
+			setMessages([])
+			form.reset({
+				...orderFormDefaultValues,
+				permitStartDate: new Date(),
+			})
 		} finally {
 			setIsLoading(false)
 		}
@@ -1333,7 +1340,7 @@ export default function NewOrderForm() {
 					</Card> */}
 
 					<div className='sticky -mx-6 bottom-0 left-0 right-0 -mb-6 mt-6 bg-white p-4 border-t border-gray-200 flex gap-4 items-center justify-end'>
-						<Button type='submit'>
+						<Button type='submit' disabled={isLoading}>
 							{isLoading ? (
 								<>
 									<Loader2 className='w-4 h-4 animate-spin' />

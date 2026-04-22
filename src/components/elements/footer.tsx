@@ -40,13 +40,16 @@ export function Footer() {
               permit processing in the industry with over 5 years of experience.
             </p>
             <div className="flex items-center space-x-4 mb-6">
-              <div className="flex items-center space-x-2">
+              <a
+                href={`tel:${process.env.NEXT_PUBLIC_UNFORMATTED_PHONE_NUMBER}`}
+                className="flex items-center space-x-2"
+              >
                 <Phone className="w-4 h-4 text-primary" />
-                <span className="text-gray-300">+373 78 410 220</span>
-              </div>
-              <a href="mailto:clickpermit@gmail.com" className="flex items-center space-x-2">
+                <span className="text-gray-300">{process.env.NEXT_PUBLIC_FORMATTED_PHONE_NUMBER}</span>
+              </a>
+              <a href={`mailto:${process.env.NEXT_PUBLIC_EMAIL}`} className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 text-primary" />
-                <span className="text-gray-300">clickpermit@gmail.com</span>
+                <span className="text-gray-300">{process.env.NEXT_PUBLIC_EMAIL}</span>
               </a>
             </div>
             <Button

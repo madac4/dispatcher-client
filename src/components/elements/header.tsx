@@ -29,13 +29,13 @@ export function Header() {
               <Clock className="h-4 w-4 text-primary" />
               Mon-Sat 7am-6pm
             </div>
-            <Link href="tel:+37378410220" className="flex items-center gap-2">
+            <Link href={`tel:${process.env.NEXT_PUBLIC_UNFORMATTED_PHONE_NUMBER}`} className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-primary" />
-              Call us +373 78 410 220
+              Call us {process.env.NEXT_PUBLIC_FORMATTED_PHONE_NUMBER}
             </Link>
-            <Link href="mailto:clickpermit@gmail.com" className="flex items-center gap-2">
+            <Link href={`mailto:${process.env.NEXT_PUBLIC_EMAIL}`} className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-primary" />
-              clickpermit@gmail.com
+              {process.env.NEXT_PUBLIC_EMAIL}
             </Link>
           </div>
         </div>

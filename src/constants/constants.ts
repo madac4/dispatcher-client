@@ -6,33 +6,35 @@ import { IconName } from 'lucide-react/dynamic';
 
 export const pageSizeOptions = [10, 20, 50, 100];
 
-export const AsideNavigation: NavigationItem[] = [
-  {
-    label: 'Dashboard',
-    icon: 'home',
-    url: '/dashboard',
-  },
-  {
-    label: 'Orders',
-    icon: 'list',
-    url: '/dashboard/orders',
-  },
-  {
-    label: 'Invoices',
-    icon: 'receipt',
-    url: '/dashboard/invoices',
-  },
-  {
-    label: 'Notifications',
-    icon: 'bell',
-    url: '/dashboard/notifications',
-  },
-  {
-    label: 'Settings',
-    icon: 'settings',
-    url: '/dashboard/settings/inventory',
-  },
-];
+export function getAsideNavigation(isAdmin: boolean): NavigationItem[] {
+  return [
+    {
+      label: isAdmin ? 'Dashboard' : 'Company Information',
+      icon: isAdmin ? 'home' : 'building',
+      url: '/dashboard',
+    },
+    {
+      label: 'Orders',
+      icon: 'list',
+      url: '/dashboard/orders',
+    },
+    {
+      label: 'Invoices',
+      icon: 'receipt',
+      url: '/dashboard/invoices',
+    },
+    {
+      label: 'Notifications',
+      icon: 'bell',
+      url: '/dashboard/notifications',
+    },
+    {
+      label: 'Settings',
+      icon: 'settings',
+      url: '/dashboard/settings/inventory',
+    },
+  ];
+}
 
 export const InventoryTabs = [
   {

@@ -76,7 +76,12 @@ export default function ContactUsPage() {
                   <div className="space-y-1">
                     <h3 className="font-bold text-gray-900">Phone Support</h3>
                     <p className="text-gray-600 text-sm">Call us for immediate assistance</p>
-                    <p className="font-semibold text-primary-600">+373 78 410 220</p>
+                    <a
+                      href={`tel:${process.env.NEXT_PUBLIC_UNFORMATTED_PHONE_NUMBER}`}
+                      className="font-semibold text-primary-600"
+                    >
+                      {process.env.NEXT_PUBLIC_FORMATTED_PHONE_NUMBER}
+                    </a>
                   </div>
                 </div>
               </Card>
@@ -89,8 +94,8 @@ export default function ContactUsPage() {
                   <div className="space-y-1">
                     <h3 className="font-bold text-gray-900">Email Support</h3>
                     <p className="text-gray-600 text-sm">Send us detailed requirements</p>
-                    <a href="mailto:clickpermit@gmail.com" className="font-semibold text-blue-600">
-                      clickpermit@gmail.com
+                    <a href={`mailto:${process.env.NEXT_PUBLIC_EMAIL}`} className="font-semibold text-blue-600">
+                      {process.env.NEXT_PUBLIC_EMAIL}
                     </a>
                   </div>
                 </div>
@@ -131,7 +136,7 @@ export default function ContactUsPage() {
                     <Download className="w-5 h-5 text-primary-600" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="font-bold text-gray-900">Company Brochure</h3>
+                    <h3 className="font-bold text-gray-900">Company Form</h3>
                     <p className="text-gray-600 text-sm">Download our company information</p>
                     <a
                       href="/ClickPermit.pdf"
